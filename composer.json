@@ -2,8 +2,8 @@
     "name": "titokenzo/easyPlanning",
     "authors": [
         {
-            "name": "Hcode Treinamentos",
-            "email": "suporte@hcode.com.br"
+            "name": "Tito Kenzo",
+            "email": "suporte@treinarecife.com.br"
         }
     ],
     "require": {
@@ -13,7 +13,7 @@
     },
     "autoload": {
         "psr-4": {
-            "": "vendor\\hcodebr\\php-classes\\src"
+            "p2a\\": "vendor\\p2a\\php-classes\\src"
         }
     }
 }
