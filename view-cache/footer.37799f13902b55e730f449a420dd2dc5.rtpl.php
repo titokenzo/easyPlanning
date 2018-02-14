@@ -25,8 +25,7 @@
 	<!-- gauge.js -->
 	<script src="/res/tema/vendors/gauge.js/dist/gauge.min.js"></script>
 	<!-- bootstrap-progressbar -->
-	<script
-		src="/res/tema/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+	<script src="/res/tema/vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
 	<!-- iCheck -->
 	<script src="/res/tema/vendors/iCheck/icheck.min.js"></script>
 	<!-- Skycons -->

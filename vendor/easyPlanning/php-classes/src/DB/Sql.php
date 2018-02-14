@@ -5,9 +5,9 @@ namespace easyPlanning\DB;
 class Sql {
 
 	const HOSTNAME = "127.0.0.1";
-	const USERNAME = "s2e";
+	const USERNAME = "easyplanning_user";
 	const PASSWORD = "123456";
-	const DBNAME = "s2e";
+	const DBNAME = "easyplanning";
 
 	private $conn;
 
