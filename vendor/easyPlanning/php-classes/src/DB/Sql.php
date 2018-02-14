@@ -1,6 +1,6 @@
 <?php 
 
-namespace p2a\DB;
+namespace easyPlanning\DB;
 
 class Sql {
 

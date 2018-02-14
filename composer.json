@@ -1,19 +1,18 @@
 {
-    "name": "titokenzo/easyPlanning",
-    "authors": [
-        {
-            "name": "Tito Kenzo",
-            "email": "suporte@treinarecife.com.br"
-        }
-    ],
-    "require": {
-    	"phpmailer/phpmailer":"5.2.22",
-    	"slim/slim":"2.0",
-    	"rain/raintpl":"3.0.0"
-    },
-    "autoload": {
-        "psr-4": {
-            "p2a\\": "vendor\\p2a\\php-classes\\src"
-        }
-    }
+	"name" : "titokenzo/easyPlanning",
+	"authors" : [{
+			"name" : "Tito Kenzo",
+			"email" : "suporte@treinarecife.com.br"
+		}
+	],
+	"require" : {
+		"phpmailer/phpmailer" : "5.2.22",
+		"slim/slim" : "2.0",
+		"rain/raintpl" : "3.0.0"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"easyPlanning\\" : "vendor\\easyPlanning\\php-classes\\src"
+		}
+	}
 }

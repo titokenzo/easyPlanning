@@ -2,15 +2,16 @@
 
 require_once("vendor/autoload.php");
 
-$app = new \Slim\Slim();
+use \Slim\Slim;
+use \easyPlanning\Page;
+
+$app = new Slim();
 
 $app->config('debug', true);
 
 $app->get('/', function() {
-    
-	$sql = new p2a\DB\Sql();
-	$results = $sql->select("SELECT * FROM empresa");
-	echo json_encode($results);
+	$page = new Page();
+	$page->setTpl("index");
 });
 
 $app->run();
