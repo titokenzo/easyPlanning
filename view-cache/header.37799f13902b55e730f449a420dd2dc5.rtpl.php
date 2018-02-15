@@ -18,7 +18,6 @@
 	<link href="/res/tema/vendors/nprogress/nprogress.css" rel="stylesheet">
 	<!-- iCheck -->
 	<link href="/res/tema/vendors/iCheck/skins/flat/green.css" rel="stylesheet">
-	
 	<!-- bootstrap-progressbar -->
 	<link href="/res/tema/vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
 	<!-- JQVMap -->
@@ -27,11 +26,21 @@
 	<link href="/res/tema/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
 	<!-- Datatables -->
 	<link href="/res/tema/vendors/datatables.net-bs/css/dataTables.bootstrap.min.css" rel="stylesheet">
-	<!-- Custom Theme Style -->
+    <!-- bootstrap-wysiwyg -->
+    <link href="/res/tema/vendors/google-code-prettify/bin/prettify.min.css" rel="stylesheet">
+    <!-- Select2 -->
+    <link href="/res/tema/vendors/select2/dist/css/select2.min.css" rel="stylesheet">
+    <!-- Switchery -->
+    <link href="/res/tema/vendors/switchery/dist/switchery.min.css" rel="stylesheet">
+    <!-- starrr -->
+    <link href="/res/tema/vendors/starrr/dist/starrr.css" rel="stylesheet">
+    <!-- bootstrap-daterangepicker -->
+    <link href="/res/tema/vendors/bootstrap-daterangepicker/daterangepicker.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
 	<link href="/res/tema/css/custom.min.css" rel="stylesheet">
 </head>
 
-<body class="nav-md">
+<body class="nav-md footer_fixed">
 	<div class="container body">
 		<div class="main_container">
 			<div class="col-md-3 left_col">
@@ -63,11 +72,12 @@
 						<div class="menu_section">
 							<h3>General</h3>
 							<ul class="nav side-menu">
-								<li><a href="#"><i class="fa fa-home"></i>
+								<li><a href="/"><i class="fa fa-home"></i>
 										Início </a></li>
 								<li><a><i class="fa fa-edit"></i> Cadastros <span
 										class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
+										<li><a href="/users">Usuários</a></li>
 										<li><a href="#">Empresas</a></li>
 										<li><a href="#">Colaboradores</a></li>
 										<li><a href="#">Grupos de Pergunta</a></li>

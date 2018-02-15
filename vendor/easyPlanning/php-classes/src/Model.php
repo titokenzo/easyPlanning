@@ -10,7 +10,7 @@ class Model{
         
         switch($method){
             case "get":
-                return $this->value[$attribute];
+                return $this->values[$attribute];
                 break;
             case "set":
                 $this->values[$attribute] = $args[0];

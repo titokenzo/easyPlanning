@@ -43,5 +43,58 @@ class User extends Model{
     public static function logout(){
         $_SESSION[User::SESSION] = NULL;
     }
+    
+    public static function listAll(){
+        $sql = new Sql();
+        return $sql->select("SELECT * from tb_users u INNER JOIN tb_persons p USING(person_id) ORDER BY p.person_name");
+    }
+    
+    public function save(){
+        $sql = new Sql();
+
+        $results = $sql->select("CALL sp_users_save(:name, :login, :pass, :email, :phone, :isadmin)", array(
+            ":name"=> $this->getperson_name(),
+            ":login"=> $this->getuser_login(),
+            ":pass"=> $this->getuser_password(),
+            ":email"=> $this->getperson_email(),
+            ":phone"=> $this->getperson_phone(),
+            ":isadmin"=> $this->getuser_isadmin()
+        ));
+        
+        //$this->setData($results[0]);
+    }
+    
+    public function get($user_id){
+        $sql = new Sql();
+        $results = $sql->select("SELECT * FROM tb_users u INNER JOIN tb_persons p USING(person_id) WHERE u.user_id=:id", array(
+            ":id"=>$user_id
+        ));
+        
+        $this->setData($results[0]);
+    }
+    
+    public function update(){
+        $sql = new Sql();
+        
+        $results = $sql->select("CALL sp_usersupdate_save(:id, :name, :login, :pass, :email, :phone, :isadmin)", array(
+            ":id"=> $this->getuser_id(),
+            ":name"=> $this->getperson_name(),
+            ":login"=> $this->getuser_login(),
+            ":pass"=> $this->getuser_password(),
+            ":email"=> $this->getperson_email(),
+            ":phone"=> $this->getperson_phone(),
+            ":isadmin"=> $this->getuser_isadmin()
+        ));
+        
+        //$this->setData($results[0]);
+    }
+    
+    public function delete(){
+        $sql=new Sql();
+        $sql->query("CALL sp_users_delete(:id)", array(
+            ":id"=>$this->getuser_id()
+        ));
+    }
+    
 }
 ?>
