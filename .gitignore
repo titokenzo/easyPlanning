@@ -1,0 +1,8 @@
+/view-cache/
+/res/tema/templates/
+/vendor/composer/
+/vendor/phpmailer/
+/vendor/rain/
+/vendor/slim/
+/vendor/easyPlanning/php-classes/src/SysConfig.php
+/.settings/

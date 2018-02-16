@@ -3,9 +3,11 @@ namespace easyPlanning\Model;
 
 use easyPlanning\DB\Sql;
 use easyPlanning\Model;
+use easyPlanning\Mailer;
 
 class User extends Model{
     const SESSION = "User";
+    const SECRET = "Tr3inaRecif3_EP_";
     
     public static function login($login, $password){
         $sql = new Sql();
@@ -94,6 +96,35 @@ class User extends Model{
         $sql->query("CALL sp_users_delete(:id)", array(
             ":id"=>$this->getuser_id()
         ));
+    }
+    
+    public function getForgot($email){
+        $sql=new Sql();
+        $results = $sql->select("SELECT * FROM tb_persons p INNER JOIN tb_users USING(person_id) WHERE p.person_email=:email", array(
+            ":email"=>$email
+        ));
+        if(count($results)===0){
+            throw new \Exception("Não foi possível recuperar a senha");
+        }else{
+            $data = $results[0];
+            $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :ip)", array(
+                ":iduser"=>$data["user_id"],
+                ":ip"=>$_SERVER["REMOTE_ADDR"]
+            ));
+            if(count($results2)===0){
+                throw new \Exception("Não foi possível recuperar a senha");
+            }else{
+                $data = $results2[0];
+                $code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $data["recovery_id"], MCRYPT_MODE_ECB));
+                $link = "http://" . $_SERVER["HTTP_HOST"] . "/forgot/reset?code=$code";
+                $mailer = new Mailer($data["person_email"], $data["person_name"], "Recuperar senha", "forgot", array(
+                    "name"=>$data["person_name"],
+                    "link"=>$link
+                ));
+                $mailer->send();
+                return $data;
+            }
+        }
     }
     
 }
