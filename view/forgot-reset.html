@@ -1,66 +1,66 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>AdminLTE 2 | Reset Password</title>
-  <!-- Tell the browser to be responsive to screen width -->
-  <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  <!-- Bootstrap 3.3.6 -->
-  <link rel="stylesheet" href="/res/admin/bootstrap/css/bootstrap.min.css">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
-  <!-- Ionicons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
-  <!-- Theme style -->
-  <link rel="stylesheet" href="/res/admin/dist/css/AdminLTE.min.css">
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
-</head>
-<body class="hold-transition lockscreen">
-<!-- Automatic element centering -->
-<div class="lockscreen-wrapper">
-  <div class="lockscreen-logo">
-    <a href="/res/admin/index2.html"><b>Admin</b>LTE</a>
-  </div>
-  
-   <div class="help-block text-center">
-     Olá {$name}, digite uma nova senha:
-    </div>
+    <title>Easy Planning</title>
 
-  <!-- START LOCK SCREEN ITEM -->
-  <div class="lockscreen-item">
+    <!-- Bootstrap -->
+    <link href="/res/tema/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="/res/tema/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress -->
+    <link href="/res/tema/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Animate.css -->
+    <link href="/res/tema/vendors/animate.css/animate.min.css" rel="stylesheet">
 
-    <!-- lockscreen credentials (contains the form) -->
-    <form  action="/admin/forgot/reset" method="post">
-      <input type="hidden" name="code" value="{$code}">
-      <div class="input-group">
-        <input type="password" class="form-control" placeholder="Digite a nova senha" name="password">
-        <div class="input-group-btn">
-          <button type="submit" class="btn"><i class="fa fa-arrow-right text-muted"></i></button>
-        </div>
-      </div>
-    </form>
-    <!-- /.lockscreen credentials -->
+    <!-- Custom Theme Style -->
+    <link href="/res/tema/css/custom.min.css" rel="stylesheet">
+  </head>
 
-  </div>
-  <!-- /.lockscreen-item -->
-  
-  <div class="lockscreen-footer text-center">
-    Copyright &copy; 2014-2016 <b><a href="http://almsaeedstudio.com" class="text-black">Almsaeed Studio</a></b><br>
-    All rights reserved
-  </div>
-</div>
-<!-- /.center -->
+  <body class="login">
+	<div>
+		<a class="hiddenanchor" id="signup"></a> <a class="hiddenanchor"
+			id="signin"></a>
 
-<!-- jQuery 2.2.3 -->
-<script src="/res/admin/plugins/jQuery/jquery-2.2.3.min.js"></script>
-<!-- Bootstrap 3.3.6 -->
-<script src="/res/admin/bootstrap/js/bootstrap.min.js"></script>
+		<div class="login_wrapper">
+			<div class="animate form login_form">
+				<section class="login_content">
+					<form method="post" action="/forgot/reset">
+						<h1>EasyPlanning</h1>
+						<div>
+						<p>Recuperação de senha.</p>
+						Olá {$name}, digite uma nova senha:
+							<input type="hidden" name="code" value="{$code}">
+							<input type="password" class="form-control"
+								placeholder="Informe a nova senha" name="password"
+								required="required" />
+						</div>
+						<div>
+							<input type="submit" class="btn btn-primary submit"
+								value="Enviar" />
+						</div>
+
+						<div class="clearfix"></div>
+
+						<div class="separator">
+							<div class="clearfix"></div>
+							<br />
+							<div>
+								<h1>
+									<img src="/res/site/img/logoTR_32x32.png" /> TreinaRecife!
+								</h1>
+								<p>©2018 All Rights Reserved. TreinaRecife!</p>
+							</div>
+						</div>
+					</form>
+				</section>
+			</div>
+		</div>
+	</div>
 </body>
 </html>

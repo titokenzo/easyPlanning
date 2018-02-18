@@ -3,11 +3,7 @@ namespace easyPlanning;
 
 use Rain\Tpl;
 
-class Mailer{
-    
-    const USERNAME = "titolixao@gmail.com";
-    const PASSWORD = "kju#6463";
-    const NAME_FROM = "Treina Recife - Easy Planning";
+class Mailer extends SysConfig{
     
     private $mail;
     
@@ -33,21 +29,24 @@ class Mailer{
         $this->mail->isSMTP();
         $this->mail->SMTPDebug=0;
         $this->mail->Debugoutput='html';
-        $this->mail->Host = 'smtp.gmail.com';
-        $this->mail->Port = 587;
-        $this->mail->SMTPSecure = 'tls';
-        $this->mail->SMTPAuth = TRUE;
-        $this->mail->Username = Mailer::USERNAME;
-        $this->mail->Password = Mailer::PASSWORD;
-        $this->mail->setFrom(Mailer::USERNAME, Mailer::NAME_FROM);
+        $this->mail->Host = self::MAIL_HOST;// 'smtp.gmail.com';
+        $this->mail->Port = self::MAIL_PORT;
+        $this->mail->SMTPSecure = self::MAIL_SMTP_SECURE;// 'tls';
+        $this->mail->SMTPAuth = self::MAIL_SMTP_AUTH;
+        $this->mail->Username = self::MAIL_USER;
+        $this->mail->Password = self::MAIL_PASS;
+        $this->mail->setFrom(self::MAIL_USER, self::MAIL_NAME);
         $this->mail->addAddress($toAddr, $toName);
         $this->mail->Subject = $subject;
         $this->mail->msgHTML($html);
-        $this->mail->AltBody = '';
+        $this->mail->AltBody = 'Treina Recife';
     }
     
     public function send(){
-        return $this->mail->send();
+        if(!$this->mail->send()){
+            throw new \Exception('Erro ao enviar formulário: ' . $this->mail->ErrorInfo);
+        } 
+        //return $this->mail->send();
     }
 }
 ?>

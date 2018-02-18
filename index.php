@@ -117,12 +117,53 @@ $app->post('/forgot', function () {
     exit();
 });
 
-$app->post('/forgot/sent', function () {
+$app->get('/forgot/sent', function () {
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
     $page->setTpl('forgot-sent');
+});
+
+$app->get('/forgot/reset', function () {
+    /*
+    $user = User::validForgotDecrypt($_GET["code"]);
+    $page = new Page([
+        "header" => false,
+        "footer" => false
+    ]);
+    
+    $page->setTpl('forgot-reset',array(
+        "name"=>$user["person_name"],
+        "code"=>$_GET["code"]
+    ));
+    */
+    $page = new Page([
+        "header" => false,
+        "footer" => false
+    ]);
+    $page->setTpl('forgot-reset',array(
+        "name"=>"TESTE",
+        "code"=>"CODIGO"
+    ));
+
+});
+
+$app->post('/forgot/reset', function () {
+    /*
+    $forgot = User::validForgotDecrypt($_POST["code"]);
+    User::setForgotUsed($forgot["recovery_id"]);
+    $user = new User();
+    $user->get((int)$forgot["user_id"]);
+
+    $pass = password_hash($_POST["password"], PASSWORD_DEFAULT,["cost"=>12]);
+    $user->setPassword($pass);
+*/
+    $page = new Page([
+        "header" => false,
+        "footer" => false
+    ]);
+    $page->setTpl('forgot-reset-success');
 });
 
 $app->run();

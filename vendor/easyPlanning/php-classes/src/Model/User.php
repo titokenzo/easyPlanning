@@ -4,10 +4,11 @@ namespace easyPlanning\Model;
 use easyPlanning\DB\Sql;
 use easyPlanning\Model;
 use easyPlanning\Mailer;
+use easyPlanning\Security;
+use easyPlanning\SysConfig;
 
 class User extends Model{
     const SESSION = "User";
-    const SECRET = "Tr3inaRecif3_EP_";
     
     public static function login($login, $password){
         $sql = new Sql();
@@ -98,7 +99,7 @@ class User extends Model{
         ));
     }
     
-    public function getForgot($email){
+    public static function getForgot($email){
         $sql=new Sql();
         $results = $sql->select("SELECT * FROM tb_persons p INNER JOIN tb_users USING(person_id) WHERE p.person_email=:email", array(
             ":email"=>$email
@@ -114,10 +115,10 @@ class User extends Model{
             if(count($results2)===0){
                 throw new \Exception("Não foi possível recuperar a senha");
             }else{
-                $data = $results2[0];
-                $code = base64_encode(mcrypt_encrypt(MCRYPT_RIJNDAEL_128, User::SECRET, $data["recovery_id"], MCRYPT_MODE_ECB));
-                $link = "http://" . $_SERVER["HTTP_HOST"] . "/forgot/reset?code=$code";
-                $mailer = new Mailer($data["person_email"], $data["person_name"], "Recuperar senha", "forgot", array(
+                $dataRecovery = $results2[0];
+                $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
+                $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
+                $mailer = new Mailer($data["person_email"], $data["person_name"], "Redefinir senha do EasyPlanning", "forgot", array(
                     "name"=>$data["person_name"],
                     "link"=>$link
                 ));
@@ -125,6 +126,43 @@ class User extends Model{
                 return $data;
             }
         }
+    }
+    
+    public static function validForgotDecrypt($code){
+        $idrecovery = Security::secured_decrypt_url($code);
+        $sql = new Sql();
+        $results = $sql->select("
+            SELECT * 
+            FROM tb_userspasswordsrecoveries r 
+            INNER JOIN tb_users u USING(user_id)
+            INNER JOIN tb_persons p USING(person_id)
+            WHERE 
+                r.recovery_dtrecovery IS NULL
+                AND r.recovery_id=:idrecovery
+                AND DATE_ADD(r.recovery_dtregister, INTERVAL 1 HOUR) >= NOW();
+        ", array(
+            ":idrecovery"=>$idrecovery
+        ));
+        if(count($results)===0){
+            throw new \Exception("Não foi possível recuperar a senha");
+        }else{
+            return $results[0];
+        }
+    }
+    
+    public static function setForgotUsed($idrecovery){
+        $sql = new Sql();
+        $sql->query("UPDATE tb_userspasswordsrecoveries SET recovery_dtrecovery=NOW() WHERE recovery_id=:idrecovery",array(
+            "idrecovery"=>$idrecovery
+        ));
+    }
+    
+    public function setPassword($pass){
+        $sql = new Sql();
+        $sql->query("UPDATE tb_users SET user_password=:pass WHERE user_id=:id", array(
+            ":pass"=>$pass,
+            ":id"=>$this->getuser_id()
+        ));
     }
     
 }

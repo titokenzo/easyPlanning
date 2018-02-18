@@ -2,12 +2,9 @@
 
 namespace easyPlanning\DB;
 
-class Sql {
+use easyPlanning\SysConfig;
 
-	const HOSTNAME = "127.0.0.1";
-	const USERNAME = "easyplanning_user";
-	const PASSWORD = "123456";
-	const DBNAME = "easyplanning";
+class Sql extends SysConfig{
 
 	private $conn;
 
@@ -15,9 +12,9 @@ class Sql {
 	{
 
 		$this->conn = new \PDO(
-			"mysql:dbname=".Sql::DBNAME.";host=".Sql::HOSTNAME, 
-			Sql::USERNAME,
-			Sql::PASSWORD
+			"mysql:dbname=". self::BD_BANCO . ";host=" . self::BD_HOST, 
+			self::BD_USER,
+			self::BD_PASS
 		);
 
 	}

@@ -2,7 +2,7 @@
 namespace easyPlanning;
 
 class Security{
-    function secured_encrypt($data)
+    public static function secured_encrypt($data)
     {
         $first_key = base64_decode(SysConfig::FIRSTKEY);
         $second_key = base64_decode(SysConfig::SECONDKEY);
@@ -18,7 +18,7 @@ class Security{
         return $output;
     }
     
-    function secured_decrypt($input)
+    public static function secured_decrypt($input)
     {
         $first_key = base64_decode(SysConfig::FIRSTKEY);
         $second_key = base64_decode(SysConfig::SECONDKEY);
@@ -38,6 +38,14 @@ class Security{
             return $data;
             
             return false;
+    }
+    
+    public static function secured_decrypt_url($input){
+        $string = $input;
+        $string = urlencode($string);
+        $string = str_replace("+", "%2B",$string);
+        $string = urldecode($string);
+        return self::secured_decrypt($string);
     }
 }
 ?>
