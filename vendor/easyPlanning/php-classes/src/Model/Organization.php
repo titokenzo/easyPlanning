@@ -7,6 +7,34 @@ use easyPlanning\Model;
 class Organization extends Model{
     const SESSION = "User";
     
+    public function __construct(){
+        $fields = array(
+            "org_id",
+            "org_companyname",
+            "org_tradingname",
+            "org_cnpj",
+            "org_size",
+            "org_legalnature",
+            "org_logo",
+            "org_addrbilling",
+            "org_addrbilling_complement",
+            "org_addrbilling_city",
+            "org_addrbilling_uf",
+            "org_addrbilling_zip",
+            "org_addrbilling_country",
+            "org_address",
+            "org_addr_complement",
+            "org_addr_city",
+            "org_addr_state",
+            "org_addr_zip",
+            "org_addr_country",
+            "org_contact_name",
+            "org_contact_email",
+            "org_contact_phone",
+            "org_notification");
+        $this->setAttrs($fields);
+    }
+    
     public static function listAll(){
         $sql = new Sql();
         return $sql->select("SELECT * from tb_organizations o ORDER BY o.org_companyname");
@@ -15,13 +43,75 @@ class Organization extends Model{
     public function save(){
         $sql = new Sql();
 
-        $results = $sql->select("CALL sp_organizations_save(:name, :login, :pass, :email, :phone, :isadmin)", array(
-            ":name"=> $this->getperson_name(),
-            ":login"=> $this->getuser_login(),
-            ":pass"=> $this->getuser_password(),
-            ":email"=> $this->getperson_email(),
-            ":phone"=> $this->getperson_phone(),
-            ":isadmin"=> $this->getuser_isadmin()
+        $results = $sql->query("INSERT INTO tb_organizations (
+            org_companyname,
+            org_tradingname,
+            org_cnpj,
+            org_size,
+            legalnature_id,
+            org_logo,
+            org_addrbilling,
+            org_addrbilling_complement,
+            org_addrbilling_city,
+            org_addrbilling_uf,
+            org_addrbilling_zip,
+            org_addrbilling_country,
+            org_address,
+            org_addr_complement,
+            org_addr_city,
+            org_addr_state,
+            org_addr_zip,
+            org_addr_country,
+            org_contact_name,
+            org_contact_email,
+            org_contact_phone,
+            org_notification
+        ) VALUES(
+            :companyname,
+            :tradingname,
+            :cnpj,
+            :size,
+            :legalnature,
+            :logo,
+            :addrbilling,
+            :addrbilling_complement,
+            :addrbilling_city,
+            :addrbilling_uf,
+            :addrbilling_zip,
+            :addrbilling_country,
+            :address,
+            :addr_complement,
+            :addr_city,
+            :addr_state,
+            :addr_zip,
+            :addr_country,
+            :contact_name,
+            :contact_email,
+            :contact_phone,
+            :notification
+        )", array(
+            ":companyname"=>$this->getorg_companyname(),
+            ":tradingname"=>$this->getorg_tradingname(),
+            ":cnpj"=>$this->getorg_cnpj(),
+            ":size"=>$this->getorg_size(),
+            ":legalnature"=>$this->getlegalnature_id(),
+            ":logo"=>$this->getorg_logo(),
+            ":addrbilling"=>$this->getorg_addrbilling(),
+            ":addrbilling_complement"=>$this->getorg_addrbilling_complement(),
+            ":addrbilling_city"=>$this->getorg_addrbilling_city(),
+            ":addrbilling_uf"=>$this->getorg_addrbilling_uf(),
+            ":addrbilling_zip"=>$this->getorg_addrbilling_zip(),
+            ":addrbilling_country"=>$this->getorg_addrbilling_country(),
+            ":address"=>$this->getorg_address(),
+            ":addr_complement"=>$this->getorg_addr_complement(),
+            ":addr_city"=>$this->getorg_addr_city(),
+            ":addr_state"=>$this->getorg_addr_state(),
+            ":addr_zip"=>$this->getorg_addr_zip(),
+            ":addr_country"=>$this->getorg_addr_country(),
+            ":contact_name"=>$this->getorg_contact_name(),
+            ":contact_email"=>$this->getorg_contact_email(),
+            ":contact_phone"=>$this->getorg_contact_phone(),
+            ":notification"=>$this->getorg_notification()
         ));
         
         //$this->setData($results[0]);
@@ -39,23 +129,60 @@ class Organization extends Model{
     public function update(){
         $sql = new Sql();
         
-        $results = $sql->select("CALL sp_usersupdate_save(:id, :name, :login, :pass, :email, :phone, :isadmin)", array(
-            ":id"=> $this->getuser_id(),
-            ":name"=> $this->getperson_name(),
-            ":login"=> $this->getuser_login(),
-            ":pass"=> $this->getuser_password(),
-            ":email"=> $this->getperson_email(),
-            ":phone"=> $this->getperson_phone(),
-            ":isadmin"=> $this->getuser_isadmin()
-        ));
-        
-        //$this->setData($results[0]);
+        $sql->query("UPDATE tb_organizations SET 
+                org_companyname=:companyname,
+                org_tradingname=:tradingname,
+                org_cnpj=:cnpj,
+                org_size=:size,
+                legalnature_id=:legalnature,
+                org_logo=:logo,
+                org_addrbilling=:addrbilling,
+                org_addrbilling_complement=:addrbilling_complement,
+                org_addrbilling_city=:addrbilling_city,
+                org_addrbilling_uf=:addrbilling_uf,
+                org_addrbilling_zip=:addrbilling_zip,
+                org_addrbilling_country=:addrbilling_country,
+                org_address=:address,
+                org_addr_complement=:addr_complement,
+                org_addr_city=:addr_city,
+                org_addr_state=:addr_state,
+                org_addr_zip=:addr_zip,
+                org_addr_country=:addr_country,
+                org_contact_name=:contact_name,
+                org_contact_email=:contact_email,
+                org_contact_phone=:contact_phone,
+                org_notification=:notification 
+            WHERE org_id=:id", array(
+                ":companyname"=>$this->getorg_companyname(),
+                ":tradingname"=>$this->getorg_tradingname(),
+                ":cnpj"=>$this->getorg_cnpj(),
+                ":size"=>$this->getorg_size(),
+                ":legalnature"=>$this->getlegalnature_id(),
+                ":logo"=>$this->getorg_logo(),
+                ":addrbilling"=>$this->getorg_addrbilling(),
+                ":addrbilling_complement"=>$this->getorg_addrbilling_complement(),
+                ":addrbilling_city"=>$this->getorg_addrbilling_city(),
+                ":addrbilling_uf"=>$this->getorg_addrbilling_uf(),
+                ":addrbilling_zip"=>$this->getorg_addrbilling_zip(),
+                ":addrbilling_country"=>$this->getorg_addrbilling_country(),
+                ":address"=>$this->getorg_address(),
+                ":addr_complement"=>$this->getorg_addr_complement(),
+                ":addr_city"=>$this->getorg_addr_city(),
+                ":addr_state"=>$this->getorg_addr_state(),
+                ":addr_zip"=>$this->getorg_addr_zip(),
+                ":addr_country"=>$this->getorg_addr_country(),
+                ":contact_name"=>$this->getorg_contact_name(),
+                ":contact_email"=>$this->getorg_contact_email(),
+                ":contact_phone"=>$this->getorg_contact_phone(),
+                ":notification"=>$this->getorg_notification(),
+                ":id"=>$this->getorg_id()
+            ));
     }
     
     public function delete(){
         $sql=new Sql();
-        $sql->query("CALL sp_users_delete(:id)", array(
-            ":id"=>$this->getuser_id()
+        $sql->query("DELETE FROM tb_organizations WHERE org_id=:id", array(
+            ":id"=>$this->getorg_id()
         ));
     }
     

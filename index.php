@@ -172,10 +172,9 @@ $app->get('/orgs', function () {
 // CREATE
 $app->get('/orgs/create', function () {
     User::verifyLogin();
-    $legalnatures = Organization::getLegalNatureList();
     $page = new Page();
     $page->setTpl('orgs-create',array(
-        "legalnatures"=>$legalnatures
+        "legalnatures"=>Organization::getLegalNatureList()
     ));
 });
 
@@ -196,7 +195,8 @@ $app->get('/orgs/:idorg', function ($idorg) {
     $org->get((int) $idorg);
     $page = new Page();
     $page->setTpl('orgs-update', array(
-        "org" => $org->getValues()
+        "org" => $org->getValues(),
+        "legalnatures"=>Organization::getLegalNatureList()
     ));
 });
 
@@ -215,7 +215,7 @@ $app->post('/orgs/create', function () {
 $app->post('/orgs/:idorg', function ($idorg) {
     User::verifyLogin();
     $org = new Organization();
-    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
+    $_POST["org_notification"] = isset($_POST["org_notification"]) ? 1 : 0;
     $org->get((int) $idorg);
     $org->setData($_POST);
     $org->update();

@@ -3,6 +3,25 @@ namespace easyPlanning;
 
 class Model{
     private $values = [];
+    private $attrs = [];
+    
+    public function setData($data = array()){
+        foreach ($data as $key => $value){
+            $this->{"set".$key}($value);
+        }
+    }
+    
+    public function getValues(){
+        return $this->values;
+    }
+    
+    public function setAttrs($arg = array()){
+        $this->attrs = $arg;
+    }
+    
+    public function getAttrs(){
+        return $this->attrs;
+    }
     
     public function __call($name, $args){
         $method = substr($name, 0, 3);
@@ -16,16 +35,6 @@ class Model{
                 $this->values[$attribute] = $args[0];
                 break;
         }
-    }
-    
-    public function setData($data = array()){
-        foreach ($data as $key => $value){
-            $this->{"set".$key}($value);
-        }
-    }
-    
-    public function getValues(){
-        return $this->values;
     }
 }
 ?>

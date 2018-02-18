@@ -9,42 +9,42 @@
 		<div class="clearfix"></div>
 		<div class="x_panel">
 			<div class="x_title">
-				<h2>Cadastro de Empresa</h2>
+				<h2>Atualização de Empresa</h2>
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<form role="form" action="/orgs/create" method="post">
+				<form role="form" action="/orgs/{$org.org_id}" method="post">
 					<div class="box-body">
 						<div class="form-group">
 							<label for="org_companyname">Razao Social *</label> <input
 								type="text" class="form-control" id="org_companyname"
 								name="org_companyname" placeholder="Digite a razão social"
-								 maxlength="255" required />
+								 maxlength="255" value="{$org.org_companyname}" required />
 						</div>
 						<div class="form-group">
 							<label for="org_tradingname">Nome Fantasia *</label> <input
 								type="text" class="form-control" id="org_tradingname"
 								name="org_tradingname" placeholder="Digite o nome fantasia"
-								 maxlength="255" required />
+								 maxlength="255" value="{$org.org_tradingname}" required />
 						</div>
 						<div class="form-group">
 							<label for="org_cnpj">CNPJ</label> <input
 								type="text" class="form-control" id="org_cnpj"
-								name="org_cnpj" placeholder="Digite o CNPJ" maxlength="16" />
+								name="org_cnpj" placeholder="Digite o CNPJ" maxlength="16" value="{$org.org_cnpj}" />
 						</div>
 						<div class="form-group">
 							<label for="org_logo">Logo</label> <input type="text"
 								class="form-control" id="org_logo" name="org_logo"
-								placeholder="Escolha o arquivo" />
+								placeholder="Escolha o arquivo" value="{$org.org_logo}" />
 						</div>
 						<div class="form-group">
 							<label for="org_size">Porte *</label> <select id="org_size"
 								name="org_size" class="form-control" required>
 								<option value="">Selecione...</option>
-								<option value="1">Micro</option>
-								<option value="2">Pequena</option>
-								<option value="3">Média</option>
-								<option value="4">Grande</option>
+								<option value="1" {if="$org.org_status == 1"}selected{/if}>Micro</option>
+								<option value="2" {if="$org.org_status == 2"}selected{/if}>Pequena</option>
+								<option value="3" {if="$org.org_status == 3"}selected{/if}>Média</option>
+								<option value="4" {if="$org.org_status == 4"}selected{/if}>Grande</option>
 							</select>
 						</div>
 						<div class="form-group">
@@ -52,38 +52,38 @@
 								id="legalnature_id" name="legalnature_id" class="form-control"
 								required>
 								<option value="">Selecione...</option> {loop="$legalnatures"}
-								<option value="{$value.legalnature_id}">{$value.legalnature_name}</option>
+								<option value="{$value.legalnature_id}" {if="$org.legalnature_id == $value.legalnature_id"}selected{/if}>{$value.legalnature_name}</option>
 								{/loop}
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="org_status">Status *</label> <select id="org_status"
 								name="org_status" class="form-control" required>
-								<option value="0">Inativo</option>
-								<option value="1" selected="selected">Ativo</option>
-								<option value="2">Concluído</option>
-								<option value="3">Pendente</option>
-								<option value="4">Suspenso</option>
+								<option value="0" {if="$org.org_status == 0"}selected{/if}>Inativo</option>
+								<option value="1" {if="$org.org_status == 1"}selected{/if}>Ativo</option>
+								<option value="2" {if="$org.org_status == 2"}selected{/if}>Concluído</option>
+								<option value="3" {if="$org.org_status == 3"}selected{/if}>Pendente</option>
+								<option value="4" {if="$org.org_status == 4"}selected{/if}>Suspenso</option>
 							</select>
 						</div>
 						<div class="form-group">
 							<label for="org_contact_name">Contato</label> <input
 								type="text" class="form-control" id="org_contact_name"
-								name="org_contact_name" placeholder="Digite o nome do contato" />
+								name="org_contact_name" placeholder="Digite o nome do contato" value="{$org.org_contact_name}" />
 						</div>
 						<div class="form-group">
 							<label for="org_contact_email">Contato e-mail</label> <input
 								type="text" class="form-control" id="org_contact_email"
-								name="org_contact_email" placeholder="Digite e-mail do contato" />
+								name="org_contact_email" placeholder="Digite e-mail do contato" value="{$org.org_contact_email}" />
 						</div>
 						<div class="form-group">
 							<label for="org_contact_phone">Contato Telefone</label> <input
 								type="text" class="form-control" id="org_contact_phone"
-								name="org_contact_phone" placeholder="Digite o telefone do contato" />
+								name="org_contact_phone" placeholder="Digite o telefone do contato" value="{$org.org_contact_phone}" />
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="org_notification"
-								value="1"> Enviar notificações
+								value="1" {if="$org.org_notification == 1"}checked{/if}> Enviar notificações
 							</label>
 						</div>
 
@@ -157,7 +157,7 @@
 							</div>
 						</div>
 						<div class="box-footer">
-							<button type="submit" class="btn btn-primary">Cadastrar</button>
+							<button type="submit" class="btn btn-primary">Salvar</button>
 							<button type="button" class="btn btn-secondary"
 								onclick="history.back()">Voltar</button>
 							<br /> <br />
