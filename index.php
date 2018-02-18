@@ -5,6 +5,7 @@ require_once ("vendor/autoload.php");
 use \Slim\Slim;
 use \easyPlanning\Page;
 use \easyPlanning\Model\User;
+use easyPlanning\Model\Organization;
 
 $app = new Slim();
 
@@ -42,6 +43,7 @@ $app->get('/', function () {
     $page->setTpl("index");
 });
 
+// #########################################################################################
 // USER LIST
 $app->get('/users', function () {
     User::verifyLogin();
@@ -126,44 +128,99 @@ $app->get('/forgot/sent', function () {
 });
 
 $app->get('/forgot/reset', function () {
-    /*
     $user = User::validForgotDecrypt($_GET["code"]);
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
     
-    $page->setTpl('forgot-reset',array(
-        "name"=>$user["person_name"],
-        "code"=>$_GET["code"]
+    $page->setTpl('forgot-reset', array(
+        "name" => $user["person_name"],
+        "code" => $_GET["code"]
     ));
-    */
-    $page = new Page([
-        "header" => false,
-        "footer" => false
-    ]);
-    $page->setTpl('forgot-reset',array(
-        "name"=>"TESTE",
-        "code"=>"CODIGO"
-    ));
-
 });
 
 $app->post('/forgot/reset', function () {
-    /*
     $forgot = User::validForgotDecrypt($_POST["code"]);
     User::setForgotUsed($forgot["recovery_id"]);
     $user = new User();
-    $user->get((int)$forgot["user_id"]);
-
-    $pass = password_hash($_POST["password"], PASSWORD_DEFAULT,["cost"=>12]);
+    $user->get((int) $forgot["user_id"]);
+    
+    $pass = password_hash($_POST["password"], PASSWORD_DEFAULT, [
+        "cost" => 12
+    ]);
     $user->setPassword($pass);
-*/
+    
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
     $page->setTpl('forgot-reset-success');
+});
+
+// ORGANIZATION ############################################################################
+// LIST
+$app->get('/orgs', function () {
+    User::verifyLogin();
+    $orgs = Organization::listAll();
+    $page = new Page();
+    $page->setTpl('orgs', array(
+        "orgs" => $orgs
+    ));
+});
+
+// CREATE
+$app->get('/orgs/create', function () {
+    User::verifyLogin();
+    $legalnatures = Organization::getLegalNatureList();
+    $page = new Page();
+    $page->setTpl('orgs-create',array(
+        "legalnatures"=>$legalnatures
+    ));
+});
+
+// DELETE
+$app->get('/orgs/:idorg/delete', function ($idorg) {
+    User::verifyLogin();
+    $org = new Organization();
+    $org->get((int) $idorg);
+    $org->delete();
+    header("Location: /orgs");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/orgs/:idorg', function ($idorg) {
+    User::verifyLogin();
+    $org = new Organization();
+    $org->get((int) $idorg);
+    $page = new Page();
+    $page->setTpl('orgs-update', array(
+        "org" => $org->getValues()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/orgs/create', function () {
+    User::verifyLogin();
+    $org = new Organization();
+    $_POST["org_notification"] = isset($_POST["org_notification"]) ? 1 : 0;
+    $org->setData($_POST);
+    $org->save();
+    header("Location: /orgs");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/orgs/:idorg', function ($idorg) {
+    User::verifyLogin();
+    $org = new Organization();
+    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
+    $org->get((int) $idorg);
+    $org->setData($_POST);
+    $org->update();
+    header("Location: /orgs");
+    exit();
 });
 
 $app->run();
