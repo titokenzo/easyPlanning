@@ -1,13 +1,16 @@
-<?php 
+<?php
 namespace easyPlanning\Model;
 
 use easyPlanning\DB\Sql;
 use easyPlanning\Model;
 
-class Organization extends Model{
+class Organization extends Model
+{
+
     const SESSION = "User";
-    
-    public function __construct(){
+
+    public function __construct()
+    {
         $fields = array(
             "org_id",
             "org_companyname",
@@ -19,7 +22,7 @@ class Organization extends Model{
             "org_addrbilling",
             "org_addrbilling_complement",
             "org_addrbilling_city",
-            "org_addrbilling_uf",
+            "org_addrbilling_state",
             "org_addrbilling_zip",
             "org_addrbilling_country",
             "org_address",
@@ -31,18 +34,21 @@ class Organization extends Model{
             "org_contact_name",
             "org_contact_email",
             "org_contact_phone",
-            "org_notification");
+            "org_notification"
+        );
         $this->setAttrs($fields);
     }
-    
-    public static function listAll(){
+
+    public static function listAll()
+    {
         $sql = new Sql();
         return $sql->select("SELECT * from tb_organizations o ORDER BY o.org_companyname");
     }
-    
-    public function save(){
-        $sql = new Sql();
 
+    public function save()
+    {
+        $sql = new Sql();
+        
         $results = $sql->query("INSERT INTO tb_organizations (
             org_companyname,
             org_tradingname,
@@ -53,7 +59,7 @@ class Organization extends Model{
             org_addrbilling,
             org_addrbilling_complement,
             org_addrbilling_city,
-            org_addrbilling_uf,
+            org_addrbilling_state,
             org_addrbilling_zip,
             org_addrbilling_country,
             org_address,
@@ -65,7 +71,8 @@ class Organization extends Model{
             org_contact_name,
             org_contact_email,
             org_contact_phone,
-            org_notification
+            org_notification,
+            org_status
         ) VALUES(
             :companyname,
             :tradingname,
@@ -76,7 +83,7 @@ class Organization extends Model{
             :addrbilling,
             :addrbilling_complement,
             :addrbilling_city,
-            :addrbilling_uf,
+            :addrbilling_state,
             :addrbilling_zip,
             :addrbilling_country,
             :address,
@@ -88,45 +95,49 @@ class Organization extends Model{
             :contact_name,
             :contact_email,
             :contact_phone,
-            :notification
+            :notification,
+            :status
         )", array(
-            ":companyname"=>$this->getorg_companyname(),
-            ":tradingname"=>$this->getorg_tradingname(),
-            ":cnpj"=>$this->getorg_cnpj(),
-            ":size"=>$this->getorg_size(),
-            ":legalnature"=>$this->getlegalnature_id(),
-            ":logo"=>$this->getorg_logo(),
-            ":addrbilling"=>$this->getorg_addrbilling(),
-            ":addrbilling_complement"=>$this->getorg_addrbilling_complement(),
-            ":addrbilling_city"=>$this->getorg_addrbilling_city(),
-            ":addrbilling_uf"=>$this->getorg_addrbilling_uf(),
-            ":addrbilling_zip"=>$this->getorg_addrbilling_zip(),
-            ":addrbilling_country"=>$this->getorg_addrbilling_country(),
-            ":address"=>$this->getorg_address(),
-            ":addr_complement"=>$this->getorg_addr_complement(),
-            ":addr_city"=>$this->getorg_addr_city(),
-            ":addr_state"=>$this->getorg_addr_state(),
-            ":addr_zip"=>$this->getorg_addr_zip(),
-            ":addr_country"=>$this->getorg_addr_country(),
-            ":contact_name"=>$this->getorg_contact_name(),
-            ":contact_email"=>$this->getorg_contact_email(),
-            ":contact_phone"=>$this->getorg_contact_phone(),
-            ":notification"=>$this->getorg_notification()
+            ":companyname" => $this->getorg_companyname(),
+            ":tradingname" => $this->getorg_tradingname(),
+            ":cnpj" => $this->getorg_cnpj(),
+            ":size" => $this->getorg_size(),
+            ":legalnature" => $this->getlegalnature_id(),
+            ":logo" => $this->getorg_logo(),
+            ":addrbilling" => $this->getorg_addrbilling(),
+            ":addrbilling_complement" => $this->getorg_addrbilling_complement(),
+            ":addrbilling_city" => $this->getorg_addrbilling_city(),
+            ":addrbilling_state" => $this->getorg_addrbilling_state(),
+            ":addrbilling_zip" => $this->getorg_addrbilling_zip(),
+            ":addrbilling_country" => $this->getorg_addrbilling_country(),
+            ":address" => $this->getorg_address(),
+            ":addr_complement" => $this->getorg_addr_complement(),
+            ":addr_city" => $this->getorg_addr_city(),
+            ":addr_state" => $this->getorg_addr_state(),
+            ":addr_zip" => $this->getorg_addr_zip(),
+            ":addr_country" => $this->getorg_addr_country(),
+            ":contact_name" => $this->getorg_contact_name(),
+            ":contact_email" => $this->getorg_contact_email(),
+            ":contact_phone" => $this->getorg_contact_phone(),
+            ":notification" => $this->getorg_notification(),
+            ":status" => $this->getorg_status()
         ));
         
-        //$this->setData($results[0]);
+        // $this->setData($results[0]);
     }
-    
-    public function get($orgid){
+
+    public function get($orgid)
+    {
         $sql = new Sql();
         $results = $sql->select("SELECT * FROM tb_organizations o WHERE o.org_id=:id", array(
-            ":id"=>$orgid
+            ":id" => $orgid
         ));
         
         $this->setData($results[0]);
     }
-    
-    public function update(){
+
+    public function update()
+    {
         $sql = new Sql();
         
         $sql->query("UPDATE tb_organizations SET 
@@ -139,7 +150,7 @@ class Organization extends Model{
                 org_addrbilling=:addrbilling,
                 org_addrbilling_complement=:addrbilling_complement,
                 org_addrbilling_city=:addrbilling_city,
-                org_addrbilling_uf=:addrbilling_uf,
+                org_addrbilling_state=:addrbilling_state,
                 org_addrbilling_zip=:addrbilling_zip,
                 org_addrbilling_country=:addrbilling_country,
                 org_address=:address,
@@ -151,46 +162,71 @@ class Organization extends Model{
                 org_contact_name=:contact_name,
                 org_contact_email=:contact_email,
                 org_contact_phone=:contact_phone,
-                org_notification=:notification 
+                org_notification=:notification,
+                org_status=:status
             WHERE org_id=:id", array(
-                ":companyname"=>$this->getorg_companyname(),
-                ":tradingname"=>$this->getorg_tradingname(),
-                ":cnpj"=>$this->getorg_cnpj(),
-                ":size"=>$this->getorg_size(),
-                ":legalnature"=>$this->getlegalnature_id(),
-                ":logo"=>$this->getorg_logo(),
-                ":addrbilling"=>$this->getorg_addrbilling(),
-                ":addrbilling_complement"=>$this->getorg_addrbilling_complement(),
-                ":addrbilling_city"=>$this->getorg_addrbilling_city(),
-                ":addrbilling_uf"=>$this->getorg_addrbilling_uf(),
-                ":addrbilling_zip"=>$this->getorg_addrbilling_zip(),
-                ":addrbilling_country"=>$this->getorg_addrbilling_country(),
-                ":address"=>$this->getorg_address(),
-                ":addr_complement"=>$this->getorg_addr_complement(),
-                ":addr_city"=>$this->getorg_addr_city(),
-                ":addr_state"=>$this->getorg_addr_state(),
-                ":addr_zip"=>$this->getorg_addr_zip(),
-                ":addr_country"=>$this->getorg_addr_country(),
-                ":contact_name"=>$this->getorg_contact_name(),
-                ":contact_email"=>$this->getorg_contact_email(),
-                ":contact_phone"=>$this->getorg_contact_phone(),
-                ":notification"=>$this->getorg_notification(),
-                ":id"=>$this->getorg_id()
-            ));
-    }
-    
-    public function delete(){
-        $sql=new Sql();
-        $sql->query("DELETE FROM tb_organizations WHERE org_id=:id", array(
-            ":id"=>$this->getorg_id()
+            ":companyname" => $this->getorg_companyname(),
+            ":tradingname" => $this->getorg_tradingname(),
+            ":cnpj" => $this->getorg_cnpj(),
+            ":size" => $this->getorg_size(),
+            ":legalnature" => $this->getlegalnature_id(),
+            ":logo" => $this->getorg_logo(),
+            ":addrbilling" => $this->getorg_addrbilling(),
+            ":addrbilling_complement" => $this->getorg_addrbilling_complement(),
+            ":addrbilling_city" => $this->getorg_addrbilling_city(),
+            ":addrbilling_state" => $this->getorg_addrbilling_state(),
+            ":addrbilling_zip" => $this->getorg_addrbilling_zip(),
+            ":addrbilling_country" => $this->getorg_addrbilling_country(),
+            ":address" => $this->getorg_address(),
+            ":addr_complement" => $this->getorg_addr_complement(),
+            ":addr_city" => $this->getorg_addr_city(),
+            ":addr_state" => $this->getorg_addr_state(),
+            ":addr_zip" => $this->getorg_addr_zip(),
+            ":addr_country" => $this->getorg_addr_country(),
+            ":contact_name" => $this->getorg_contact_name(),
+            ":contact_email" => $this->getorg_contact_email(),
+            ":contact_phone" => $this->getorg_contact_phone(),
+            ":notification" => $this->getorg_notification(),
+            ":status" => $this->getorg_status(),
+            ":id" => $this->getorg_id()
         ));
     }
-    
-    public static function getLegalNatureList(){
+
+    public function delete()
+    {
         $sql = new Sql();
-        return $sql->select("SELECT * FROM tb_legalnature ORDER BY legalnature_name");
+        $sql->query("DELETE FROM tb_organizations WHERE org_id=:id", array(
+            ":id" => $this->getorg_id()
+        ));
     }
-    
-    
+
+    public static function getLegalNatureList()
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM tb_legalnatures ORDER BY legalnature_name");
+    }
+
+    public static function getSizeList()
+    {
+        $lista = array(
+            1 => "Micro",
+            2 => "Pequena",
+            3 => "Média",
+            4 => "Grande"
+        );
+        return $lista;
+    }
+
+    public static function getStatusList()
+    {
+        $lista = array(
+            0 => "Inativo",
+            1 => "Ativo",
+            2 => "Concluído",
+            3 => "Pendente",
+            4 => "Suspenso"
+        );
+        return $lista;
+    }
 }
 ?>

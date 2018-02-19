@@ -174,7 +174,8 @@ $app->get('/orgs/create', function () {
     User::verifyLogin();
     $page = new Page();
     $page->setTpl('orgs-create',array(
-        "legalnatures"=>Organization::getLegalNatureList()
+        "legalnatures"=>Organization::getLegalNatureList(),
+        "sizes"=>Organization::getSizeList()
     ));
 });
 
@@ -196,7 +197,9 @@ $app->get('/orgs/:idorg', function ($idorg) {
     $page = new Page();
     $page->setTpl('orgs-update', array(
         "org" => $org->getValues(),
-        "legalnatures"=>Organization::getLegalNatureList()
+        "legalnatures"=>Organization::getLegalNatureList(),
+        "status"=>Organization::getStatusList(),
+        "sizes"=>Organization::getSizeList()
     ));
 });
 

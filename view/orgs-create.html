@@ -19,18 +19,18 @@
 							<label for="org_companyname">Razao Social *</label> <input
 								type="text" class="form-control" id="org_companyname"
 								name="org_companyname" placeholder="Digite a razão social"
-								 maxlength="255" required />
+								maxlength="255" required />
 						</div>
 						<div class="form-group">
 							<label for="org_tradingname">Nome Fantasia *</label> <input
 								type="text" class="form-control" id="org_tradingname"
 								name="org_tradingname" placeholder="Digite o nome fantasia"
-								 maxlength="255" required />
+								maxlength="255" required />
 						</div>
 						<div class="form-group">
-							<label for="org_cnpj">CNPJ</label> <input
-								type="text" class="form-control" id="org_cnpj"
-								name="org_cnpj" placeholder="Digite o CNPJ" maxlength="16" />
+							<label for="org_cnpj">CNPJ</label> <input type="text"
+								class="form-control" id="org_cnpj" name="org_cnpj"
+								placeholder="Digite o CNPJ" maxlength="16" />
 						</div>
 						<div class="form-group">
 							<label for="org_logo">Logo</label> <input type="text"
@@ -40,11 +40,9 @@
 						<div class="form-group">
 							<label for="org_size">Porte *</label> <select id="org_size"
 								name="org_size" class="form-control" required>
-								<option value="">Selecione...</option>
-								<option value="1">Micro</option>
-								<option value="2">Pequena</option>
-								<option value="3">Média</option>
-								<option value="4">Grande</option>
+								<option value="">Selecione...</option> {loop="$sizes"}
+								<option value="{$key}">{$value}</option>
+								{/loop}
 							</select>
 						</div>
 						<div class="form-group">
@@ -67,8 +65,8 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="org_contact_name">Contato</label> <input
-								type="text" class="form-control" id="org_contact_name"
+							<label for="org_contact_name">Contato</label> <input type="text"
+								class="form-control" id="org_contact_name"
 								name="org_contact_name" placeholder="Digite o nome do contato" />
 						</div>
 						<div class="form-group">
@@ -79,7 +77,8 @@
 						<div class="form-group">
 							<label for="org_contact_phone">Contato Telefone</label> <input
 								type="text" class="form-control" id="org_contact_phone"
-								name="org_contact_phone" placeholder="Digite o telefone do contato" />
+								name="org_contact_phone"
+								placeholder="Digite o telefone do contato" />
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="org_notification"
@@ -102,22 +101,23 @@
 							<div class="form-group">
 								<label for="org_addr_city">Cidade</label> <input type="text"
 									class="form-control" id="org_addr_city" name="org_addr_city"
-									 maxlength="255" placeholder="Digite a cidade" />
+									maxlength="255" placeholder="Digite a cidade" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_state">UF</label> <input type="text"
 									class="form-control" id="org_addr_state" name="org_addr_state"
-									 maxlength="2" placeholder="Digite o Estado" />
+									maxlength="2" placeholder="Digite o Estado" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_zip">CEP</label> <input type="text"
 									class="form-control" id="org_addr_zip" name="org_addr_zip"
-									 maxlength="10" placeholder="Digite o CEP" />
+									maxlength="10" placeholder="Digite o CEP" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_country">Pais</label> <input type="text"
-									class="form-control" id="org_addr_country" name="org_addr_country"
-									 maxlength="100" placeholder="Digite o Pais" />
+									class="form-control" id="org_addr_country"
+									name="org_addr_country" maxlength="100"
+									placeholder="Digite o Pais" />
 							</div>
 						</div>
 
@@ -138,22 +138,24 @@
 							<div class="form-group">
 								<label for="org_addrbilling_city">Cidade</label> <input
 									type="text" class="form-control" id="org_addrbilling_city"
-									 maxlength="255" name="org_addrbilling_city" placeholder="Digite a cidade" />
+									maxlength="255" name="org_addrbilling_city"
+									placeholder="Digite a cidade" />
 							</div>
 							<div class="form-group">
-								<label for="org_addrbilling_uf">UF</label> <input type="text"
-									class="form-control" id="org_addrbilling_uf"
-									 maxlength="2" name="org_addrbilling_uf" placeholder="Digite o Estado" />
+								<label for="org_addrbilling_state">UF</label> <input type="text"
+									class="form-control" id="org_addrbilling_state" maxlength="2"
+									name="org_addrbilling_state" placeholder="Digite o Estado" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_zip">CEP</label> <input type="text"
-									class="form-control" id="org_addrbilling_zip"
-									 maxlength="10" name="org_addrbilling_zip" placeholder="Digite o CEP" />
+									class="form-control" id="org_addrbilling_zip" maxlength="10"
+									name="org_addrbilling_zip" placeholder="Digite o CEP" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_country">Pais</label> <input
 									type="text" class="form-control" id="org_addrbilling_country"
-									 maxlength="100" name="org_addrbilling_country" placeholder="Digite o Pais" />
+									maxlength="100" name="org_addrbilling_country"
+									placeholder="Digite o Pais" />
 							</div>
 						</div>
 						<div class="box-footer">
