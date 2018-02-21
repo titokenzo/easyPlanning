@@ -6,6 +6,7 @@ use \Slim\Slim;
 use \easyPlanning\Page;
 use \easyPlanning\Model\User;
 use easyPlanning\Model\Organization;
+use easyPlanning\Model\QSet;
 
 $app = new Slim();
 
@@ -41,68 +42,6 @@ $app->get('/', function () {
     User::verifyLogin();
     $page = new Page();
     $page->setTpl("index");
-});
-
-// #########################################################################################
-// USER LIST
-$app->get('/users', function () {
-    User::verifyLogin();
-    $users = User::listAll();
-    $page = new Page();
-    $page->setTpl('users', array(
-        "users" => $users
-    ));
-});
-
-// USER VIEW CREATE
-$app->get('/users/create', function () {
-    User::verifyLogin();
-    $page = new Page();
-    $page->setTpl('users-create');
-});
-
-// USER DELETE
-$app->get('/users/:iduser/delete', function ($iduser) {
-    User::verifyLogin();
-    $user = new User();
-    $user->get((int) $iduser);
-    $user->delete();
-    header("Location: /users");
-    exit();
-});
-
-// USER VIEW UPDATE
-$app->get('/users/:iduser', function ($iduser) {
-    User::verifyLogin();
-    $user = new User();
-    $user->get((int) $iduser);
-    $page = new Page();
-    $page->setTpl('users-update', array(
-        "user" => $user->getValues()
-    ));
-});
-
-// USER SAVE CREATE
-$app->post('/users/create', function () {
-    User::verifyLogin();
-    $user = new User();
-    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
-    $user->setData($_POST);
-    $user->save();
-    header("Location: /users");
-    exit();
-});
-
-// USER SAVE UPDATE
-$app->post('/users/:iduser', function ($iduser) {
-    User::verifyLogin();
-    $user = new User();
-    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
-    $user->get((int) $iduser);
-    $user->setData($_POST);
-    $user->update();
-    header("Location: /users");
-    exit();
 });
 
 $app->get('/forgot', function () {
@@ -158,14 +97,80 @@ $app->post('/forgot/reset', function () {
     $page->setTpl('forgot-reset-success');
 });
 
-// ORGANIZATION ############################################################################
+// #########################################################################################
+// USERS
+// #########################################################################################
+// USER LIST
+$app->get('/users', function () {
+    User::verifyLogin();
+    $objs = User::listAll();
+    $page = new Page();
+    $page->setTpl('users', array(
+        "objs" => $objs
+    ));
+});
+
+// USER VIEW CREATE
+$app->get('/users/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('users-create');
+});
+
+// USER DELETE
+$app->get('/users/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new User();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /users");
+    exit();
+});
+
+// USER VIEW UPDATE
+$app->get('/users/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new User();
+    $obj->get((int) $idobj);
+    $obj = new Page();
+    $page->setTpl('users-update', array(
+        "obj" => $obj->getValues()
+    ));
+});
+
+// USER SAVE CREATE
+$app->post('/users/create', function () {
+    User::verifyLogin();
+    $obj = new User();
+    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /users");
+    exit();
+});
+
+// USER SAVE UPDATE
+$app->post('/users/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new User();
+    $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
+    $obj->get((int) $idobj);
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /users");
+    exit();
+});
+
+// #########################################################################################
+// ORGANIZATIONS
+// #########################################################################################
 // LIST
 $app->get('/orgs', function () {
     User::verifyLogin();
-    $orgs = Organization::listAll();
+    $objs = Organization::listAll();
     $page = new Page();
     $page->setTpl('orgs', array(
-        "orgs" => $orgs
+        "objs" => $objs
     ));
 });
 
@@ -173,56 +178,118 @@ $app->get('/orgs', function () {
 $app->get('/orgs/create', function () {
     User::verifyLogin();
     $page = new Page();
-    $page->setTpl('orgs-create',array(
-        "legalnatures"=>Organization::getLegalNatureList(),
-        "sizes"=>Organization::getSizeList()
+    $page->setTpl('orgs-create', array(
+        "legalnatures" => Organization::getLegalNatureList(),
+        "sizes" => Organization::getSizeList()
     ));
 });
 
 // DELETE
-$app->get('/orgs/:idorg/delete', function ($idorg) {
+$app->get('/orgs/:idobj/delete', function ($idobj) {
     User::verifyLogin();
-    $org = new Organization();
-    $org->get((int) $idorg);
-    $org->delete();
+    $obj = new Organization();
+    $obj->get((int) $idobj);
+    $obj->delete();
     header("Location: /orgs");
     exit();
 });
 
 // VIEW UPDATE
-$app->get('/orgs/:idorg', function ($idorg) {
+$app->get('/orgs/:idobj', function ($idobj) {
     User::verifyLogin();
-    $org = new Organization();
-    $org->get((int) $idorg);
+    $obj = new Organization();
+    $obj->get((int) $idobj);
     $page = new Page();
     $page->setTpl('orgs-update', array(
-        "org" => $org->getValues(),
-        "legalnatures"=>Organization::getLegalNatureList(),
-        "status"=>Organization::getStatusList(),
-        "sizes"=>Organization::getSizeList()
+        "org" => $obj->getValues(),
+        "legalnatures" => Organization::getLegalNatureList(),
+        "status" => Organization::getStatusList(),
+        "sizes" => Organization::getSizeList()
     ));
 });
 
 // SAVE CREATE
 $app->post('/orgs/create', function () {
     User::verifyLogin();
-    $org = new Organization();
+    $obj = new Organization();
     $_POST["org_notification"] = isset($_POST["org_notification"]) ? 1 : 0;
-    $org->setData($_POST);
-    $org->save();
+    $obj->setData($_POST);
+    $obj->save();
     header("Location: /orgs");
     exit();
 });
 
 // SAVE UPDATE
-$app->post('/orgs/:idorg', function ($idorg) {
+$app->post('/orgs/:idobj', function ($idobj) {
     User::verifyLogin();
-    $org = new Organization();
+    $obj = new Organization();
     $_POST["org_notification"] = isset($_POST["org_notification"]) ? 1 : 0;
-    $org->get((int) $idorg);
-    $org->setData($_POST);
-    $org->update();
+    $obj->get((int) $idobj);
+    $obj->setData($_POST);
+    $obj->update();
     header("Location: /orgs");
+    exit();
+});
+
+// #########################################################################################
+// QUESTIONS SETS
+// #########################################################################################
+// LIST
+$app->get('/qsets', function () {
+    User::verifyLogin();
+    $objs = QSet::listAll();
+    $page = new Page();
+    $page->setTpl('qsets', array(
+        "objs" => $objs
+    ));
+});
+
+// CREATE
+$app->get('/qsets/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('qsets-create');
+});
+
+// DELETE
+$app->get('/qsets/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new QSet();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /qsets");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/qsets/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new QSet();
+    $obj->get((int) $idobj);
+    $page = new Page();
+    $page->setTpl('qsets-update', array(
+        "obj" => $obj->getValues()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/qsets/create', function () {
+    User::verifyLogin();
+    $obj = new QSet();
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /qsets");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/qsets/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new QSet();
+    $obj->get((int) $idobj);
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /qsets");
     exit();
 });
 

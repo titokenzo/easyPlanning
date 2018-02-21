@@ -1,0 +1,39 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h3>Grupos de Perguntas</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Atualização de Grupo de Perguntas</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<form role="form" action="/qsets/{$obj.qset_id}" method="post">
+					<div class="box-body">
+						<div class="form-group">
+							<label for="qset_name">Nome *</label> <input type="text"
+								class="form-control" id="qset_name" name="qset_name"
+								placeholder="Digite o nome" value="{$obj.qset_name}" required />
+						</div>
+						<div class="form-group">
+							<label for="qset_description">Descrição</label> <textarea
+								class="form-control" id="qset_description" name="qset_description"
+								placeholder="Digite uma descrição">{$obj.qset_description}</textarea>
+						</div>
+					</div>
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Salvar</button>
+						<button type="button" class="btn btn-secondary"
+							onclick="history.back()">Voltar</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /page content -->

@@ -23,11 +23,11 @@ class SysConfig{
     const MAIL_NAME = "";
     const MAIL_USER = "";
     const MAIL_PASS = "";
-    const MAIL_PORT = ;
-    const MAIL_SMTP_AUTH = ;
+    const MAIL_PORT = "";
+    const MAIL_SMTP_AUTH = "";
     const MAIL_SMTP_SECURE = "";
     const MAIL_CHARSET = "";
-    const MAIL_IS_HTML = ;
+    const MAIL_IS_HTML = "";
     const MAIL_COPIA = "";
         
     //INFORMAÇÕES PARA CRIPTOGRAFIA

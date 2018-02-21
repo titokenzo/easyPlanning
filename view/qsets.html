@@ -1,0 +1,46 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h3>Grupos de Perguntas</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="row">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="x_title">
+						<div class="box-header">
+							<a href="/qsets/create" class="btn btn-success">Cadastrar novo grupo de perguntas</a>
+			            </div>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<table id="datatable" class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>Nome</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								{loop="$objs"}
+								<tr>
+				                    <td>{$value.qset_name}</td>
+				                    <td>
+				                      <a href="/qsets/{$value.qset_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+				                      <a href="/qsets/{$value.qset_id}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
+				                    </td>							
+								</tr>
+								{/loop}
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+</div>
+<!-- /page content -->

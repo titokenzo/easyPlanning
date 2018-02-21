@@ -7,8 +7,6 @@ use easyPlanning\Model;
 class Organization extends Model
 {
 
-    const SESSION = "User";
-
     public function __construct()
     {
         $fields = array(
@@ -18,6 +16,7 @@ class Organization extends Model
             "org_cnpj",
             "org_size",
             "org_legalnature",
+            "org_dtcreation",
             "org_logo",
             "org_addrbilling",
             "org_addrbilling_complement",
