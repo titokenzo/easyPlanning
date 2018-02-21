@@ -13,32 +13,32 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<form role="form" action="/users/{$user.user_id}" method="post">
+				<form role="form" action="/users/{$obj.user_id}" method="post">
 					<div class="box-body">
 						<div class="form-group">
 							<label for="person_name">Nome *</label> <input type="text"
 								class="form-control" id="person_name" name="person_name"
-								placeholder="Digite o nome" value="{$user.person_name}" required />
+								placeholder="Digite o nome" value="{$obj.person_name}" required />
 						</div>
 						<div class="form-group">
 							<label for="user_login">Login *</label> <input type="text"
 								class="form-control" id="user_login" name="user_login"
-								placeholder="Digite o login" value="{$user.user_login}" required />
+								placeholder="Digite o login" value="{$obj.user_login}" required />
 						</div>
 						<div class="form-group">
 							<label for="person_phone">Telefone</label> <input type="tel"
 								class="form-control" id="person_phone" name="person_phone"
-								placeholder="Digite o telefone" value="{$user.person_phone}">
+								placeholder="Digite o telefone" value="{$obj.person_phone}">
 						</div>
 						<div class="form-group">
 							<label for="person_email">E-mail *</label> <input type="email"
 								class="form-control" id="person_email" name="person_email"
-								placeholder="Digite o e-mail" value="{$user.person_email}"
+								placeholder="Digite o e-mail" value="{$obj.person_email}"
 								required />
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="user_isadmin" value="1"
-								{if="$user.user_isadmin == 1"}checked{/if}> Acesso de
+								{if="$obj.user_isadmin == 1"}checked{/if}> Acesso de
 								Administrador
 							</label>
 						</div>

@@ -7,6 +7,7 @@ class Model{
     
     public function setData($data = array()){
         foreach ($data as $key => $value){
+            //$value = html_entity_decode($value);
             $this->{"set".$key}($value);
         }
     }

@@ -13,36 +13,36 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<form role="form" action="/orgs/{$org.org_id}" method="post">
+				<form role="form" action="/orgs/{$obj.org_id}" method="post">
 					<div class="box-body">
 						<div class="form-group">
 							<label for="org_companyname">Razao Social *</label> <input
 								type="text" class="form-control" id="org_companyname"
 								name="org_companyname" placeholder="Digite a razão social"
-								maxlength="255" value="{$org.org_companyname}" required />
+								maxlength="255" value="{$obj.org_companyname}" required />
 						</div>
 						<div class="form-group">
 							<label for="org_tradingname">Nome Fantasia *</label> <input
 								type="text" class="form-control" id="org_tradingname"
 								name="org_tradingname" placeholder="Digite o nome fantasia"
-								maxlength="255" value="{$org.org_tradingname}" required />
+								maxlength="255" value="{$obj.org_tradingname}" required />
 						</div>
 						<div class="form-group">
 							<label for="org_cnpj">CNPJ</label> <input type="text"
 								class="form-control" id="org_cnpj" name="org_cnpj"
 								placeholder="Digite o CNPJ" maxlength="16"
-								value="{$org.org_cnpj}" />
+								value="{$obj.org_cnpj}" />
 						</div>
 						<div class="form-group">
 							<label for="org_logo">Logo</label> <input type="text"
 								class="form-control" id="org_logo" name="org_logo"
-								placeholder="Escolha o arquivo" value="{$org.org_logo}" />
+								placeholder="Escolha o arquivo" value="{$obj.org_logo}" />
 						</div>
 						<div class="form-group">
 							<label for="org_size">Porte *</label> <select id="org_size"
 								name="org_size" class="form-control" required>
 								<option value="">Selecione...</option> {loop="$sizes"}
-								<option value="{$key}" {if="$org.org_size == $key"}selected{/if}>{$value}</option>
+								<option value="{$key}" {if="$obj.org_size == $key"}selected{/if}>{$value}</option>
 								{/loop}
 							</select>
 						</div>
@@ -52,7 +52,7 @@
 								required>
 								<option value="">Selecione...</option> {loop="$legalnatures"}
 								<option value="{$value.legalnature_id}"
-									{if="$org.legalnature_id == $value.legalnature_id"}selected{/if}>{$value.legalnature_name}</option>
+									{if="$obj.legalnature_id == $value.legalnature_id"}selected{/if}>{$value.legalnature_name}</option>
 								{/loop}
 							</select>
 						</div>
@@ -60,7 +60,7 @@
 							<label for="org_status">Status *</label> <select id="org_status"
 								name="org_status" class="form-control" required>
 								{loop="$status"}
-								<option value="{$key}" {if="$org.org_status == $key"}selected{/if}>{$value}</option>
+								<option value="{$key}" {if="$obj.org_status == $key"}selected{/if}>{$value}</option>
 								{/loop}
 							</select>
 						</div>
@@ -68,24 +68,24 @@
 							<label for="org_contact_name">Contato</label> <input type="text"
 								class="form-control" id="org_contact_name"
 								name="org_contact_name" placeholder="Digite o nome do contato"
-								value="{$org.org_contact_name}" />
+								value="{$obj.org_contact_name}" />
 						</div>
 						<div class="form-group">
 							<label for="org_contact_email">Contato e-mail</label> <input
 								type="text" class="form-control" id="org_contact_email"
 								name="org_contact_email" placeholder="Digite e-mail do contato"
-								value="{$org.org_contact_email}" />
+								value="{$obj.org_contact_email}" />
 						</div>
 						<div class="form-group">
 							<label for="org_contact_phone">Contato Telefone</label> <input
 								type="text" class="form-control" id="org_contact_phone"
 								name="org_contact_phone"
 								placeholder="Digite o telefone do contato"
-								value="{$org.org_contact_phone}" />
+								value="{$obj.org_contact_phone}" />
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="org_notification"
-								value="1" {if="$org.org_notification == 1"}checked{/if}>
+								value="1" {if="$obj.org_notification == 1"}checked{/if}>
 								Enviar notificações
 							</label>
 						</div>
@@ -96,37 +96,37 @@
 								<label for="org_address">Endereço</label> <input type="text"
 									class="form-control" id="org_address" name="org_address"
 									placeholder="logradouro, número, bairro"
-									value="{$org.org_address}" />
+									value="{$obj.org_address}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_complement">Complemento</label> <input
 									type="text" class="form-control" id="org_addr_complement"
 									name="org_addr_complement" placeholder="apto, bloco, sala"
-									value="{$org.org_addr_complement}" />
+									value="{$obj.org_addr_complement}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_city">Cidade</label> <input type="text"
 									class="form-control" id="org_addr_city" name="org_addr_city"
 									maxlength="255" placeholder="Digite a cidade"
-									value="{$org.org_addr_city}" />
+									value="{$obj.org_addr_city}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_state">UF</label> <input type="text"
 									class="form-control" id="org_addr_state" name="org_addr_state"
 									maxlength="2" placeholder="Digite o Estado"
-									value="{$org.org_addr_state}" />
+									value="{$obj.org_addr_state}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_zip">CEP</label> <input type="text"
 									class="form-control" id="org_addr_zip" name="org_addr_zip"
 									maxlength="10" placeholder="Digite o CEP"
-									value="{$org.org_addr_zip}" />
+									value="{$obj.org_addr_zip}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addr_country">Pais</label> <input type="text"
 									class="form-control" id="org_addr_country"
 									name="org_addr_country" maxlength="100"
-									placeholder="Digite o Pais" value="{$org.org_addr_country}" />
+									placeholder="Digite o Pais" value="{$obj.org_addr_country}" />
 							</div>
 						</div>
 
@@ -136,7 +136,7 @@
 								<label for="org_addrbilling">Endereço</label> <input type="text"
 									class="form-control" id="org_addrbilling"
 									name="org_addrbilling" placeholder="logradouro, número, bairro"
-									value="{$org.org_addrbilling}" />
+									value="{$obj.org_addrbilling}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_complement">Complemento</label> <input
@@ -144,33 +144,33 @@
 									id="org_addrbilling_complement"
 									name="org_addrbilling_complement"
 									placeholder="apto, bloco, sala"
-									value="{$org.org_addrbilling_complement}" />
+									value="{$obj.org_addrbilling_complement}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_city">Cidade</label> <input
 									type="text" class="form-control" id="org_addrbilling_city"
 									maxlength="255" name="org_addrbilling_city"
 									placeholder="Digite a cidade"
-									value="{$org.org_addrbilling_city}" />
+									value="{$obj.org_addrbilling_city}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_state">UF</label> <input type="text"
 									class="form-control" id="org_addrbilling_state" maxlength="2"
 									name="org_addrbilling_state" placeholder="Digite o Estado"
-									value="{$org.org_addrbilling_state}" />
+									value="{$obj.org_addrbilling_state}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_zip">CEP</label> <input type="text"
 									class="form-control" id="org_addrbilling_zip" maxlength="10"
 									name="org_addrbilling_zip" placeholder="Digite o CEP"
-									value="{$org.org_addrbilling_zip}" />
+									value="{$obj.org_addrbilling_zip}" />
 							</div>
 							<div class="form-group">
 								<label for="org_addrbilling_country">Pais</label> <input
 									type="text" class="form-control" id="org_addrbilling_country"
 									maxlength="100" name="org_addrbilling_country"
 									placeholder="Digite o Pais"
-									value="{$org.org_addrbilling_country}" />
+									value="{$obj.org_addrbilling_country}" />
 							</div>
 						</div>
 						<div class="box-footer">

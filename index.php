@@ -7,6 +7,7 @@ use \easyPlanning\Page;
 use \easyPlanning\Model\User;
 use easyPlanning\Model\Organization;
 use easyPlanning\Model\QSet;
+use easyPlanning\Model\Perspective;
 
 $app = new Slim();
 
@@ -132,7 +133,7 @@ $app->get('/users/:idobj', function ($idobj) {
     User::verifyLogin();
     $obj = new User();
     $obj->get((int) $idobj);
-    $obj = new Page();
+    $page = new Page();
     $page->setTpl('users-update', array(
         "obj" => $obj->getValues()
     ));
@@ -201,7 +202,7 @@ $app->get('/orgs/:idobj', function ($idobj) {
     $obj->get((int) $idobj);
     $page = new Page();
     $page->setTpl('orgs-update', array(
-        "org" => $obj->getValues(),
+        "obj" => $obj->getValues(),
         "legalnatures" => Organization::getLegalNatureList(),
         "status" => Organization::getStatusList(),
         "sizes" => Organization::getSizeList()
@@ -290,6 +291,70 @@ $app->post('/qsets/:idobj', function ($idobj) {
     $obj->setData($_POST);
     $obj->update();
     header("Location: /qsets");
+    exit();
+});
+
+// #########################################################################################
+// PERSPECTIVES
+// #########################################################################################
+// LIST
+$app->get('/perspectives', function () {
+    User::verifyLogin();
+    $objs = Perspective::listAll();
+    $page = new Page();
+    $page->setTpl('perspectives', array(
+        "objs" => $objs
+    ));
+});
+
+// CREATE
+$app->get('/perspectives/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('perspectives-create');
+});
+
+// DELETE
+$app->get('/perspectives/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Perspective();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /perspectives");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/perspectives/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Perspective();
+    $obj->get((int) $idobj);
+    $page = new Page();
+    $page->setTpl('perspectives-update', array(
+        "obj" => $obj->getValues()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/perspectives/create', function () {
+    User::verifyLogin();
+    $obj = new Perspective();
+    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#","",$_POST["persp_color"]) : "006666";
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /perspectives");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/perspectives/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Perspective();
+    $obj->get((int) $idobj);
+    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#","",$_POST["persp_color"]) : "006666";
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /perspectives");
     exit();
 });
 
