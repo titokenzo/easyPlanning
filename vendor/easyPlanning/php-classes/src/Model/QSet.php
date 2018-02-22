@@ -20,7 +20,7 @@ class QSet extends Model
     public static function listAll()
     {
         $sql = new Sql();
-        return $sql->select("SELECT * from tb_questions_sets q ORDER BY q.qset_name");
+        return $sql->select("SELECT * from tb_questions_sets a ORDER BY a.qset_name");
     }
 
     public function save()
@@ -42,7 +42,7 @@ class QSet extends Model
     public function get($qsetid)
     {
         $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_questions_sets q WHERE q.qset_id=:id", array(
+        $results = $sql->select("SELECT * FROM tb_questions_sets a WHERE a.qset_id=:id", array(
             ":id" => $qsetid
         ));
         
@@ -56,7 +56,7 @@ class QSet extends Model
         $sql->query("UPDATE tb_questions_sets SET 
                 qset_name=:name,
                 qset_description=:description
-            WHERE org_id=:id", array(
+            WHERE qset_id=:id", array(
                 ":name" => $this->getqset_name(),
                 ":description" => $this->getqset_description(),
                 ":id" => $this->getqset_id()
@@ -66,7 +66,7 @@ class QSet extends Model
     public function delete()
     {
         $sql = new Sql();
-        $sql->query("DELETE FROM tb_organizations q WHERE q.qset_id=:id", array(
+        $sql->query("DELETE FROM tb_questions_sets WHERE qset_id=:id", array(
             ":id" => $this->getqset_id()
         ));
     }

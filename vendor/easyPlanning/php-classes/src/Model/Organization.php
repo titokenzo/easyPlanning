@@ -207,25 +207,25 @@ class Organization extends Model
 
     public static function getSizeList()
     {
-        $lista = array(
+        $list = array(
             1 => "Micro",
             2 => "Pequena",
             3 => "Média",
             4 => "Grande"
         );
-        return $lista;
+        return $list;
     }
 
     public static function getStatusList()
     {
-        $lista = array(
+        $list = array(
             0 => "Inativo",
             1 => "Ativo",
             2 => "Concluído",
             3 => "Pendente",
             4 => "Suspenso"
         );
-        return $lista;
+        return $list;
     }
 }
 ?>

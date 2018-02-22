@@ -43,8 +43,10 @@ class Sql extends SysConfig{
 		$stmt = $this->conn->prepare($rawQuery);
 
 		$this->setParams($stmt, $params);
-
-		$stmt->execute();
+		
+		if (!$stmt->execute()){
+		    throw new \Exception('Erro ao salvar os dados. #' . $stmt->errorInfo()[0] . ': ' . $stmt->errorInfo()[2]);
+		}
 
 	}
 

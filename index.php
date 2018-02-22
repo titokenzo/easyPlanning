@@ -8,6 +8,7 @@ use \easyPlanning\Model\User;
 use easyPlanning\Model\Organization;
 use easyPlanning\Model\QSet;
 use easyPlanning\Model\Perspective;
+use easyPlanning\Model\Question;
 
 $app = new Slim();
 
@@ -181,6 +182,7 @@ $app->get('/orgs/create', function () {
     $page = new Page();
     $page->setTpl('orgs-create', array(
         "legalnatures" => Organization::getLegalNatureList(),
+        "status" => Organization::getStatusList(),
         "sizes" => Organization::getSizeList()
     ));
 });
@@ -339,7 +341,7 @@ $app->get('/perspectives/:idobj', function ($idobj) {
 $app->post('/perspectives/create', function () {
     User::verifyLogin();
     $obj = new Perspective();
-    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#","",$_POST["persp_color"]) : "006666";
+    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#", "", $_POST["persp_color"]) : "006666";
     $obj->setData($_POST);
     $obj->save();
     header("Location: /perspectives");
@@ -351,10 +353,83 @@ $app->post('/perspectives/:idobj', function ($idobj) {
     User::verifyLogin();
     $obj = new Perspective();
     $obj->get((int) $idobj);
-    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#","",$_POST["persp_color"]) : "006666";
+    $_POST["persp_color"] = isset($_POST["persp_color"]) ? str_replace("#", "", $_POST["persp_color"]) : "006666";
     $obj->setData($_POST);
     $obj->update();
     header("Location: /perspectives");
+    exit();
+});
+
+// #########################################################################################
+// QUESTIONS
+// #########################################################################################
+// LIST
+$app->get('/questions', function () {
+    User::verifyLogin();
+    $objs = Question::listAll();
+    $page = new Page();
+    $page->setTpl('questions', array(
+        "objs" => $objs
+    ));
+});
+
+// CREATE
+$app->get('/questions/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('questions-create', array(
+        "status" => Question::getStatusList(),
+        "environments" => Question::getEnvironmentList(),
+        "qsets" => QSet::listAll(),
+        "perspectives" => Perspective::listAll()
+    ));
+});
+
+// DELETE
+$app->get('/questions/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Question();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /questions");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/questions/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Question();
+    $obj->get((int) $idobj);
+    $page = new Page();
+    $page->setTpl('questions-update', array(
+        "obj" => $obj->getValues(),
+        "status" => Question::getStatusList(),
+        "environments" => Question::getEnvironmentList(),
+        "qsets" => QSet::listAll(),
+        "perspectives" => Perspective::listAll()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/questions/create', function () {
+    User::verifyLogin();
+    $obj = new Question();
+    $_POST["quest_iscriticalkey"] = isset($_POST["quest_iscriticalkey"]) ? 1 : 0;
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /questions");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/questions/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Question();
+    $obj->get((int) $idobj);
+    $_POST["quest_iscriticalkey"] = isset($_POST["quest_iscriticalkey"]) ? 1 : 0;
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /questions");
     exit();
 });
 
