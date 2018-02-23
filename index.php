@@ -9,6 +9,7 @@ use easyPlanning\Model\Organization;
 use easyPlanning\Model\QSet;
 use easyPlanning\Model\Perspective;
 use easyPlanning\Model\Question;
+use easyPlanning\Model\Plan;
 
 $app = new Slim();
 
@@ -26,10 +27,40 @@ $app->get('/login', function () {
 $app->post('/login', function () {
     try {
         User::login($_POST["login"], $_POST["password"]);
-        header("Location: /");
+        if (isset($_SESSION["User"]["org_id"])) {
+            header("Location: /");
+        } else {
+            header("Location: /loginOrganization");
+        }
     } catch (Exception $e) {
-        header("Location: /login");
+        $page = new Page([
+            "header" => false,
+            "footer" => false
+        ]);
+        $page->setTpl('login', array(
+            "error" => $e->getMessage()
+        ));
     }
+    exit();
+});
+
+$app->get('/loginOrganization', function () {
+    User::verifyLogin();
+    $page = new Page([
+        "header" => false,
+        "footer" => false
+    ]);
+    $page->setTpl('loginOrganization', array(
+        "orgs" => User::getSessionUserOrganizations(),
+        "user_isamdin" =>(int)$_SESSION["User"]["user_isadmin"]
+    ));
+});
+
+$app->post('/loginOrganization', function () {
+    User::verifyLogin();
+    $idorg = isset($_POST["org_id"]) ? $_POST["org_id"] : 0;
+    User::setSessionOrganization($idorg);
+    header("Location: /");
     exit();
 });
 
@@ -430,6 +461,70 @@ $app->post('/questions/:idobj', function ($idobj) {
     $obj->setData($_POST);
     $obj->update();
     header("Location: /questions");
+    exit();
+});
+
+// #########################################################################################
+// STRATEGIC PLANNING
+// #########################################################################################
+// LIST
+$app->get('/plans', function () {
+    User::verifyLogin();
+    $objs = Plan::listAll();
+    $page = new Page();
+    $page->setTpl('plans', array(
+        "objs" => $objs
+    ));
+});
+
+// CREATE
+$app->get('/plans/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('plans-create');
+});
+
+// DELETE
+$app->get('/plans/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Plan();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /plans");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/plans/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Plan();
+    $obj->get((int) $idobj);
+    $page = new Page();
+    $page->setTpl('plans-update', array(
+        "obj" => $obj->getValues()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/plans/create', function () {
+    User::verifyLogin();
+    $obj = new Plan();
+    $_POST["plan_isopen"] = isset($_POST["plan_isopen"]) ? 1 : 0;
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /plans");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/plans/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Plan();
+    $_POST["plan_isopen"] = isset($_POST["plan_isopen"]) ? 1 : 0;
+    $obj->get((int) $idobj);
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /plans");
     exit();
 });
 

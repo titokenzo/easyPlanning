@@ -1,0 +1,59 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h3>Planejamentos Estratégicos</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Cadastro de Plano Estratégico</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<form role="form" action="/plans/create" method="post">
+					<div class="box-body">
+						<div class="form-group">
+							<label for="plan_title">Título *</label> <input type="text"
+								id="plan_title" name="plan_title" class="form-control"
+								placeholder="Digite o título" required/>
+						</div>
+						<div class="form-group">
+							<label for="plan_team">Time *</label> <textarea
+								class="form-control" id="plan_team" name="plan_team"
+								placeholder="Digite o nome das pessoas" required></textarea>
+						</div>
+						<div class="form-group">
+							<label for="plan_mission">Missão</label> <textarea
+								class="form-control" id="plan_mission" name="plan_mission"
+								placeholder="Digite a missão"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="plan_vision">Visão</label> <textarea
+								class="form-control" id="plan_vision" name="plan_vision"
+								placeholder="Digite a visão"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="plan_values">Valores</label> <textarea
+								class="form-control" id="plan_values" name="plan_values"
+								placeholder="Digite os valores"></textarea>
+						</div>
+						<div class="checkbox">
+							<label> <input type="checkbox" name="plan_isopen" value="0"/> Aberto
+							</label>
+						</div>
+					</div>
+					<div class="box-footer">
+						<button type="submit" class="btn btn-primary">Cadastrar</button>
+						<button type="button" class="btn btn-secondary"
+							onclick="history.back()">Voltar</button>
+						<br /> <br />
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /page content -->

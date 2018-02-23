@@ -33,23 +33,24 @@
 		<div class="login_wrapper">
 			<div class="animate form login_form">
 				<section class="login_content">
-					<form method="post" action="login">
-						<h1>Login</h1>
-						{if="isset($error)"}
-						<div class="alert alert-danger" role="alert">{$error}</div>
-						{/if}
-						<div>
-							<input type="text" class="form-control" placeholder="Usuário"
-								name="login" required="required" />
-						</div>
-						<div>
-							<input type="password" class="form-control" placeholder="Senha"
-								name="password" required="required" />
+					<form method="post" action="loginOrganization">
+						<h1>Organização</h1>
+						<div class="form-group">
+							<select
+								id="org_id" name="org_id" class="form-control"
+								required>
+								<option value="">Selecione...</option>
+								{if="(int)$user_isamdin===1"}
+								<option value="0">Administração</option>
+								{/if}
+								{loop="$orgs"}
+								<option value="{$value.org_id}">{$value.org_tradingname}</option>
+								{/loop}
+							</select>
 						</div>
 						<div>
 							<input type="submit" class="btn btn-primary submit"
-								value="Entrar" /> <a class="reset_pass" href="/forgot">Esqueceu
-								a senha?</a>
+								value="Entrar" /> 
 						</div>
 
 						<div class="clearfix"></div>

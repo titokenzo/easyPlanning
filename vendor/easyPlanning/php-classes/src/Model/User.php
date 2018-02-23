@@ -13,20 +13,45 @@ class User extends Model{
     public static function login($login, $password){
         $sql = new Sql();
         $results = $sql->select("SELECT * FROM tb_users WHERE user_login=:LOGIN", array(":LOGIN"=>$login));
-        
         if(count($results)===0){
-            throw new \Exception("Usuário inexistente ou senha inválida.");
+            throw new \Exception("Usuário inexistente, ou senha inválida");
+        }
+        $data = $results[0];
+        if(password_verify($password, $data["user_password"])===FALSE){
+            throw new \Exception("Usuário inexistente ou senha inválida");
+        }
+        $user = new User();
+        $data["user_password"]=NULL;
+        $data["org_id"] = NULL;
+        //$user->setData($data);
+
+        //GET USER ORGANIZATIONS
+        $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(":ID"=>$data["user_id"]));
+        if(count($results)===0 AND !(int)$data["user_isadmin"]===1){
+            throw new \Exception("Usuário não associado a nenhuma Organização");
+        }elseif(count($results)===1){
+            $data = array_merge($data,$results[0]);
         }
         
-        $data = $results[0];
-        if(password_verify($password, $data["user_password"])===true){
-            $user = new User();
-            $user->setData($data);
-            
-            $_SESSION[User::SESSION] = $user->getValues();
-            return $user;
+        $_SESSION[User::SESSION] = $data;       
+        //$_SESSION[User::SESSION] = $user->getValues();
+        //return $user;
+    }
+    
+    public static function setSessionOrganization($idorg){
+        $data = $_SESSION[User::SESSION];
+        if((int)$data["user_isadmin"]===1 AND (int)$idorg===0){
+            $results = array(0=>array("org_id"=>0, "org_tradingname"=>"Adminstração"));
         }else{
-            throw new \Exception("Usuário inexistente ou senha inválida.");
+            $sql = new Sql();
+            $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
+                ":USER"=>$data["user_id"],
+                ":ORG"=>$idorg
+                
+            ));
+        }
+        if(count($results)>0){
+            $_SESSION[User::SESSION] = array_merge($data,$results[0]);
         }
     }
     
@@ -63,8 +88,10 @@ class User extends Model{
             ":phone"=> $this->getperson_phone(),
             ":isadmin"=> $this->getuser_isadmin()
         ));
-        
-        //$this->setData($results[0]);
+        if(count($results)>0){
+            $this->setData($results[0]);
+            
+        }
     }
     
     public function get($user_id){
@@ -165,5 +192,24 @@ class User extends Model{
         ));
     }
     
+    public static function getTypeList(){
+        $list = array(
+            0 => "Administrador",
+            1 => "Consultor Interno",
+            2 => "Colaborador"
+        );
+        return $list;
+    }
+    
+    public static function getOrganizationList(){
+        $sql = new Sql();
+        return $sql->select("SELECT org_id, org_tradingname from tb_organizations ORDER BY org_tradingname");
+    }
+    
+    public static function getSessionUserOrganizations(){
+        $id = (int)$_SESSION[User::SESSION]["user_id"];
+        $sql = new Sql();
+        return $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER", array(":USER"=>$id));
+    }
 }
 ?>
