@@ -199,13 +199,19 @@ class Organization extends Model
         ));
     }
 
-    public static function getLegalNatureList()
+    public static function getOrgIdList()
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT org_id, org_tradingname from tb_organizations ORDER BY org_tradingname");
+    }
+
+    public static function getOrgLegalNatureList()
     {
         $sql = new Sql();
         return $sql->select("SELECT * FROM tb_legalnatures ORDER BY legalnature_name");
     }
 
-    public static function getSizeList()
+    public static function getOrgSizeList()
     {
         $list = array(
             1 => "Micro",
@@ -216,7 +222,7 @@ class Organization extends Model
         return $list;
     }
 
-    public static function getStatusList()
+    public static function getOrgStatusList()
     {
         $list = array(
             0 => "Inativo",

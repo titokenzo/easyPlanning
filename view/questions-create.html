@@ -25,9 +25,8 @@
 							</select>
 						</div>
 						<div class="form-group">
-							<label for="qset_id">Grupo *</label> <select
-								id="qset_id" name="qset_id" class="form-control"
-								required>
+							<label for="qset_id">Grupo *</label> <select id="qset_id"
+								name="qset_id" class="form-control" required>
 								<option value="">Selecione...</option> {loop="$qsets"}
 								<option value="{$value.qset_id}">{$value.qset_name}</option>
 								{/loop}

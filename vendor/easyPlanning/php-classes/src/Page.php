@@ -2,6 +2,7 @@
 namespace easyPlanning;
 
 use Rain\Tpl;
+use easyPlanning\Model\User;
 
 class Page{
 	private $tpl;
@@ -22,11 +23,13 @@ class Page{
 		);
 
 		Tpl::configure( $config );
-		
 		$this->tpl = new Tpl;
 		
+        if(isset($_SESSION[User::SESSION])){
+            $this->options["data"]["logged"] = $_SESSION[User::SESSION];
+        }
 		$this->setData($this->options["data"]);
-		
+        
         if($this->options["header"]===true)
 		  $this->tpl->draw("header");
 	}

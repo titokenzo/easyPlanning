@@ -10,6 +10,7 @@ use easyPlanning\Model\QSet;
 use easyPlanning\Model\Perspective;
 use easyPlanning\Model\Question;
 use easyPlanning\Model\Plan;
+use easyPlanning\Model\Respondent;
 
 $app = new Slim();
 
@@ -27,7 +28,7 @@ $app->get('/login', function () {
 $app->post('/login', function () {
     try {
         User::login($_POST["login"], $_POST["password"]);
-        if (isset($_SESSION["User"]["org_id"])) {
+        if (isset($_SESSION[User::SESSION]["org_id"])) {
             header("Location: /");
         } else {
             header("Location: /loginOrganization");
@@ -52,7 +53,7 @@ $app->get('/loginOrganization', function () {
     ]);
     $page->setTpl('loginOrganization', array(
         "orgs" => User::getSessionUserOrganizations(),
-        "user_isamdin" =>(int)$_SESSION["User"]["user_isadmin"]
+        "user_isamdin" => (int) $_SESSION[User::SESSION]["user_isadmin"]
     ));
 });
 
@@ -73,8 +74,14 @@ $app->get('/logout', function () {
 // HOME
 $app->get('/', function () {
     User::verifyLogin();
-    $page = new Page();
-    $page->setTpl("index");
+    $page = new Page([
+        "data" => array(
+            "logged" => $_SESSION[User::SESSION]
+        )
+    ]);
+    $page->setTpl("index", array(
+        "logged" => $_SESSION[User::SESSION]
+    ));
 });
 
 $app->get('/forgot', function () {
@@ -118,10 +125,7 @@ $app->post('/forgot/reset', function () {
     $user = new User();
     $user->get((int) $forgot["user_id"]);
     
-    $pass = password_hash($_POST["password"], PASSWORD_DEFAULT, [
-        "cost" => 12
-    ]);
-    $user->setPassword($pass);
+    $user->setPassword($_POST["password"]);
     
     $page = new Page([
         "header" => false,
@@ -147,7 +151,9 @@ $app->get('/users', function () {
 $app->get('/users/create', function () {
     User::verifyLogin();
     $page = new Page();
-    $page->setTpl('users-create');
+    $page->setTpl('users-create', array(
+        "types" => USer::getUserTypeList()
+    ));
 });
 
 // USER DELETE
@@ -167,7 +173,8 @@ $app->get('/users/:idobj', function ($idobj) {
     $obj->get((int) $idobj);
     $page = new Page();
     $page->setTpl('users-update', array(
-        "obj" => $obj->getValues()
+        "obj" => $obj->getValues(),
+        "types" => User::getUserTypeList()
     ));
 });
 
@@ -212,9 +219,9 @@ $app->get('/orgs/create', function () {
     User::verifyLogin();
     $page = new Page();
     $page->setTpl('orgs-create', array(
-        "legalnatures" => Organization::getLegalNatureList(),
-        "status" => Organization::getStatusList(),
-        "sizes" => Organization::getSizeList()
+        "legalnatures" => Organization::getOrgLegalNatureList(),
+        "status" => Organization::getOrgStatusList(),
+        "sizes" => Organization::getOrgSizeList()
     ));
 });
 
@@ -236,9 +243,9 @@ $app->get('/orgs/:idobj', function ($idobj) {
     $page = new Page();
     $page->setTpl('orgs-update', array(
         "obj" => $obj->getValues(),
-        "legalnatures" => Organization::getLegalNatureList(),
-        "status" => Organization::getStatusList(),
-        "sizes" => Organization::getSizeList()
+        "legalnatures" => Organization::getOrgLegalNatureList(),
+        "status" => Organization::getOrgStatusList(),
+        "sizes" => Organization::getOrgSizeList()
     ));
 });
 
@@ -525,6 +532,75 @@ $app->post('/plans/:idobj', function ($idobj) {
     $obj->setData($_POST);
     $obj->update();
     header("Location: /plans");
+    exit();
+});
+
+// ########################################################################################
+// RESPONDENTS
+// #########################################################################################
+// LIST
+$app->get('/respondents', function () {
+    User::verifyLogin();
+    $data = $_SESSION[User::SESSION];
+    if((int)$data["user_isadmin"]==1){
+        $objs = Respondent::listAll();
+    }else{
+        $objs = Respondent::listFromOrganization($data["user_isadmin"]["org_id"]);
+    }
+    $page = new Page();
+    $page->setTpl('respondents', array(
+        "objs" => $objs
+    ));
+});
+
+// CREATE
+$app->get('/respondents/create', function () {
+    User::verifyLogin();
+    $page = new Page();
+    $page->setTpl('respondents-create');
+});
+
+// DELETE
+$app->get('/respondents/:idobj/delete', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Respondent();
+    $obj->get((int) $idobj);
+    $obj->delete();
+    header("Location: /respondents");
+    exit();
+});
+
+// VIEW UPDATE
+$app->get('/respondents/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Respondent();
+    $obj->get((int) $idobj);
+    $page = new Page();
+    $page->setTpl('respondents-update', array(
+        "obj" => $obj->getValues()
+    ));
+});
+
+// SAVE CREATE
+$app->post('/respondents/create', function () {
+    User::verifyLogin();
+    $obj = new Respondent();
+    $_POST["respondent_isopen"] = isset($_POST["respondent_isopen"]) ? 1 : 0;
+    $obj->setData($_POST);
+    $obj->save();
+    header("Location: /respondents");
+    exit();
+});
+
+// SAVE UPDATE
+$app->post('/respondents/:idobj', function ($idobj) {
+    User::verifyLogin();
+    $obj = new Respondent();
+    $_POST["respondent_isopen"] = isset($_POST["respondent_isopen"]) ? 1 : 0;
+    $obj->get((int) $idobj);
+    $obj->setData($_POST);
+    $obj->update();
+    header("Location: /respondents");
     exit();
 });
 

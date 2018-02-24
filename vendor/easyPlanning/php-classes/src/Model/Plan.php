@@ -12,8 +12,7 @@ class Plan extends Model
         $fields = array(
             "plan_id",
             "org_id",
-            "plan_dtcreation".
-            "plan_isopen",
+            "plan_dtcreation" . "plan_isopen",
             "plan_title",
             "plan_team",
             "plan_mission",
@@ -28,8 +27,7 @@ class Plan extends Model
         $sql = new Sql();
         return $sql->select("SELECT * from tb_strategic_planning a 
             INNER JOIN tb_organizations b USING(org_id) 
-            ORDER BY a.plan_title;"
-        );
+            ORDER BY a.plan_title;");
     }
 
     public function save()
@@ -86,14 +84,14 @@ class Plan extends Model
                 plan_vision=:plan_vision,
                 plan_values=:plan_values
             WHERE plan_id=:plan_id", array(
-                ":org_id" => $this->getorg_id(),
-                ":plan_isopen" => $this->getplan_isopen(),
-                ":plan_title" => $this->getplan_title(),
-                ":plan_team" => $this->getplan_team(),
-                ":plan_mission" => $this->getplan_mission(),
-                ":plan_vision" => $this->getplan_vision(),
-                ":plan_values" => $this->getplan_values(),
-                ":plan_id" => $this->getplan_id()
+            ":org_id" => $this->getorg_id(),
+            ":plan_isopen" => $this->getplan_isopen(),
+            ":plan_title" => $this->getplan_title(),
+            ":plan_team" => $this->getplan_team(),
+            ":plan_mission" => $this->getplan_mission(),
+            ":plan_vision" => $this->getplan_vision(),
+            ":plan_values" => $this->getplan_values(),
+            ":plan_id" => $this->getplan_id()
         ));
     }
 

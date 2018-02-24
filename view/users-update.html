@@ -16,30 +16,52 @@
 				<form role="form" action="/users/{$obj.user_id}" method="post">
 					<div class="box-body">
 						<div class="form-group">
-							<label for="person_name">Nome *</label> <input type="text"
-								class="form-control" id="person_name" name="person_name"
-								placeholder="Digite o nome" value="{$obj.person_name}" required />
+							<label for="user_name">Nome *</label> <input type="text"
+								class="form-control" id="user_name" name="user_name" maxlength="200"
+								placeholder="Digite o nome" value="{$obj.user_name}" required />
+						</div>
+						<div class="form-group">
+							<label for="user_email">CPF (apenas números) *</label> <input type="text"
+								class="form-control" id="user_email" name="user_email" maxlength="11"
+								placeholder="Digite o e-mail" value="{$obj.user_email}" required />
 						</div>
 						<div class="form-group">
 							<label for="user_login">Login *</label> <input type="text"
-								class="form-control" id="user_login" name="user_login"
+								class="form-control" id="user_login" name="user_login" maxlength="20"
 								placeholder="Digite o login" value="{$obj.user_login}" required />
 						</div>
 						<div class="form-group">
-							<label for="person_phone">Telefone</label> <input type="tel"
-								class="form-control" id="person_phone" name="person_phone"
-								placeholder="Digite o telefone" value="{$obj.person_phone}">
+							<label for="user_email">E-mail *</label> <input type="email"
+								class="form-control" id="user_email" name="user_email" maxlength="255"
+								placeholder="Digite o e-mail" value="{$obj.user_email}" required />
 						</div>
 						<div class="form-group">
-							<label for="person_email">E-mail *</label> <input type="email"
-								class="form-control" id="person_email" name="person_email"
-								placeholder="Digite o e-mail" value="{$obj.person_email}"
-								required />
+							<label for="user_type">Tipo *</label> <select id="user_type"
+								name="user_type" class="form-control" required>
+								<option value="">Selecione...</option> {loop="$types"}
+								<option value="{$key}" {if="$obj.user_type == $key"}selected{/if}>{$value}</option>
+								{/loop}
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="user_phone">Telefone</label> <input type="text"
+								class="form-control" id="user_phone" name="user_phone" maxlength="100"
+								placeholder="Digite os telefones" value="{$obj.user_phone}" />
+						</div>
+						<div class="form-group">
+							<label for="user_position">Cargo</label> <input type="text"
+								class="form-control" id="user_position" name="user_position" maxlength="100"
+								placeholder="Digite o cargo" value="{$obj.user_position}" />
+						</div>
+						<div class="form-group">
+							<label for="user_photo">Foto</label> <input type="text"
+								class="form-control" id="user_photo" name="user_photo" maxlength="200"
+								placeholder="Selecione a foto" value="{$obj.user_photo}" />
 						</div>
 						<div class="checkbox">
-							<label> <input type="checkbox" name="user_isadmin" value="1"
-								{if="$obj.user_isadmin == 1"}checked{/if}> Acesso de
-								Administrador
+							<label> <input type="checkbox" name="user_isadmin"
+								value="1" {if="$obj.user_isadmin == 1"}checked{/if}>
+								Acesso de Administrador
 							</label>
 						</div>
 					</div>
