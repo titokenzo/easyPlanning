@@ -31,76 +31,6 @@ class Respondent extends Model
         $this->setAttrs($fields);
     }
 
-    public static function login($login, $password)
-    {
-        $sql = new Sql();
-        $results = $sql->select("SELECT resp_id, resp_name, resp_login, resp_password, resp_isadmin FROM tb_resps WHERE resp_login=:LOGIN", array(
-            ":LOGIN" => $login
-        ));
-        if (count($results) === 0) {
-            throw new \Exception("Usuário inexistente, ou senha inválida");
-        }
-        $data = $results[0];
-        if (password_verify($password, $data["resp_password"]) === FALSE) {
-            throw new \Exception("Usuário inexistente ou senha inválida");
-        }
-        $resp = new User();
-        $data["resp_password"] = NULL;
-        $data["org_id"] = NULL;
-        $data["org_tradingname"] = NULL;
-        // $resp->setData($data);
-        
-        // GET USER ORGANIZATIONS
-        $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_resps_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.resp_id=:ID", array(
-            ":ID" => $data["resp_id"]
-        ));
-        if (count($results) === 0 and ! (int) $data["resp_isadmin"] === 1) {
-            throw new \Exception("Usuário não associado a nenhuma Organização");
-        } elseif (count($results) === 1) {
-            $data = array_merge($data, $results[0]);
-        }
-        
-        $_SESSION[User::SESSION] = $data;
-        // $_SESSION[User::SESSION] = $resp->getValues();
-        // return $resp;
-    }
-
-    public static function setSessionOrganization($idorg)
-    {
-        $data = $_SESSION[User::SESSION];
-        if ((int) $data["resp_isadmin"] === 1 and (int) $idorg === 0) {
-            $results = array(
-                0 => array(
-                    "org_id" => 0,
-                    "org_tradingname" => "Adminstração"
-                )
-            );
-        } else {
-            $sql = new Sql();
-            $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_resps_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.resp_id=:USER AND a.org_id=:ORG", array(
-                ":USER" => $data["resp_id"],
-                ":ORG" => $idorg
-            
-            ));
-        }
-        if (count($results) > 0) {
-            $_SESSION[User::SESSION] = array_merge($data, $results[0]);
-        }
-    }
-
-    public static function verifyLogin()
-    {
-        if (! isset($_SESSION[User::SESSION]) || ! $_SESSION[User::SESSION] || ! (int) $_SESSION[User::SESSION]["resp_id"] > 0) {
-            header("Location: /login");
-            exit();
-        }
-    }
-
-    public static function logout()
-    {
-        $_SESSION[User::SESSION] = NULL;
-    }
-
     public static function listAll()
     {
         $sql = new Sql();
@@ -109,51 +39,71 @@ class Respondent extends Model
 
     public function save()
     {
-        $pass = password_hash($this->getresp_password(), PASSWORD_DEFAULT, [
-            "cost" => 12
-        ]);
-        
         $sql = new Sql();
-        $results = $sql->query("INSERT INTO tb_resps (
-            resp_login,
-            resp_password,
-            resp_isadmin,
-            resp_cpf,
-            resp_name,
-            resp_email,
-            resp_type,
-            resp_phone,
-            resp_position,
-            resp_photo
-        ) VALUES(
-            :resp_login,
-            :resp_password,
-            :resp_isadmin,
-            :resp_cpf,
-            :resp_name,
-            :resp_email,
-            :resp_type,
-            :resp_phone,
-            :resp_position,
-            :resp_photo
-        )", array(
-            ":resp_login" => $this->getresp_login(),
-            ":resp_password" => $pass,
-            ":resp_isadmin" => $this->getresp_isadmin(),
-            ":resp_cpf" => $this->getresp_cpf(),
-            ":resp_name" => $this->getresp_name(),
+        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:resp_email AND a.org_id=:org_id", array(
             ":resp_email" => $this->getresp_email(),
-            ":resp_type" => $this->getresp_type(),
-            ":resp_phone" => $this->getresp_phone(),
-            ":resp_position" => $this->getresp_position(),
-            ":resp_photo" => $this->getresp_photo()
+            ":org_id" => $this->getorg_id()
         ));
+        if (!count($results) === 0) {
+            throw new \Exception("O e-mail $this->getresp_email() já está cadastrado para a Oganização");
+        } else {
+            $results = $sql->select("CALL sp_respondent_create(:org_id, :resp_email, :resp_orglevel, :resp_allowreturn, :resp_allowpartial)", array(
+                ":org_id" => $this->georg_id(),
+                ":resp_email" => $this->getresp_email(),
+                ":resp_orglevel" => $this->getresp_orglevel(),
+                ":resp_allowreturn" => $this->getresp_allowreturn(),
+                ":resp_allowpartial" => $this->getresp_allowpartial()
+            ));
+            if (count($results) === 0) {
+                throw new \Exception("Não foi possível salvar os dados");
+            } else {
+                $data = $results[0];
+                $code = Security::secured_encrypt($data["resp_id"]);
+                $link = SysConfig::SITE_URL . "/respond?code=$code";
+                $mailer = new Mailer($data["resp_email"], "Colaborador", "EasyPlanning - Questinário", "mailRespond", array(
+                    "name" => "Colaborador",
+                    "link" => $link
+                ));
+                $mailer->send();
+                //return $data;
+            }
+        }
     }
 
+    public static function getForgot($email)
+    {
+        $sql = new Sql();
+        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:email", array(
+            ":email" => $email
+        ));
+        if (count($results) === 0) {
+            throw new \Exception("Não foi possível recuperar a senha");
+        } else {
+            $data = $results[0];
+            $results2 = $sql->select("CALL sp_respspasswordsrecoveries_create(:idresp, :ip)", array(
+                ":idresp" => $data["resp_id"],
+                ":ip" => $_SERVER["REMOTE_ADDR"]
+            ));
+            if (count($results2) === 0) {
+                throw new \Exception("Não foi possível recuperar a senha");
+            } else {
+                $dataRecovery = $results2[0];
+                $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
+                $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
+                $mailer = new Mailer($data["resp_email"], $data["resp_name"], "Redefinir senha do EasyPlanning", "forgot", array(
+                    "name" => $data["resp_name"],
+                    "link" => $link
+                ));
+                $mailer->send();
+                return $data;
+            }
+        }
+    }
+    
     public function get($resp_id)
     {
         $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_resps a WHERE a.resp_id=:id", array(
+        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_id=:id", array(
             ":id" => $resp_id
         ));
         
@@ -162,12 +112,8 @@ class Respondent extends Model
 
     public function update()
     {
-        $pass = password_hash($this->getresp_password(), PASSWORD_DEFAULT, [
-            "cost" => 12
-        ]);
-        
         $sql = new Sql();
-        $results = $sql->query("UPDATE tb_resps SET 
+        $results = $sql->query("UPDATE tb_respondents SET 
             resp_login=:resp_login,
             resp_password=:resp_password,
             resp_isadmin=:resp_isadmin,
@@ -197,39 +143,9 @@ class Respondent extends Model
     public function delete()
     {
         $sql = new Sql();
-        $sql->query("DELETE FROM tb_resps WHERE resp_id=:id", array(
+        $sql->query("DELETE FROM tb_respondents WHERE resp_id=:id", array(
             ":id" => $this->getresp_id()
         ));
-    }
-
-    public static function getForgot($email)
-    {
-        $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_resps a WHERE a.resp_email=:email", array(
-            ":email" => $email
-        ));
-        if (count($results) === 0) {
-            throw new \Exception("Não foi possível recuperar a senha");
-        } else {
-            $data = $results[0];
-            $results2 = $sql->select("CALL sp_respspasswordsrecoveries_create(:idresp, :ip)", array(
-                ":idresp" => $data["resp_id"],
-                ":ip" => $_SERVER["REMOTE_ADDR"]
-            ));
-            if (count($results2) === 0) {
-                throw new \Exception("Não foi possível recuperar a senha");
-            } else {
-                $dataRecovery = $results2[0];
-                $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
-                $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
-                $mailer = new Mailer($data["resp_email"], $data["resp_name"], "Redefinir senha do EasyPlanning", "forgot", array(
-                    "name" => $data["resp_name"],
-                    "link" => $link
-                ));
-                $mailer->send();
-                return $data;
-            }
-        }
     }
 
     public static function validForgotDecrypt($code)
@@ -284,10 +200,12 @@ class Respondent extends Model
         return $list;
     }
 
-    public static function getOrganizationList()
+    public static function getFromOrganization($orgid)
     {
         $sql = new Sql();
-        return $sql->select("SELECT org_id, org_tradingname from tb_organizations ORDER BY org_tradingname");
+        return $sql->select("SELECT * FROM tb_repondents a WHERE org_id=:ID ORDER BY resp_email", array(
+            ":ID" => (int)$orgid
+        ));
     }
 
     public static function getSessionUserOrganizations()

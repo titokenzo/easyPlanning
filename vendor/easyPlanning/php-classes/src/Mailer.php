@@ -43,10 +43,7 @@ class Mailer extends SysConfig{
     }
     
     public function send(){
-        if(!$this->mail->send()){
-            throw new \Exception('Erro ao enviar formulário: ' . $this->mail->ErrorInfo);
-        } 
-        //return $this->mail->send();
+        return $this->mail->send();
     }
 }
 ?>

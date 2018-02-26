@@ -93,11 +93,21 @@ $app->get('/forgot', function () {
 });
 
 $app->post('/forgot', function () {
-    $user = User::getForgot($_POST["email"]);
-    header("Location: /forgot/sent");
-    exit();
+    $page = new Page([
+        "header" => false,
+        "footer" => false
+    ]);
+    try{
+        $user = User::getForgot($_POST["email"]);
+        $page->setTpl('forgot-sent');
+    }catch(Exception $e){
+        $page->setTpl('forgot-sent', array(
+            "error" => $e->getMessage()
+        ));
+    }
 });
 
+//Função desabilitada, chamada direto pelo endereço "/forgot"
 $app->get('/forgot/sent', function () {
     $page = new Page([
         "header" => false,
@@ -542,11 +552,7 @@ $app->post('/plans/:idobj', function ($idobj) {
 $app->get('/respondents', function () {
     User::verifyLogin();
     $data = $_SESSION[User::SESSION];
-    if((int)$data["user_isadmin"]==1){
-        $objs = Respondent::listAll();
-    }else{
-        $objs = Respondent::listFromOrganization($data["user_isadmin"]["org_id"]);
-    }
+    $objs = Respondent::getFromOrganization($data["org_id"]);
     $page = new Page();
     $page->setTpl('respondents', array(
         "objs" => $objs
@@ -557,7 +563,9 @@ $app->get('/respondents', function () {
 $app->get('/respondents/create', function () {
     User::verifyLogin();
     $page = new Page();
-    $page->setTpl('respondents-create');
+    $page->setTpl('respondents-create', array(
+        "levels" => Respondent::getOrganizationLevelList()
+    ));
 });
 
 // DELETE
@@ -577,7 +585,8 @@ $app->get('/respondents/:idobj', function ($idobj) {
     $obj->get((int) $idobj);
     $page = new Page();
     $page->setTpl('respondents-update', array(
-        "obj" => $obj->getValues()
+        "obj" => $obj->getValues(),
+        "levels" => Respondent::getOrganizationLevelList()
     ));
 });
 
@@ -585,7 +594,8 @@ $app->get('/respondents/:idobj', function ($idobj) {
 $app->post('/respondents/create', function () {
     User::verifyLogin();
     $obj = new Respondent();
-    $_POST["respondent_isopen"] = isset($_POST["respondent_isopen"]) ? 1 : 0;
+    $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
+    $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
     $obj->setData($_POST);
     $obj->save();
     header("Location: /respondents");

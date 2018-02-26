@@ -35,11 +35,15 @@
 				<section class="login_content">
 					<form>
 						<h1>EasyPlanning</h1>
+						<p>Recuperação de senha.</p>
+						{if="isset($error)"}
+							<div class="alert alert-danger" role="alert">{$error}</div>
+						{else}
 						<div>
-							<p>Recuperação de senha.</p>
 							<h4>E-mail enviado!</h4>
 							<p>Verifique as instruções no seu e-mail.</p>
 						</div>
+						{/if}
 						<div class="clearfix"></div>
 
 						<div class="separator">

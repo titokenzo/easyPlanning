@@ -11,13 +11,20 @@
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
 					<div class="x_title">
+						{if="!(int)$logged.org_id==0"}
+						<div class="box-header">
+							<a href="/respondents/create" class="btn btn-success">Cadastrar novo respondedor</a>
+			            </div>
+			            {/if}
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
 						<table id="datatable" class="table table-striped table-bordered">
 							<thead>
 								<tr>
-									<th>Nome Fantasia</th>
+									<th>E-mail</th>
+									<th>Cadastro</th>
+									<th>Concluído</th>
 									<th style="width: 60px">Notificar</th>
 									<th style="width: 140px">&nbsp;</th>
 								</tr>
@@ -26,8 +33,9 @@
 							<tbody>
 								{loop="$objs"}
 								<tr>
-									<td>{$value.org_tradingname}</td>
-									<td>{if="$value.org_notification == 1"}Sim{else}Não{/if}</td>
+									<td>{$value.resp_email}</td>
+									<td>{$value.resp_dtcreation}</td>resp_orglevel
+									<td>{if="$value.resp_hascompleted== 1"}Sim{else}Não{/if}</td>
 									<td><a href="/respondents/{$value.org_id}"
 										class="btn btn-primary btn-xs"><i class="fa fa-envelope-o"></i>
 											Editar</a></td>

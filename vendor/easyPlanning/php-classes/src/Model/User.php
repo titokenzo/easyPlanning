@@ -228,7 +228,10 @@ class User extends Model
                     "name" => $data["user_name"],
                     "link" => $link
                 ));
-                $mailer->send();
+                if(!$mailer->send()){
+                    throw new \Exception('Erro ao enviar e-mail: ' . $this->mail->ErrorInfo);
+                }
+                //$mailer->send();
                 return $data;
             }
         }
