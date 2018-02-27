@@ -45,7 +45,7 @@ class Sql extends SysConfig{
 		$this->setParams($stmt, $params);
 		
 		if (!$stmt->execute()){
-		    throw new \Exception('Erro ao salvar os dados. #' . $stmt->errorInfo()[0] . ': ' . $stmt->errorInfo()[2]);
+		    throw new \Exception('Erro nos dados. #' . $stmt->errorInfo()[0] . ': ' . $stmt->errorInfo()[2]);
 		}
 
 	}
@@ -57,8 +57,10 @@ class Sql extends SysConfig{
 
 		$this->setParams($stmt, $params);
 
-		$stmt->execute();
-
+		if (!$stmt->execute()){
+		    throw new \Exception('Erro nos dados. #' . $stmt->errorInfo()[0] . ': ' . $stmt->errorInfo()[2]);
+		}
+		
 		return $stmt->fetchAll(\PDO::FETCH_ASSOC);
 
 	}

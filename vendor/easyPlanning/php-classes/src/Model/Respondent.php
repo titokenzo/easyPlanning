@@ -36,37 +36,46 @@ class Respondent extends Model
         $sql = new Sql();
         return $sql->select("SELECT * from tb_respondents a INNER JOIN tb_organizations b USING(org_id) ORDER BY b.org_tradingname, a.respondent_email");
     }
+    
+    public function saveRespodents(){
+        $emails = explode(",", $this->getresp_email());
+        foreach ($emails as $value){
+            $this->setresp_email(trim($value));
+            $this->save();
+        }
+    }
 
     public function save()
     {
         $sql = new Sql();
         $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:resp_email AND a.org_id=:org_id", array(
             ":resp_email" => $this->getresp_email(),
-            ":org_id" => $this->getorg_id()
+            ":org_id" => (int)$this->getorg_id()
         ));
-        if (!count($results) === 0) {
-            throw new \Exception("O e-mail $this->getresp_email() já está cadastrado para a Oganização");
+        if (count($results) > 0) {
+            throw new \Exception("O e-mail " . $this->getresp_email() . " já está cadastrado como respondedor");
+        }
+        
+        $results = $sql->select("CALL sp_respondent_create(:org_id, :resp_email, :resp_orglevel, :resp_allowreturn, :resp_allowpartial)", array(
+            ":org_id" => $this->getorg_id(),
+            ":resp_email" => $this->getresp_email(),
+            ":resp_orglevel" => $this->getresp_orglevel(),
+            ":resp_allowreturn" => $this->getresp_allowreturn(),
+            ":resp_allowpartial" => $this->getresp_allowpartial()
+        ));
+        if (count($results) === 0) {
+            throw new \Exception("Não foi possível salvar os dados");
         } else {
-            $results = $sql->select("CALL sp_respondent_create(:org_id, :resp_email, :resp_orglevel, :resp_allowreturn, :resp_allowpartial)", array(
-                ":org_id" => $this->georg_id(),
-                ":resp_email" => $this->getresp_email(),
-                ":resp_orglevel" => $this->getresp_orglevel(),
-                ":resp_allowreturn" => $this->getresp_allowreturn(),
-                ":resp_allowpartial" => $this->getresp_allowpartial()
+            $data = $results[0];
+            $code = Security::secured_encrypt($data["resp_id"]);
+            $link = SysConfig::SITE_URL . "/respond?code=$code";
+            $mailer = new Mailer($data["resp_email"], "Colaborador", "EasyPlanning - Questinário", "respondent", array(
+                "name" => "Colaborador",
+                "link" => $link,
+                "org_tradingname" => $_SESSION[User::SESSION]["org_tradingname"]
             ));
-            if (count($results) === 0) {
-                throw new \Exception("Não foi possível salvar os dados");
-            } else {
-                $data = $results[0];
-                $code = Security::secured_encrypt($data["resp_id"]);
-                $link = SysConfig::SITE_URL . "/respond?code=$code";
-                $mailer = new Mailer($data["resp_email"], "Colaborador", "EasyPlanning - Questinário", "mailRespond", array(
-                    "name" => "Colaborador",
-                    "link" => $link
-                ));
-                $mailer->send();
-                //return $data;
-            }
+            $mailer->send();
+            //return $data;
         }
     }
 
@@ -203,7 +212,7 @@ class Respondent extends Model
     public static function getFromOrganization($orgid)
     {
         $sql = new Sql();
-        return $sql->select("SELECT * FROM tb_repondents a WHERE org_id=:ID ORDER BY resp_email", array(
+        return $sql->select("SELECT * FROM tb_respondents a WHERE org_id=:ID ORDER BY resp_email", array(
             ":ID" => (int)$orgid
         ));
     }

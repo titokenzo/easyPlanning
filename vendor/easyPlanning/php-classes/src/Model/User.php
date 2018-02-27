@@ -44,22 +44,25 @@ class User extends Model
         }
         $data = $results[0];
         if (password_verify($password, $data["user_password"]) === FALSE) {
+            // throw new \Exception("Usuário inexistente ou senha inválida - " . $login ."/". $password . "=" . $data["user_password"]);
             throw new \Exception("Usuário inexistente ou senha inválida");
         }
         $user = new User();
         $data["user_password"] = NULL;
         $data["org_id"] = NULL;
-        $data["org_tradingname"] = NULL;
+        $data["org_name"] = NULL;
         // $user->setData($data);
         
         // GET USER ORGANIZATIONS
-        $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
+        $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
             ":ID" => $data["user_id"]
         ));
-        if (count($results) === 0 and ! (int) $data["user_isadmin"] === 1) {
-            throw new \Exception("Usuário não associado a nenhuma Organização");
-        } elseif (count($results) === 1) {
-            $data = array_merge($data, $results[0]);
+        if((int) $data["user_isadmin"] === 0){
+            if ((! $results) or count($results) === 0) {
+                throw new \Exception("Usuário não associado a nenhuma Organização");
+            } elseif (count($results) === 1) {
+                $data = array_merge($data, $results[0]);
+            }
         }
         
         $_SESSION[User::SESSION] = $data;
@@ -74,12 +77,12 @@ class User extends Model
             $results = array(
                 0 => array(
                     "org_id" => 0,
-                    "org_tradingname" => "Adminstração"
+                    "org_name" => "Adminstração"
                 )
             );
         } else {
             $sql = new Sql();
-            $results = $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
+            $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
                 ":USER" => $data["user_id"],
                 ":ORG" => $idorg
             
@@ -228,10 +231,10 @@ class User extends Model
                     "name" => $data["user_name"],
                     "link" => $link
                 ));
-                if(!$mailer->send()){
+                if (! $mailer->send()) {
                     throw new \Exception('Erro ao enviar e-mail: ' . $this->mail->ErrorInfo);
                 }
-                //$mailer->send();
+                // $mailer->send();
                 return $data;
             }
         }
@@ -273,7 +276,7 @@ class User extends Model
             "cost" => 12
         ]);
         $sql = new Sql();
-        $sql->query("UPDATE tb_users SET user_password=:pass WHERE user_id=:id", array(
+        $sql->query("UPDATE tb_users SET user_password=:pass, user_dtupdate=NOW() WHERE user_id=:id", array(
             ":pass" => $pass,
             ":id" => $this->getuser_id()
         ));

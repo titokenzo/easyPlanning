@@ -11,6 +11,17 @@ use easyPlanning\Model\Perspective;
 use easyPlanning\Model\Question;
 use easyPlanning\Model\Plan;
 use easyPlanning\Model\Respondent;
+use easyPlanning\SysRouter;
+
+$verifyLogin = function () {
+    return function () {
+        if (! isset($_SESSION[User::SESSION]) || ! $_SESSION[User::SESSION] || ! (int) $_SESSION[User::SESSION]["user_id"] > 0) {
+            $app = \Slim\Slim::getInstance();
+            $app->flash('error', 'Você precisa estar logado');
+            $app->redirect('/login');
+        }
+    };
+};
 
 $app = new Slim();
 
@@ -22,7 +33,10 @@ $app->get('/login', function () {
         "header" => false,
         "footer" => false
     ]);
-    $page->setTpl('login');
+    $error = isset($_SESSION['slim.flash']['error'])?$_SESSION['slim.flash']['error']:NULL;
+    $page->setTpl('login', array(
+        "error" => $error
+    ));
 });
 
 $app->post('/login', function () {
@@ -73,6 +87,20 @@ $app->get('/logout', function () {
 
 // HOME
 $app->get('/', function () {
+    echo "<h1>hi</h1>";
+    User::verifyLogin();
+    $page = new Page([
+        "data" => array(
+            "logged" => $_SESSION[User::SESSION]
+        )
+    ]);
+    $page->setTpl("index", array(
+        "logged" => $_SESSION[User::SESSION]
+    ));
+});
+
+$app->post('/', function () {
+    echo "<h1>hi</h1>";
     User::verifyLogin();
     $page = new Page([
         "data" => array(
@@ -93,21 +121,22 @@ $app->get('/forgot', function () {
 });
 
 $app->post('/forgot', function () {
+    $error = NULL;
+    try {
+        $user = User::getForgot($_POST["email"]);
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
-    try{
-        $user = User::getForgot($_POST["email"]);
-        $page->setTpl('forgot-sent');
-    }catch(Exception $e){
-        $page->setTpl('forgot-sent', array(
-            "error" => $e->getMessage()
-        ));
-    }
+    $page->setTpl('forgot-sent', array(
+        "error" => $error
+    ));
 });
 
-//Função desabilitada, chamada direto pelo endereço "/forgot"
+// Função desabilitada, chamada direto pelo endereço "/forgot"
 $app->get('/forgot/sent', function () {
     $page = new Page([
         "header" => false,
@@ -117,15 +146,22 @@ $app->get('/forgot/sent', function () {
 });
 
 $app->get('/forgot/reset', function () {
-    $user = User::validForgotDecrypt($_GET["code"]);
+    $error = NULL;
+    $user = NULL;
+    try {
+        $user = User::validForgotDecrypt($_GET["code"])["user_name"];
+    } catch (Exception $e) {
+        $error = $e->getMessage();
+    }
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
     
     $page->setTpl('forgot-reset', array(
-        "name" => $user["person_name"],
-        "code" => $_GET["code"]
+        "name" => $user,
+        "code" => $_GET["code"],
+        "error" => $error
     ));
 });
 
@@ -555,63 +591,71 @@ $app->get('/respondents', function () {
     $objs = Respondent::getFromOrganization($data["org_id"]);
     $page = new Page();
     $page->setTpl('respondents', array(
-        "objs" => $objs
-    ));
-});
-
-// CREATE
-$app->get('/respondents/create', function () {
-    User::verifyLogin();
-    $page = new Page();
-    $page->setTpl('respondents-create', array(
+        "objs" => $objs,
         "levels" => Respondent::getOrganizationLevelList()
     ));
 });
 
-// DELETE
-$app->get('/respondents/:idobj/delete', function ($idobj) {
-    User::verifyLogin();
-    $obj = new Respondent();
-    $obj->get((int) $idobj);
-    $obj->delete();
-    header("Location: /respondents");
-    exit();
-});
-
-// VIEW UPDATE
-$app->get('/respondents/:idobj', function ($idobj) {
-    User::verifyLogin();
-    $obj = new Respondent();
-    $obj->get((int) $idobj);
-    $page = new Page();
-    $page->setTpl('respondents-update', array(
-        "obj" => $obj->getValues(),
-        "levels" => Respondent::getOrganizationLevelList()
-    ));
-});
-
-// SAVE CREATE
-$app->post('/respondents/create', function () {
-    User::verifyLogin();
-    $obj = new Respondent();
-    $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
-    $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
-    $obj->setData($_POST);
-    $obj->save();
-    header("Location: /respondents");
-    exit();
-});
-
-// SAVE UPDATE
-$app->post('/respondents/:idobj', function ($idobj) {
-    User::verifyLogin();
-    $obj = new Respondent();
-    $_POST["respondent_isopen"] = isset($_POST["respondent_isopen"]) ? 1 : 0;
-    $obj->get((int) $idobj);
-    $obj->setData($_POST);
-    $obj->update();
-    header("Location: /respondents");
-    exit();
+$app->group('/respondents', $verifyLogin(), function () use ($app) {
+    // CREATE
+    $app->get('/create', function () {
+        // User::verifyLogin();
+        $page = new Page();
+        $page->setTpl('respondents-create', array(
+            "levels" => Respondent::getOrganizationLevelList()
+        ));
+    });
+    
+    // DELETE
+    $app->get('/:idobj/delete', function ($idobj) {
+        User::verifyLogin();
+        $obj = new Respondent();
+        $obj->get((int) $idobj);
+        $obj->delete();
+        header("Location: /respondents");
+        exit();
+    });
+    
+    // VIEW UPDATE
+    $app->get('/:idobj', function ($idobj) {
+        User::verifyLogin();
+        $obj = new Respondent();
+        $obj->get((int) $idobj);
+        $page = new Page();
+        $page->setTpl('respondents-update', array(
+            "obj" => $obj->getValues(),
+            "levels" => Respondent::getOrganizationLevelList()
+        ));
+    });
+    
+    // SAVE CREATE
+    $app->post('/create', function () {
+        User::verifyLogin();
+        $obj = new Respondent();
+        $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
+        $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
+        $obj->setData($_POST);
+        try {
+            $obj->saveRespodents();
+            // $app->redirect('/new', 301);
+            header("Location: /respondents");
+            exit();
+        } catch (Exception $e) {
+            SysRouter::goRespondentCreate($e->getMessage());
+        }
+    });
+    
+    // SAVE UPDATE
+    $app->post('/:idobj', function ($idobj) {
+        User::verifyLogin();
+        $obj = new Respondent();
+        $_POST["respondent_isopen"] = isset($_POST["respondent_isopen"]) ? 1 : 0;
+        $obj->get((int) $idobj);
+        $obj->setData($_POST);
+        $obj->update();
+        header("Location: /respondents");
+        exit();
+    });
 });
 
 $app->run();

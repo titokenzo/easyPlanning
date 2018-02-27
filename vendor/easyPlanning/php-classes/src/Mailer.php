@@ -43,7 +43,9 @@ class Mailer extends SysConfig{
     }
     
     public function send(){
-        return $this->mail->send();
+        if(!$this->mail->send()){
+            throw new \Exception($this->mail->ErrorInfo); 
+        }
     }
 }
 ?>

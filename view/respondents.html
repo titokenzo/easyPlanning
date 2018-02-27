@@ -13,9 +13,10 @@
 					<div class="x_title">
 						{if="!(int)$logged.org_id==0"}
 						<div class="box-header">
-							<a href="/respondents/create" class="btn btn-success">Cadastrar novo respondedor</a>
-			            </div>
-			            {/if}
+							<a href="/respondents/create" class="btn btn-success">Cadastrar
+								novo respondedor</a>
+						</div>
+						{/if}
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -23,9 +24,9 @@
 							<thead>
 								<tr>
 									<th>E-mail</th>
+									<th>Nível</th>
 									<th>Cadastro</th>
-									<th>Concluído</th>
-									<th style="width: 60px">Notificar</th>
+									<th style="width: 60px">Concluído</th>
 									<th style="width: 140px">&nbsp;</th>
 								</tr>
 							</thead>
@@ -34,11 +35,15 @@
 								{loop="$objs"}
 								<tr>
 									<td>{$value.resp_email}</td>
+									<td>{loop="$levels"}{if="$key==$value1.resp_orglevel"}{$value}{break}{/if}{/loop}</td>
 									<td>{$value.resp_dtcreation}</td>resp_orglevel
 									<td>{if="$value.resp_hascompleted== 1"}Sim{else}Não{/if}</td>
-									<td><a href="/respondents/{$value.org_id}"
+									<td><a href="/respondents/{$value.resp_id}"
 										class="btn btn-primary btn-xs"><i class="fa fa-envelope-o"></i>
-											Editar</a></td>
+											Editar</a> <a href="/respondents/{$value.resp_id}/delete"
+										onclick="return confirm('Deseja realmente excluir este registro?')"
+										class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>
+											Excluir</a></td>
 								</tr>
 								{/loop}
 							</tbody>
