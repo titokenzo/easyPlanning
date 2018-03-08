@@ -3,7 +3,7 @@
 	<div class="">
 		<div class="page-title">
 			<div class="title_left">
-				<h3>Usuários</h3>
+				<h3>Respondedores</h3>
 			</div>
 		</div>
 		<div class="clearfix"></div>
@@ -14,38 +14,42 @@
 			</div>
 			<div class="x_content">
 				<form role="form" action="/respondents/create" method="post">
-				<input type="hidden" id="org_id" name="org_id" value="{$logged.org_id}" />
+					<input type="hidden" id="org_id" name="org_id"
+						value="{$logged.org_id}" />
 					<div class="box-body">
 						{if="isset($error)"}
 						<div class="alert alert-danger" role="alert">{$error}</div>
 						{/if}
 						<div class="form-group">
-							<label for="resp_email">E-mail * (para vários e-mails, separe por vírgula ",")</label> <input type="text"
-								class="form-control" id="resp_email" name="resp_email"
-								placeholder="Digite o e-mail" required />
+							<label for="resp_email">E-mail * (para vários e-mails,
+								separe por vírgula ",")</label> <input type="text" class="form-control"
+								id="resp_email" name="resp_email" placeholder="Digite o e-mail"
+								required />
 						</div>
 						<div class="form-group">
-							<label for="resp_orglevel">Nível *</label> <select id="resp_orglevel"
-								name="resp_orglevel" class="form-control" required>
+							<label for="resp_orglevel">Nível *</label> <select
+								id="resp_orglevel" name="resp_orglevel" class="form-control"
+								required>
 								<option value="">Selecione...</option> {loop="$levels"}
 								<option value="{$key}">{$value}</option> {/loop}
 							</select>
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="resp_allowpartial"
-								value="0"> Aceitar resposta parcial (concluir sem responder todas as questões)
+								value="0"> Aceitar resposta parcial (concluir sem
+								responder todas as questões)
 							</label>
 						</div>
 						<div class="checkbox">
 							<label> <input type="checkbox" name="resp_allowreturn"
-								value="0"> Permitir resposta iterativa (responder um pouco a cada acesso)  
+								value="0"> Permitir resposta iterativa (responder um
+								pouco a cada acesso)
 							</label>
 						</div>
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Cadastrar</button>
-						<button type="button" class="btn btn-secondary"
-							onclick="history.back()">Voltar</button>
+						<a class="btn btn-default" href="/respondents">Voltar</a>
 					</div>
 				</form>
 			</div>

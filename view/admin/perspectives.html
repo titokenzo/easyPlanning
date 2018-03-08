@@ -3,7 +3,7 @@
 	<div class="">
 		<div class="page-title">
 			<div class="title_left">
-				<h3>Grupos de Perguntas</h3>
+				<h3>Administrar Perspectivas</h3>
 			</div>
 		</div>
 		<div class="clearfix"></div>
@@ -12,7 +12,7 @@
 				<div class="x_panel">
 					<div class="x_title">
 						<div class="box-header">
-							<a href="/qsets/create" class="btn btn-success">Cadastrar novo grupo de perguntas</a>
+							<a href="/admin/perspectives/create" class="btn btn-success">Cadastrar nova perspectiva</a>
 			            </div>
 						<div class="clearfix"></div>
 					</div>
@@ -21,6 +21,7 @@
 							<thead>
 								<tr>
 									<th>Nome</th>
+									<th>Cor</th>
 									<th></th>
 								</tr>
 							</thead>
@@ -28,10 +29,11 @@
 							<tbody>
 								{loop="$objs"}
 								<tr>
-				                    <td>{$value.qset_name}</td>
+				                    <td>{$value.persp_name}</td>
+				                    <td><span class="btn-xs" style="background-color: #{$value.persp_color}"><i class="fa fa-square-o"></i> </span></td>
 				                    <td>
-				                      <a href="/qsets/{$value.qset_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
-				                      <a href="/qsets/{$value.qset_id}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
+				                      <a href="/admin/perspectives/{$value.persp_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+				                      <a href="/admin/perspectives/{$value.persp_id}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
 				                    </td>							
 								</tr>
 								{/loop}

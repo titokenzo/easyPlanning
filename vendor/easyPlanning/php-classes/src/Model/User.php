@@ -24,7 +24,6 @@ class User extends Model
             "user_name",
             "user_email",
             "user_islogged",
-            "user_type",
             "user_phone",
             "user_position",
             "user_photo",
@@ -44,7 +43,7 @@ class User extends Model
         }
         $data = $results[0];
         if (password_verify($password, $data["user_password"]) === FALSE) {
-            // throw new \Exception("Usuário inexistente ou senha inválida - " . $login ."/". $password . "=" . $data["user_password"]);
+            //throw new \Exception("Usuário inexistente ou senha inválida - " . $login ."/". $password . "=" . $data["user_password"]);
             throw new \Exception("Usuário inexistente ou senha inválida");
         }
         $user = new User();
@@ -54,7 +53,7 @@ class User extends Model
         // $user->setData($data);
         
         // GET USER ORGANIZATIONS
-        $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
+        $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name, a.userorg_type FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
             ":ID" => $data["user_id"]
         ));
         if((int) $data["user_isadmin"] === 0){
@@ -77,12 +76,13 @@ class User extends Model
             $results = array(
                 0 => array(
                     "org_id" => 0,
-                    "org_name" => "Adminstração"
+                    "org_name" => "Adminstração",
+                    "userorg_type" => 0
                 )
             );
         } else {
             $sql = new Sql();
-            $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
+            $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name, userorg_type FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
                 ":USER" => $data["user_id"],
                 ":ORG" => $idorg
             
@@ -161,7 +161,9 @@ class User extends Model
         $results = $sql->select("SELECT * FROM tb_users a WHERE a.user_id=:id", array(
             ":id" => $user_id
         ));
-        
+        if(!$results){
+            throw new \Exception("Não foi possível recuperar o registro");
+        }
         $this->setData($results[0]);
     }
 
@@ -231,8 +233,10 @@ class User extends Model
                     "name" => $data["user_name"],
                     "link" => $link
                 ));
-                if (! $mailer->send()) {
-                    throw new \Exception('Erro ao enviar e-mail: ' . $this->mail->ErrorInfo);
+                try{
+                    $mailer->send();
+                }catch(\Exception $e){
+                    throw new \Exception('Não foi possível enviar o e-mail de recuperação: ' . $e->getMessage());
                 }
                 // $mailer->send();
                 return $data;
@@ -285,11 +289,36 @@ class User extends Model
     public static function getUserTypeList()
     {
         $list = array(
-            0 => "Administrador",
             1 => "Consultor Interno",
             2 => "Colaborador"
         );
         return $list;
+    }
+    
+    public static function getUserOrganizations($id)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT b.user_id, a.org_id, b.userorg_type, a.org_tradingname FROM tb_organizations a LEFT JOIN tb_users_organizations b on a.org_id=b.org_id and b.user_id=:USER",array(":USER"=>$id));
+    }
+    
+    public function registrar(){
+        $sql = new Sql();
+        $sql->query("INSERT INTO tb_tmp (data) VALUES(NOW())");
+    }
+    
+    public function updatePermition($idorg, $type){
+        $sql = new Sql();
+        $sql->query("DELETE FROM tb_users_organizations WHERE org_id=:ORG AND user_id=:USER",array(
+            ":ORG" => $idorg,
+            ":USER" => $this->getuser_id()
+        ));
+        if(!$type==0){
+            $sql->query("INSERT INTO tb_users_organizations (org_id,user_id,userorg_type) VALUES (:ORG,:USER,:TYPE)",array(
+                ":ORG" => $idorg,
+                ":USER" => $this->getuser_id(),
+                ":TYPE" => $type
+            ));
+        }
     }
 
     public static function getSessionUserOrganizations()

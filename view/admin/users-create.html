@@ -3,7 +3,7 @@
 	<div class="">
 		<div class="page-title">
 			<div class="title_left">
-				<h3>Usuários</h3>
+				<h3>Administração de Usuários</h3>
 			</div>
 		</div>
 		<div class="clearfix"></div>
@@ -13,20 +13,8 @@
 				<div class="clearfix"></div>
 			</div>
 			<div class="x_content">
-				<form role="form" action="/users/create" method="post">
+				<form role="form" action="/admin/users/create" method="post">
 					<div class="box-body">
-						<div class="form-group">
-							<label>Organização</label> <input type="text"
-								class="form-control" value={$logged.org_name}
-								disabled="disabled" />
-						</div>
-						<div class="form-group">
-							<label>Tipo</label>
-								{loop="$types"} {if="$key==2"}
-								<input type="text" class="form-control" value={$value}
-								disabled="disabled" /> {/if}
-								{/loop}
-						</div>
 						<div class="form-group">
 							<label for="user_name">Nome *</label> <input type="text"
 								class="form-control" id="user_name" name="user_name"
@@ -68,11 +56,26 @@
 								class="form-control" id="user_photo" name="user_photo"
 								maxlength="200" placeholder="Selecione a foto" />
 						</div>
+						{if="$logged.org_id==0"}
+						<div class="form-group">
+							<label for="user_type">Organização *</label> <select id="user_type"
+								name="user_type" class="form-control" onchange="pickOrganiaztion(this);">
+								<option value="">Selecione...</option> {loop="$types"}
+								<option value="{$key}">{$value}</option> {/loop}
+							</select>
+						</div>
+						<div class="form-group">
+							<label for="user_type">Papel na Organização *</label> <select id="user_type"
+								name="user_type" class="form-control" required>
+								<option value="">Selecione...</option> {loop="$types"}
+								<option value="{$key}">{$value}</option> {/loop}
+							</select>
+						</div>
+						{/if}
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Cadastrar</button>
-						<button type="button" class="btn btn-secondary"
-							onclick="history.back()">Voltar</button>
+						<a class="btn btn-default" href="/admin/users">Voltar</a>
 					</div>
 				</form>
 			</div>

@@ -38,9 +38,11 @@
 									<td>{loop="$levels"}{if="$key==$value1.resp_orglevel"}{$value}{break}{/if}{/loop}</td>
 									<td>{$value.resp_dtcreation}</td>resp_orglevel
 									<td>{if="$value.resp_hascompleted== 1"}Sim{else}Não{/if}</td>
-									<td><a href="/respondents/{$value.resp_id}"
+									<td> {if="$value.resp_hascompleted==0 AND $value.resp_hasemailerror==0"}<a href="/respondents/{$value.resp_id}" 
 										class="btn btn-primary btn-xs"><i class="fa fa-envelope-o"></i>
-											Editar</a> <a href="/respondents/{$value.resp_id}/delete"
+											Editar</a>{else}<a href="#}" 
+										class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i>
+											Editar</a>{/if} <a href="/respondents/{$value.resp_id}/delete"
 										onclick="return confirm('Deseja realmente excluir este registro?')"
 										class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>
 											Excluir</a></td>

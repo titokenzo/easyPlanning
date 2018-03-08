@@ -3,7 +3,7 @@
 	<div class="">
 		<div class="page-title">
 			<div class="title_left">
-				<h3>Usuários</h3>
+				<h3>Administração de Usuários</h3>
 			</div>
 		</div>
 		<div class="clearfix"></div>
@@ -12,9 +12,8 @@
 				<div class="x_panel">
 					<div class="x_title">
 						<div class="box-header">
-							<a href="/users/create" class="btn btn-success">Cadastrar
-								novo usuário</a>
-						</div>
+							<a href="/admin/users/create" class="btn btn-success">Cadastrar novo usuário</a>
+			            </div>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
@@ -32,17 +31,17 @@
 							<tbody>
 								{loop="$objs"}
 								<tr>
-									<td>{$value.user_name}</td>
-									<td>{$value.user_email}</td>
-									<td>{$value.user_login}</td/>
-									<td>{if="$value.user_isadmin == 1"}Sim{else}Não{/if}</td>
-									<td><a href="/users/{$value.user_id}"
-										class="btn btn-primary btn-xs"><i class="fa fa-edit"></i>
-											Editar</a><a
-										href="/users/{$value.user_id}/delete"
-										class="btn btn-danger btn-xs"
-										onclick="return confirm('Deseja realmente excluir este registro?')"><i
-											class="fa fa-trash"></i> Excluir</a></td>
+				                    <td>{$value.user_name}</td>
+				                    <td>{$value.user_email}</td>
+				                    <td>{$value.user_login}</td/>
+				                    <td>{if="$value.user_isadmin == 1"}Sim{else}Não{/if}</td>
+				                    <td>
+				                      <a href="/admin/users/{$value.user_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+										<a href="/admin/users/{$value.user_id}/delete"
+										onclick="return confirm('Deseja realmente excluir este registro?')"
+										class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>
+											Excluir</a>
+									</td>							
 								</tr>
 								{/loop}
 							</tbody>

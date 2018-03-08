@@ -21,7 +21,7 @@
 						<div class="form-group">
 							<label for="resp_email">E-mail *</label> <input type="email"
 								class="form-control" id="resp_email" name="resp_email"
-								maxlength="200" placeholder="Digite o e-mail" required value="{$obj.resp_email}"/>
+								maxlength="200" placeholder="Digite o e-mail" required value="{$obj.resp_email}" readonly="readonly"/>
 						</div>
 						<div class="form-group">
 							<label for="resp_orglevel">Nível *</label> <select
@@ -47,8 +47,7 @@
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Salvar</button>
-						<button type="button" class="btn btn-secondary"
-							onclick="history.back()">Voltar</button>
+						<a class="btn btn-default" href="/respondents">Voltar</a>
 					</div>
 				</form>
 			</div>

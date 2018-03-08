@@ -1,0 +1,45 @@
+<div class="container">
+    <h1>Auto populate dropdown</h1>
+    <div id="div_content">
+
+        <div>Organização</div>
+        <select id="sel_org" id="sel_org" onchange="pickOrganization(this)" _user="1" _org="1" _type="0">
+            <option value="0">- Selecione -</option>
+            <option value="32">TECNASA LTDA</option>
+            <option value="33">GHC Tecnologia da Informação</option>
+            <option value="39">Centro Integrado de Gestão de Franquia LTDA</option>
+            <option value="44">Rocha Compensados LTDA</option>
+            <option value="45">Construtora Conic Souza Filho LTDA</option>
+            <option value="46">Romarco Construtora e Incorporadora Ltda</option>
+            <option value="47">Valgueiro Teixeira</option>
+            <option value="48">Treina Recife LTDA</option>
+        </select>
+
+        <div class="clear"></div>
+		<br/>	
+		</div>
+
+</div>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script>
+function pickOrganization(obj){
+    var orgid = $(obj).attr("_org");
+	var userid = $(obj).attr("_user");
+	var type = $(obj).attr("_type");
+	alert("user: " + userid + " /org: " + orgid + " /type: " + type);
+    $.ajax({
+        url: 'http://www.p2a.com.br/admin/users/organization',
+        type: 'post',
+        data: {user_id:userid, org_id:orgid, type:type},
+        dataType: 'json',
+        success: function(data, textStatus, jqXHR){
+            alert('Wine created successfully');
+            
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert('addWine error: ' + textStatus);
+        }
+	});
+	return false;
+}
+</script>

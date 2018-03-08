@@ -12,7 +12,8 @@ class Plan extends Model
         $fields = array(
             "plan_id",
             "org_id",
-            "plan_dtcreation" . "plan_isopen",
+            "plan_dtcreation",
+            "plan_isopen",
             "plan_title",
             "plan_team",
             "plan_mission",

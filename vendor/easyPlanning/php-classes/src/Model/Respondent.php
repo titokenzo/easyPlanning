@@ -67,12 +67,13 @@ class Respondent extends Model
             throw new \Exception("Não foi possível salvar os dados");
         } else {
             $data = $results[0];
-            $code = Security::secured_encrypt($data["resp_id"]);
+            $code = $data["resp_id"] . '-'. $data["org_id"];
+            $code = Security::secured_encrypt($code);
             $link = SysConfig::SITE_URL . "/respond?code=$code";
             $mailer = new Mailer($data["resp_email"], "Colaborador", "EasyPlanning - Questinário", "respondent", array(
                 "name" => "Colaborador",
                 "link" => $link,
-                "org_tradingname" => $_SESSION[User::SESSION]["org_tradingname"]
+                "org_tradingname" => $_SESSION[User::SESSION]["org_name"]
             ));
             $mailer->send();
             //return $data;
@@ -123,28 +124,13 @@ class Respondent extends Model
     {
         $sql = new Sql();
         $results = $sql->query("UPDATE tb_respondents SET 
-            resp_login=:resp_login,
-            resp_password=:resp_password,
-            resp_isadmin=:resp_isadmin,
-            resp_cpf=:resp_cpf,
-            resp_name=:resp_name,
-            resp_email=:resp_email,
-            resp_type=:resp_type,
-            resp_phone=:resp_phone,
-            resp_position=:resp_position,
-            resp_photo=:resp_photo,
-            resp_dtupdate=NOW()
+            resp_allowreturn=:resp_allowreturn,
+            resp_allowpartial=:resp_allowpartial,
+            resp_orglevel=:resp_orglevel
         WHERE resp_id=:resp_id", array(
-            ":resp_login" => $this->getresp_login(),
-            ":resp_password" => $pass,
-            ":resp_isadmin" => $this->getresp_isadmin(),
-            ":resp_cpf" => $this->getresp_cpf(),
-            ":resp_name" => $this->getresp_name(),
-            ":resp_email" => $this->getresp_email(),
-            ":resp_type" => $this->getresp_type(),
-            ":resp_phone" => $this->getresp_phone(),
-            ":resp_position" => $this->getresp_position(),
-            ":resp_photo" => $this->getresp_photo(),
+            ":resp_allowreturn" => $this->getresp_allowreturn(),
+            ":resp_allowpartial" => $this->getresp_allowpartial(),
+            ":resp_orglevel" => $this->getresp_orglevel(),
             ":resp_id" => $this->getresp_id()
         ));
     }
