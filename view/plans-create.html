@@ -14,6 +14,7 @@
 			</div>
 			<div class="x_content">
 				<form role="form" action="/plans/create" method="post">
+				<input type="hidden" id="org_id" name="org_id" value={$logged.org_id}/>
 					<div class="box-body">
 						<div class="form-group">
 							<label for="plan_title">Título *</label> <input type="text"
@@ -41,14 +42,13 @@
 								placeholder="Digite os valores"></textarea>
 						</div>
 						<div class="checkbox">
-							<label> <input type="checkbox" name="plan_isopen" value="0"/> Aberto
+							<label> <input type="checkbox" name="plan_isopen" value="1" checked/> Aberto
 							</label>
 						</div>
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Cadastrar</button>
-						<button type="button" class="btn btn-secondary"
-							onclick="history.back()">Voltar</button>
+						<a class="btn btn-default" href="/plans">Voltar</a>
 						<br /> <br />
 					</div>
 				</form>

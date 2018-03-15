@@ -143,23 +143,26 @@ class Respondent extends Model
         ));
     }
 
-    public static function validForgotDecrypt($code)
+    public static function validFormDecrypt($code=NULL)
     {
-        $idrecovery = Security::secured_decrypt_url($code);
+        if(!isset($code)){
+            throw new \Exception("Este link não é válido");
+        }
+        //$data["resp_id"] . '-'. $data["org_id"]
+        $decode = explode("-", Security::secured_decrypt_url($code));
+        $resp_id = $decode[0];
+        $org_id = $decode[1];
         $sql = new Sql();
         $results = $sql->select("
-            SELECT * 
-            FROM tb_respspasswordsrecoveries r 
-            INNER JOIN tb_resps u USING(resp_id)
+            SELECT
+                a.org_id, a.resp_id, a.resp_email, a.resp_allowreturn, a.resp_allowpartial, a.resp_hascompleted, a.resp_orglevel, b.org_tradingname as org_name 
+                FROM tb_respondents a 
+                INNER JOIN tb_organizations b using(org_id) 
+                INNER JOIN tb_strategic_planning c on b.org_id=c.org_id and c.plan_status=1
             WHERE 
-                r.recovery_dtrecovery IS NULL
-                AND r.recovery_id=:idrecovery
-                AND DATE_ADD(r.recovery_dtregister, INTERVAL 1 HOUR) >= NOW();
-        ", array(
-            ":idrecovery" => $idrecovery
-        ));
+                a.org_id=:ORG AND a.resp_id=:RESP", array(":ORG"=>$org_id,":RESP" => $resp_id));
         if (count($results) === 0) {
-            throw new \Exception("Não foi possível recuperar a senha");
+            throw new \Exception("Este link não é mais válido");
         } else {
             return $results[0];
         }

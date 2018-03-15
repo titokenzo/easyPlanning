@@ -36,6 +36,27 @@ class Question extends Model
         );
     }
 
+    public static function listAllFromEnvironment($quest_environment=0)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * from tb_questions a
+            INNER JOIN tb_questions_sets b USING(qset_id)
+            INNER JOIN tb_perspectives c USING(persp_id)
+            WHERE a.quest_environment=:ENV
+            ORDER BY a.quest_text;",array(":ENV"=>$quest_environment)
+            );
+    }
+    
+    public static function listDistinctlPerspectives($quest_environment)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT DISTINCT c.persp_name,c.persp_id from tb_questions a
+            INNER JOIN tb_perspectives c USING(persp_id)
+            WHERE a.quest_environment=:ENV
+            ORDER BY c.persp_name;", array(":ENV"=>$quest_environment)
+            );
+    }
+    
     public function save()
     {
         $sql = new Sql();

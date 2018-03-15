@@ -18,7 +18,7 @@
 						<div class="form-group">
 							<label for="plan_title">Título *</label> <input type="text"
 								id="plan_title" name="plan_title" class="form-control"
-								placeholder="Digite o título" required value="{$value.plan_title}"/>
+								placeholder="Digite o título" required value="{$obj.plan_title}"/>
 						</div>
 						<div class="form-group">
 							<label for="plan_team">Time *</label> <textarea
@@ -33,7 +33,7 @@
 						<div class="form-group">
 							<label for="plan_vision">Visão</label> <textarea
 								class="form-control" id="plan_vision" name="plan_vision"
-								placeholder="Digite a visão">{$obj."plan_vision"}</textarea>
+								placeholder="Digite a visão">{$obj.plan_vision}</textarea>
 						</div>
 						<div class="form-group">
 							<label for="plan_values">Valores</label> <textarea
@@ -48,8 +48,7 @@
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Salvar</button>
-						<button type="button" class="btn btn-secondary"
-							onclick="history.back()">Voltar</button>
+						<a class="btn btn-default" href="/plans">Voltar</a>
 						<br /> <br />
 					</div>
 				</form>

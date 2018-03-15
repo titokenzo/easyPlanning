@@ -26,11 +26,15 @@ class Plan extends Model
     public static function listAll()
     {
         $sql = new Sql();
-        return $sql->select("SELECT * from tb_strategic_planning a 
-            INNER JOIN tb_organizations b USING(org_id) 
-            ORDER BY a.plan_title;");
+        return $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) ORDER BY a.plan_title;");
     }
 
+    public static function listFromOrg($idorg)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) WHERE a.org_id=:ORG ORDER BY a.plan_title;", array(":ORG"=>$idorg));
+    }
+    
     public function save()
     {
         $sql = new Sql();
@@ -52,7 +56,7 @@ class Plan extends Model
             :plan_vision,
             :plan_values
         )", array(
-            ":org_id" => $this->getorg_id(),
+            ":org_id" => (int)$this->getorg_id(),
             ":plan_isopen" => $this->getplan_isopen(),
             ":plan_title" => $this->getplan_title(),
             ":plan_team" => $this->getplan_team(),
@@ -77,7 +81,6 @@ class Plan extends Model
         $sql = new Sql();
         
         $sql->query("UPDATE tb_strategic_planning SET 
-                org_id=:org_id,
                 plan_isopen=:plan_isopen,
                 plan_title=:plan_title,
                 plan_team=:plan_team,
@@ -85,7 +88,6 @@ class Plan extends Model
                 plan_vision=:plan_vision,
                 plan_values=:plan_values
             WHERE plan_id=:plan_id", array(
-            ":org_id" => $this->getorg_id(),
             ":plan_isopen" => $this->getplan_isopen(),
             ":plan_title" => $this->getplan_title(),
             ":plan_team" => $this->getplan_team(),
@@ -102,6 +104,12 @@ class Plan extends Model
         $sql->query("DELETE FROM tb_strategic_planning WHERE plan_id=:id", array(
             ":id" => $this->getplan_id()
         ));
+    }
+    
+    public static function getActive($idorg){
+        $sql = new Sql();
+        $results = $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) WHERE a.org_id=:ORG", array(":ORG"=>$idorg));
+        return $results[0];
     }
 }
 ?>

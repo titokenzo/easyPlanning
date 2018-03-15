@@ -1,0 +1,58 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h3>Planejamentos Estratégicos</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Plano Estratégico</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<div class="box-body">
+					{if="$new===true"}
+					<h2>Não há um Plano ativo para a organização</h2>
+					{else}
+					<ul class="messages">
+						<li>
+							<div class="message_wrapper">
+								<h4 class="heading">Título:</h4>
+								<blockquote class="message">{$obj.plan_title}</blockquote>
+							</div>
+						</li>
+						<li>
+							<div class="message_wrapper">
+								<h4 class="heading">Time:</h4>
+								<blockquote class="message">{function="nl2br($obj.plan_team)"}</blockquote>
+							</div>
+						</li>
+						<li>
+							<div class="message_wrapper">
+								<h4 class="heading">Missão:</h4>
+								<blockquote class="message">{function="nl2br($obj.plan_mission)"}</blockquote>
+							</div>
+						</li>
+						<li>
+							<div class="message_wrapper">
+								<h4 class="heading">Visão:</h4>
+								<blockquote class="message">{function="nl2br($obj.plan_vision)"}</blockquote>
+							</div>
+						</li>
+						<li>
+							<div class="message_wrapper">
+								<h4 class="heading">Valores:</h4>
+								<blockquote class="message">{function="nl2br($obj.plan_values)"}</blockquote>
+							</div>
+						</li>
+					</ul>
+					{/if}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<!-- /page content -->

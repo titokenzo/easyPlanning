@@ -43,14 +43,12 @@ class User extends Model
         }
         $data = $results[0];
         if (password_verify($password, $data["user_password"]) === FALSE) {
-            //throw new \Exception("Usuário inexistente ou senha inválida - " . $login ."/". $password . "=" . $data["user_password"]);
             throw new \Exception("Usuário inexistente ou senha inválida");
         }
         $user = new User();
         $data["user_password"] = NULL;
         $data["org_id"] = NULL;
         $data["org_name"] = NULL;
-        // $user->setData($data);
         
         // GET USER ORGANIZATIONS
         $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name, a.userorg_type FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
@@ -65,8 +63,6 @@ class User extends Model
         }
         
         $_SESSION[User::SESSION] = $data;
-        // $_SESSION[User::SESSION] = $user->getValues();
-        // return $user;
     }
 
     public static function setSessionOrganization($idorg)
@@ -114,9 +110,7 @@ class User extends Model
 
     public function save()
     {
-        $pass = password_hash($this->getuser_password(), PASSWORD_DEFAULT, [
-            "cost" => 12
-        ]);
+        $pass = password_hash($this->getuser_cpf(), PASSWORD_DEFAULT, ["cost" => 12]);
         
         $sql = new Sql();
         $results = $sql->query("INSERT INTO tb_users (
@@ -126,7 +120,6 @@ class User extends Model
             user_cpf,
             user_name,
             user_email,
-            user_type,
             user_phone,
             user_position,
             user_photo
@@ -137,7 +130,6 @@ class User extends Model
             :user_cpf,
             :user_name,
             :user_email,
-            :user_type,
             :user_phone,
             :user_position,
             :user_photo
@@ -148,11 +140,15 @@ class User extends Model
             ":user_cpf" => $this->getuser_cpf(),
             ":user_name" => $this->getuser_name(),
             ":user_email" => $this->getuser_email(),
-            ":user_type" => $this->getuser_type(),
             ":user_phone" => $this->getuser_phone(),
             ":user_position" => $this->getuser_position(),
             ":user_photo" => $this->getuser_photo()
         ));
+    }
+    
+    public function saveColaborador($idorg){
+        $this->save();
+        $this->updatePermission($idorg,2);
     }
 
     public function get($user_id)
@@ -168,32 +164,24 @@ class User extends Model
     }
 
     public function update()
-    {
-        $pass = password_hash($this->getuser_password(), PASSWORD_DEFAULT, [
-            "cost" => 12
-        ]);
-        
+    {        
         $sql = new Sql();
         $results = $sql->query("UPDATE tb_users SET 
             user_login=:user_login,
-            user_password=:user_password,
             user_isadmin=:user_isadmin,
             user_cpf=:user_cpf,
             user_name=:user_name,
             user_email=:user_email,
-            user_type=:user_type,
             user_phone=:user_phone,
             user_position=:user_position,
             user_photo=:user_photo,
             user_dtupdate=NOW()
         WHERE user_id=:user_id", array(
             ":user_login" => $this->getuser_login(),
-            ":user_password" => $pass,
             ":user_isadmin" => $this->getuser_isadmin(),
             ":user_cpf" => $this->getuser_cpf(),
             ":user_name" => $this->getuser_name(),
             ":user_email" => $this->getuser_email(),
-            ":user_type" => $this->getuser_type(),
             ":user_phone" => $this->getuser_phone(),
             ":user_position" => $this->getuser_position(),
             ":user_photo" => $this->getuser_photo(),
@@ -295,7 +283,7 @@ class User extends Model
         return $list;
     }
     
-    public static function getUserOrganizations($id)
+    public static function getUserOrganizations($id=0)
     {
         $sql = new Sql();
         return $sql->select("SELECT b.user_id, a.org_id, b.userorg_type, a.org_tradingname FROM tb_organizations a LEFT JOIN tb_users_organizations b on a.org_id=b.org_id and b.user_id=:USER",array(":USER"=>$id));
@@ -306,7 +294,7 @@ class User extends Model
         $sql->query("INSERT INTO tb_tmp (data) VALUES(NOW())");
     }
     
-    public function updatePermition($idorg, $type){
+    public function updatePermission($idorg, $type=2){
         $sql = new Sql();
         $sql->query("DELETE FROM tb_users_organizations WHERE org_id=:ORG AND user_id=:USER",array(
             ":ORG" => $idorg,

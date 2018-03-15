@@ -21,20 +21,16 @@
 								maxlength="200" placeholder="Digite o nome" required />
 						</div>
 						<div class="form-group">
-							<label for="user_email">CPF (apenas números) *</label> <input
-								type="text" class="form-control" id="user_email"
-								name="user_email" maxlength="11" placeholder="Digite o e-mail"
+							<label for="user_cpf">CPF (apenas números) *</label> <input
+								type="text" class="form-control" id="user_cpf"
+								name="user_cpf" maxlength="11" placeholder="Digite o CPF"
 								required />
+								(será a senha incial do usuário)
 						</div>
 						<div class="form-group">
 							<label for="user_login">Login *</label> <input type="text"
 								class="form-control" id="user_login" name="user_login"
 								maxlength="20" placeholder="Digite o login" required />
-						</div>
-						<div class="form-group">
-							<label for="user_password">Senha *</label> <input type="password"
-								class="form-control" id="user_password" name="user_password"
-								placeholder="Digite a senha" required />
 						</div>
 						<div class="form-group">
 							<label for="user_email">E-mail *</label> <input type="email"
@@ -56,22 +52,12 @@
 								class="form-control" id="user_photo" name="user_photo"
 								maxlength="200" placeholder="Selecione a foto" />
 						</div>
-						{if="$logged.org_id==0"}
-						<div class="form-group">
-							<label for="user_type">Organização *</label> <select id="user_type"
-								name="user_type" class="form-control" onchange="pickOrganiaztion(this);">
-								<option value="">Selecione...</option> {loop="$types"}
-								<option value="{$key}">{$value}</option> {/loop}
-							</select>
+						<div class="checkbox">
+							<label> <input type="checkbox" name="user_isadmin"
+								value="0" />
+								Acesso de Administrador
+							</label>
 						</div>
-						<div class="form-group">
-							<label for="user_type">Papel na Organização *</label> <select id="user_type"
-								name="user_type" class="form-control" required>
-								<option value="">Selecione...</option> {loop="$types"}
-								<option value="{$key}">{$value}</option> {/loop}
-							</select>
-						</div>
-						{/if}
 					</div>
 					<div class="box-footer">
 						<button type="submit" class="btn btn-primary">Cadastrar</button>
