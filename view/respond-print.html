@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{$cfg.imgs}/favicon.ico" type="image/ico" />
+
+<title>Easy Planning</title>
+
+<!-- Bootstrap -->
+<link href="{$cfg.libcss}bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="{$cfg.libcss}font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="{$cfg.libcss}nprogress.css" rel="stylesheet">
+<!-- Select2 -->
+<link href="{$cfg.libcss}select2.min.css" rel="stylesheet">
+<!-- Switchery -->
+<link href="{$cfg.libcss}switchery.min.css" rel="stylesheet">
+<!-- starrr -->
+<link href="{$cfg.libcss}starrr.css" rel="stylesheet">
+<!-- Custom Theme Style -->
+<link href="{$cfg.css}custom.min.css" rel="stylesheet">
+<style type="text/css">
+.table .txt-small {
+	width: 35px;
+	heght: 40px;
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	font-size: 15px;
+}
+
+.img-small {
+	width: 30px;
+}
+</style>
+<style type="text/css" media="all">
+body{
+	min-width: 600px;
+}
+.tab-content > .tab-pane {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+.page-break{
+	display: block;
+	page-break-before: always !important;
+	top:0px;
+}
+.panel > .panel-collapse{
+	display: block !important;
+}
+table > tbody{
+	page-break-inside: avoid !important;
+}
+</style>
+<style type="text/css" media="screen">
+.page-break{
+	display: none;
+}
+</style>
+</head>
+
+<body class="login">
+	<div class="nav_menu">
+			<a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a>
+	</div>
+
+	<!-- page content -->
+	<div>
+		<div class="page-title">
+			<div class="title_left" style="margin-left: 10px;">
+				<h3>{if="isset($error)"}{$error}{else}{$obj.org_name}{/if}</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="row" style="padding: 0 20px 0 20px;">
+			<div class="col-md-12 col-sm-12 col-xs-12">
+				<div class="x_panel">
+					<div class="title_left">
+						<h1>Diagnóstico Estratégico</h1>
+						<div class="clearfix"></div>
+					</div>
+					<div class="x_content">
+						<div class="accordion" id="accordion" role="tablist"
+							aria-multiselectable="true">
+							<div class="panel">
+								<a class="panel-heading collapsed">
+									<h4 class="panel-title">[Apresentação]</h4>
+								</a>
+								<div id="step-11" class="panel-collapse collapse in">
+									<div class="panel-body">
+										<p>
+											Você responderá a questões que tratam de um processo de
+											diagnóstico estratégico dos Ambientes Interno e Externo da empresa.
+										</p>
+										<p>Trata-se de um momento de extrema importância por
+											contemplar a geração de informações que serão utilizadas para
+											alimentar o processo de tomada de decisão nos três níveis:
+											estratégico, tático e operacional.</p>
+										<p>Este questionário leva, em torno de, 30 minutos para
+											ser concluído.</p>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+								<a class="panel-heading collapsed" role="tab" id="headingTwo"
+									data-toggle="collapse" data-parent="#accordion" href="#step-22"
+									aria-expanded="false" aria-controls="step-22">
+									<h4 class="panel-title">Ambiente Interno</h4>
+								</a>
+								<div id="step-22" class="panel-collapse collapse"
+									role="tabpanel" aria-labelledby="headingTwo">
+									<div class="panel-body">
+										<div class="" role="tabpanel">
+											<div id="myTabContentIntern" class="tab-content">
+												<div role="tabpanel" class="tab-pane fade active in"
+													id="tab_contenthome_intern" aria-labelledby="home-tab">
+													<p>
+														Aqui serão levantadas questões referentes ao dignóstico
+														estratégico do seu <b>Ambiente Interno</b>, o que
+														significa dizer que estaremos gerando informações sobre a
+														saúde interna da empresa.
+													</p>
+													<p>1. Utilize as abas para navegar entre as categorias.</p>
+													<p>2. Você pode avançar ou retroceder quantas vezes
+														achar necessário para rever suas respostas, mas
+														recomendamos que o diagnóstico seja preenchido de forma
+														sequencial.</p>
+													<p>3. Escolha um dos seguintes conceitos: muito doente,
+														doente, equilibrado, saudável, muito saudável, que indique
+														o grau de saúde da empresa em relação a cada categoria
+														neste exato momento.</p>
+													<p>4. Quando concluir todas as abas, você deve avançar
+														para as próximas etapas.</p>
+												</div>
+												{loop="$pintern"}
+								<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+								<a class="panel-heading collapsed">
+									<h4 class="panel-title">Perspectiva: {$value1.persp_name}</h4>
+								</a>
+												<div class="tab-pane fade">
+													<table class="table table-striped">
+														<thead>
+															<tr>
+																<th>Questão</th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}cc.png" 
+																	class="img-small" /></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}c1.png" 
+																	class="img-small" /></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}c2.png" 
+																	class="img-small" /></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}c3.png" 
+																	class="img-small" /></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}c4.png" 
+																	class="img-small" /></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}c5.png" 
+																	class="img-small" /></th>
+															</tr>
+														</thead>
+														<tbody>
+															{loop="$intern"} {if="$value.persp_id==$value1.persp_id"}
+															<tr class="text-center">
+																<td class="text-left">{$value.quest_text}</td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+															</tr>
+															{/if} {/loop}
+														</tbody>
+													</table>
+												</div>
+												{/loop}
+												<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+												<div class="tab-pane fade">
+													<form class="form-horizontal form-label-left">
+														<p>
+															Você agora tem a chance de registrar livremente outros <b>pontos fracos</b>
+															e <b>ponstos fortes</b>, segundo sua percepção.
+														</p>
+														<p>
+															1. Você gostaria de indicar outros <b>PONTOS FRACOS</b> da sua
+															empresa?<br /> No campo abaixo, registre situações reais
+															que existem dentro de sua empresa, portanto, sob seu
+															absoluto controle, que considera <b>NEGATIVAS</b> e <b>RUINS</b>.<br/>
+															Tais realidades incomodam profundamente, a ponto de não somente atrapalhar, 
+															mas de comprometer e até inviabilizar o alcance dos objetivos e
+															metas.<br/>Procure utilizar uma linguagem negativa, como por exemplo: 
+															inexistência; excesso; falta; desequilíbrio; inconsistência; etc.
+														</p>
+														<div class="form-group">
+															<div class="col-md-12 col-sm-12">
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+															</div>
+														</div>
+														<p>
+															2. Você gostaria de indicar outros <b>PONTOS FORTES</b>
+															da sua empresa?<br /> No campo abaixo, registre
+															situações que existem dentro de sua empresa, que
+															considera <b>POSITIVAS</b> e <b>BOAS</b>.<br/>Tais qualidades 
+															consquistadas estão à sua disposição, podendo ser adicionadas 
+															para mudar um série de situações que precisam ser alteradas 
+															para viabilizar o alcance dos objetivos e metas.<br/>
+															Procure utiliza uma linguagem positiva, como por exemplo: 
+															existência; controle equilibrado; racionalidade; consistência; etc.
+														</p>
+														<div class="form-group">
+															<div class="col-md-12 col-sm-12">
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+															</div>
+														</div>
+
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="panel">
+								<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+								<a class="panel-heading">
+									<h4 class="panel-title">Ambiente Externo</h4>
+								</a>
+								<div id="step-33">
+									<div class="panel-body">
+										<div class="" role="tabpanel">
+											<div class="tab-content">
+												<div class="tab-pane fade active in">
+													<p>
+														Aqui serão levantadas questões referentes ao dignóstico
+														estratégico do seu <b>Ambiente Externo</b>, o que
+														significa dizer que estaremos gerando informações sobre a
+														saúde externa da empresa.
+													</p>
+													<p>1. Utilize as abas para navegar entre as categorias.</p>
+													<p>2. Você pode avançar ou retroceder quantas vezes
+														achar necessário para rever suas respostas, mas
+														recomendamos que o diagnóstico seja preenchido de forma
+														sequencial.</p>
+													<p>3. Escolha o conceito de 1 (mais baixo impacto) a
+														5 (nível de mais alto impacto), que indique o grau de
+														risco da empresa em relação a cada categoria neste exato
+														momento.</p>
+													<p>4. Nesta etapa cada questão deve ser avaliada pelas
+														perspectivas de Ameaças (A) e Oportunidades (O).</p>
+													<p>5. Quando concluir todas as questões, você poderá
+														citar outras que não foram abordadas nas suas respostas.</p>
+												</div>
+												{loop="$pextern"}
+								<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+								<a class="panel-heading">
+									<h4 class="panel-title">Perspectiva: {$value1.persp_name}</h4>
+								</a>
+												<div class="tab-pane fade">
+													<table class="table table-striped">
+														<thead>
+															<tr>
+																<th>Questão</th>
+																<th style="width: 50px"></th>
+																<th class="text-center txt-small"><img
+																	src="{$cfg.imgs}ne2.png" class="img-small" /></th>
+																<th class="text-center txt-small"
+																	style="background-color: OrangeRed;">1</th>
+																<th class="text-center txt-small"
+																	style="background-color: Tomato;"></div>2</th>
+																<th class="text-center txt-small"
+																	style="background-color: Coral;">3</th>
+																<th class="text-center txt-small"
+																	style="background-color: Orange;">4</th>
+																<th class="text-center txt-small"
+																	style="background-color: DarkOrange;">5</th>
+															</tr>
+														</thead>
+														<tbody>
+															{loop="$extern"} {if="$value.persp_id==$value1.persp_id"}
+															<tr class="text-center">
+																<td class="text-left" rowspan="2">{$value.quest_text}</td>
+																<td>A</td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+															</tr>
+															<tr class="text-center">
+																<td>O</td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+																<td><input type="radio" /></td>
+															</tr>
+															{/if} {/loop}
+														</tbody>
+													</table>
+												</div>
+												{/loop}
+								<div class="page-break"><a href="#" class="site_title"><img
+				src="{$cfg.imgs}logoTR_32x32.png" /> <span
+				style="color: midnightblue;">Easy Planning</span></a></div>
+												<div class="tab-pane">
+													<form class="form-horizontal form-label-left">
+														<p>
+															Você agora tem a chance de registrar livremente outras <b>ameaças</b>
+															e <b>oportunidades</b>, segundo sua percepção.
+														</p>
+														<p>
+															1. Você gostaria de indicar outras <b>AMEAÇAS</b> à sua
+															empresa?<br /> No campo abaixo, registre situações reais
+															que existem fora de sua empresa, portanto, fora do seu
+															controle, que considera <b>AMEAÇADORAS</b>, e que podem
+															comprometer e até inviabilizar o alcance dos objetivos e
+															metas.
+														</p>
+														<div class="form-group">
+															<div class="col-md-12 col-sm-12">
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+															</div>
+														</div>
+														<p>
+															2. Você gostaria de indicar outras <b>OPORTUNIDADES</b>
+															da sua empresa?<br /> No campo abaixo, registre
+															situações reais que existem fora de sua empresa, que
+															considera <b>OPORTUNIDADES</b>, que podem e devem ser
+															aproveitadas para viabilizar ou facilitar o alcance dos
+															objetivos e metas.
+														</p>
+														<div class="form-group">
+															<div class="col-md-12 col-sm-12">
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+																<input type="text" class="form-control col-md-12 col-xs-12" />
+															</div>
+														</div>
+													</form>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- footer content -->
+				<div class="pull-right">©2018 All Rights Reserved.
+					TreinaRecife!</div>
+				<!-- /footer content -->
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

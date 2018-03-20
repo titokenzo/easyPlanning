@@ -51,8 +51,17 @@ class User extends Model
         $data["org_name"] = NULL;
         
         // GET USER ORGANIZATIONS
-        $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name, a.userorg_type FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:ID", array(
+        $results = $sql->select("SELECT 
+            b.org_id, 
+            b.org_tradingname as org_name, 
+            a.userorg_type, 
+            c.diagnostic_id 
+        FROM tb_users_organizations a 
+        INNER JOIN tb_organizations b USING (org_id) 
+        LEFT JOIN tb_diagnostics c on b.org_id=c.org_id AND c.diagnostic_status IN (1,2)
+        WHERE a.user_id=:ID", array(
             ":ID" => $data["user_id"]
+            
         ));
         if((int) $data["user_isadmin"] === 0){
             if ((! $results) or count($results) === 0) {
@@ -73,14 +82,23 @@ class User extends Model
                 0 => array(
                     "org_id" => 0,
                     "org_name" => "Adminstração",
-                    "userorg_type" => 0
+                    "userorg_type" => 0,
+                    "diagnostic_id" => 0
                 )
             );
         } else {
             $sql = new Sql();
-            $results = $sql->select("SELECT b.org_id, b.org_tradingname as org_name, userorg_type FROM tb_users_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.user_id=:USER AND a.org_id=:ORG", array(
-                ":USER" => $data["user_id"],
-                ":ORG" => $idorg
+            $results = $sql->select("SELECT 
+                b.org_id, 
+                b.org_tradingname as org_name, 
+                a.userorg_type, 
+                c.diagnostic_id 
+            FROM tb_users_organizations a 
+            INNER JOIN tb_organizations b USING (org_id) 
+            LEFT JOIN tb_diagnostics c on b.org_id=c.org_id AND c.diagnostic_status IN (1,2)
+            WHERE a.user_id=:USER AND a.org_id=:ORG", array(
+            ":USER" => $data["user_id"],
+            ":ORG" => $idorg
             
             ));
         }

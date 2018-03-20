@@ -1,7 +1,7 @@
 <?php
 namespace easyPlanning;
 
-class SysConfig{
+class SysConfig_BKP{
     //CAMINHOS
     const IMG_URL = self::SITE_URL . "";
     

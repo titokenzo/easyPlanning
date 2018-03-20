@@ -174,32 +174,123 @@ $app->post('/forgot/reset', function () {
     $page->setTpl('forgot-reset-success');
 });
 
-$app->get('/diagnostics', function () use($app) {
+// RESPOND
+$app->get('/respond', function () use ($app) {
     $error = NULL;
     $user = NULL;
     $objs = NULL;
     $obj = NULL;
     try {
-        $obj = Respondent::validFormDecrypt($_GET["code"]);
-        $intern = Question::listAllFromEnvironment(0);
-        $extern = Question::listAllFromEnvironment(1);
-        $pintern = Question::listDistinctlPerspectives(0);
-        $pextern = Question::listDistinctlPerspectives(1);
+        $obj = new Respondent();
+        $obj->setData(Respondent::validFormDecrypt($_GET["code"]));
+        $intern = $obj->listAllQuestions(0);
+        $extern = $obj->listAllQuestions(1);
+        $pintern = $obj->listDistinctPerspectives(0);
+        $pextern = $obj->listDistinctPerspectives(1);
+        $responsesInputs = $obj->listInputs();
         $page = new Page([
             "header" => false,
             "footer" => false
         ]);
-        $page->setTpl('diagnostics', array(
-            "obj"=>$obj, 
-            "pintern"=>$pintern,
-            "pextern"=>$pextern,
-            "intern"=>$intern, 
-            "extern"=>$extern, 
-            "error"=>$error
+        $page->setTpl('respond', array(
+            "obj" => $obj->getValues(),
+            "pintern" => $pintern,
+            "pextern" => $pextern,
+            "intern" => $intern,
+            "extern" => $extern,
+            "responsesInputs" => $responsesInputs,
+            "error" => $error
         ));
     } catch (Exception $e) {
         $app->flash("error", $e->getMessage());
-        $app->response->redirect('/login',301);
+        $app->response->redirect('/login', 301);
+    }
+});
+
+// RESPOND PRINT
+$app->get('/respond/print', function () use ($app) {
+    $error = NULL;
+    $user = NULL;
+    $objs = NULL;
+    $obj = NULL;
+    try {
+        $obj = new Respondent();
+        $obj->setData(Respondent::validFormDecrypt($_GET["code"]));
+        $obj->setresp_id(0);
+        $intern = $obj->listAllQuestions(0);
+        $extern = $obj->listAllQuestions(1);
+        $pintern = $obj->listDistinctPerspectives(0);
+        $pextern = $obj->listDistinctPerspectives(1);
+        $responsesInputs = $obj->listInputs();
+        $page = new Page([
+            "header" => false,
+            "footer" => false
+        ]);
+        $page->setTpl('respond-print', array(
+            "obj" => $obj->getValues(),
+            "pintern" => $pintern,
+            "pextern" => $pextern,
+            "intern" => $intern,
+            "extern" => $extern,
+            "responsesInputs" => $responsesInputs,
+            "error" => $error
+        ));
+    } catch (Exception $e) {
+        $app->flash("error", $e->getMessage());
+        $app->response->redirect('/login', 301);
+    }
+});
+
+// RESPOND-SAVE UPDATE
+$app->post('/respond/save', function () {
+    $idresp = $_POST["resp"];
+    $idquest = $_POST["quest"];
+    $type = $_POST["type"];
+    $grade = $_POST["grade"];
+    $obj = new Respondent();
+    try {
+        $obj->get((int) $idresp);
+        $obj->updateResponses($idquest, $type, $grade);
+        $message = "Dados salvos";
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+    } finally {
+        echo json_encode($message);
+        exit();
+    }
+});
+
+// RESPOND-SAVE INPUT
+$app->post('/respond/input', function () {
+    $idresp = $_POST["resp"];
+    $type = $_POST["type"];
+    $input = $_POST["grade"];
+    $obj = new Respondent();
+    try {
+        $obj->get((int) $idresp);
+        $message = $obj->insertInputs($type, $input);
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+    } finally {
+        echo json_encode($message);
+        exit();
+    }
+});
+
+// RESPOND-REMOVE INPUT
+$app->post('/respond/remove', function () {
+    $idresp = $_POST["resp"];
+    $idinput = $_POST["quest"];
+    $obj = new Respondent();
+    try {
+        $obj->get((int) $idresp);
+        $obj->removeInputs($idinput);
+        $message = "Dados salvos";
+    } catch (Exception $e) {
+        $message = $e->getMessage();
+    } finally {
+        echo json_encode($message);
+        exit();
     }
 });
 
@@ -338,6 +429,65 @@ $app->group('/plans', verifyLogin(), function () use ($app) {
     });
 });
 
+// #########################################################################################
+// DIAGNOSTIC
+// #########################################################################################
+// LIST
+$app->group('/diagnostics', verifyLogin(), function () use ($app) {
+    $app->get('/', verifyLogin(), function () {
+        $objs = Diagnostic::listAllFromOrg($_SESSION[User::SESSION]["org_id"]);
+        $status = Diagnostic::getStatusList();
+        $page = new Page();
+        $page->setTpl('diagnostics', array(
+            "objs" => $objs,
+            "status" => $status
+        ));
+    });
+    
+    // CREATE
+    $app->get('/create', verifyLogin(), function () {
+        $page = new Page();
+        $page->setTpl('diagnostics-create');
+    });
+    
+    // SAVE CREATE
+    $app->post('/create', verifyLogin(), function () use ($app) {
+        $obj = new Diagnostic();
+        $obj->setData($_POST);
+        $obj->save();
+        $app->response->redirect("/diagnostics", 301);
+    });
+    
+    // DELETE
+    $app->get('/:idobj/delete', verifyLogin(), function ($idobj) use ($app) {
+        $obj = new Diagnostic();
+        $obj->get((int) $idobj);
+        $obj->delete();
+        $app->response->redirect("/diagnostics", 301);
+    });
+    
+    // VIEW UPDATE
+    $app->get('/:idobj', verifyLogin(), function ($idobj) {
+        $obj = new Diagnostic();
+        $obj->get((int) $idobj);
+        $status = Diagnostic::getStatusList();
+        $page = new Page();
+        $page->setTpl('diagnostics-update', array(
+            "obj" => $obj->getValues(),
+            "status" => $status
+        ));
+    });
+    
+    // SAVE UPDATE
+    $app->post('/:idobj', verifyLogin(), function ($idobj) use ($app) {
+        $obj = new Diagnostic();
+        $obj->get((int) $idobj);
+        $obj->setData($_POST);
+        $obj->update();
+        $app->response->redirect("/diagnostics", 301);
+    });
+});
+
 // ########################################################################################
 // RESPONDENTS
 // #########################################################################################
@@ -346,10 +496,9 @@ $app->group('/plans', verifyLogin(), function () use ($app) {
 $app->group('/respondents', verifyLogin(), function () use ($app) {
     $app->get('/', function () {
         $data = $_SESSION[User::SESSION];
-        $objs = Respondent::getFromOrganization($data["org_id"]);
         $page = new Page();
         $page->setTpl('respondents', array(
-            "objs" => $objs,
+            "objs" => Respondent::getFromActiveDiagnostic($data["org_id"]),
             "levels" => Respondent::getOrganizationLevelList()
         ));
     });
@@ -362,6 +511,21 @@ $app->group('/respondents', verifyLogin(), function () use ($app) {
             "levels" => Respondent::getOrganizationLevelList(),
             "error" => $error
         ));
+    });
+    
+    // SAVE CREATE
+    $app->post('/create', function () use ($app) {
+        $obj = new Respondent();
+        $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
+        $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
+        $obj->setData($_POST);
+        try {
+            $obj->saveRespodents();
+            $app->response->redirect('/respondents', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/respondents/create');
+        }
     });
     
     // DELETE
@@ -383,29 +547,23 @@ $app->group('/respondents', verifyLogin(), function () use ($app) {
         ));
     });
     
-    // SAVE CREATE
-    $app->post('/create', function () use ($app) {
-        $obj = new Respondent();
-        $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
-        $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
-        $obj->setData($_POST);
-        try {
-            $obj->saveRespodents();
-        } catch (Exception $e) {
-            $app->flash('error', $e->getMessage());
-            $app->response->redirect('/respondents/create');
-        }
-        $app->response->redirect('/respondents', 301);
-    });
-    
     // SAVE UPDATE
     $app->post('/:idobj', function ($idobj) use ($app) {
         $obj = new Respondent();
+        $obj->get((int) $idobj);
         $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
         $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
-        $obj->get((int) $idobj);
         $obj->setData($_POST);
         $obj->update();
+        $app->response->redirect('/respondents', 301);
+    });
+    
+    // RE-SEND EMAIL
+    $app->get('/:idobj/resend', function ($idobj) use ($app) {
+        $obj = new Respondent();
+        $obj->get((int) $idobj);
+        $obj->setData($_POST);
+        $obj->sendDiagnosticEmail();
         $app->response->redirect('/respondents', 301);
     });
 });

@@ -48,16 +48,16 @@ class Respondent extends Model
     public function save()
     {
         $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:resp_email AND a.org_id=:org_id", array(
+        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:resp_email AND a.diagnostic_id=:diagnostic_id", array(
             ":resp_email" => $this->getresp_email(),
-            ":org_id" => (int)$this->getorg_id()
+            ":diagnostic_id" => (int)$this->getdiagnostic_id()
         ));
         if (count($results) > 0) {
             throw new \Exception("O e-mail " . $this->getresp_email() . " já está cadastrado como respondedor");
         }
         
-        $results = $sql->select("CALL sp_respondent_create(:org_id, :resp_email, :resp_orglevel, :resp_allowreturn, :resp_allowpartial)", array(
-            ":org_id" => $this->getorg_id(),
+        $results = $sql->select("CALL sp_respondent_create(:diagnostic_id, :resp_email, :resp_orglevel, :resp_allowreturn, :resp_allowpartial)", array(
+            ":diagnostic_id" => $this->getdiagnostic_id(),
             ":resp_email" => $this->getresp_email(),
             ":resp_orglevel" => $this->getresp_orglevel(),
             ":resp_allowreturn" => $this->getresp_allowreturn(),
@@ -66,50 +66,27 @@ class Respondent extends Model
         if (count($results) === 0) {
             throw new \Exception("Não foi possível salvar os dados");
         } else {
-            $data = $results[0];
-            $code = $data["resp_id"] . '-'. $data["org_id"];
+            $this->setData($results[0]);
+            $this->sendDiagnosticEmail();
+        }
+    }
+    
+    public function sendDiagnosticEmail(){
+        try{
+            $code = $this->getresp_id() . '-'. $this->getdiagnostic_id();
             $code = Security::secured_encrypt($code);
             $link = SysConfig::SITE_URL . "/respond?code=$code";
-            $mailer = new Mailer($data["resp_email"], "Colaborador", "EasyPlanning - Questinário", "respondent", array(
+            $mailer = new Mailer($this->getresp_email(), "Colaborador", "EasyPlanning - Questinário", "respondent", array(
                 "name" => "Colaborador",
                 "link" => $link,
                 "org_tradingname" => $_SESSION[User::SESSION]["org_name"]
             ));
             $mailer->send();
-            //return $data;
+        }catch(\Exception $e){
+            throw new \Exception("Não foi possível enviar o e-mail.");
         }
     }
 
-    public static function getForgot($email)
-    {
-        $sql = new Sql();
-        $results = $sql->select("SELECT * FROM tb_respondents a WHERE a.resp_email=:email", array(
-            ":email" => $email
-        ));
-        if (count($results) === 0) {
-            throw new \Exception("Não foi possível recuperar a senha");
-        } else {
-            $data = $results[0];
-            $results2 = $sql->select("CALL sp_respspasswordsrecoveries_create(:idresp, :ip)", array(
-                ":idresp" => $data["resp_id"],
-                ":ip" => $_SERVER["REMOTE_ADDR"]
-            ));
-            if (count($results2) === 0) {
-                throw new \Exception("Não foi possível recuperar a senha");
-            } else {
-                $dataRecovery = $results2[0];
-                $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
-                $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
-                $mailer = new Mailer($data["resp_email"], $data["resp_name"], "Redefinir senha do EasyPlanning", "forgot", array(
-                    "name" => $data["resp_name"],
-                    "link" => $link
-                ));
-                $mailer->send();
-                return $data;
-            }
-        }
-    }
-    
     public function get($resp_id)
     {
         $sql = new Sql();
@@ -123,16 +100,17 @@ class Respondent extends Model
     public function update()
     {
         $sql = new Sql();
-        $results = $sql->query("UPDATE tb_respondents SET 
-            resp_allowreturn=:resp_allowreturn,
-            resp_allowpartial=:resp_allowpartial,
-            resp_orglevel=:resp_orglevel
-        WHERE resp_id=:resp_id", array(
-            ":resp_allowreturn" => $this->getresp_allowreturn(),
-            ":resp_allowpartial" => $this->getresp_allowpartial(),
-            ":resp_orglevel" => $this->getresp_orglevel(),
-            ":resp_id" => $this->getresp_id()
-        ));
+        $results = $sql->query("
+            UPDATE tb_respondents SET 
+                resp_allowreturn=:resp_allowreturn,
+                resp_allowpartial=:resp_allowpartial,
+                resp_orglevel=:resp_orglevel
+            WHERE resp_id=:resp_id", array(
+                ":resp_allowreturn" => $this->getresp_allowreturn(),
+                ":resp_allowpartial" => $this->getresp_allowpartial(),
+                ":resp_orglevel" => $this->getresp_orglevel(),
+                ":resp_id" => $this->getresp_id()
+            ));
     }
 
     public function delete()
@@ -151,41 +129,26 @@ class Respondent extends Model
         //$data["resp_id"] . '-'. $data["org_id"]
         $decode = explode("-", Security::secured_decrypt_url($code));
         $resp_id = $decode[0];
-        $org_id = $decode[1];
+        $diag_id = $decode[1];
         $sql = new Sql();
         $results = $sql->select("
             SELECT
-                a.org_id, a.resp_id, a.resp_email, a.resp_allowreturn, a.resp_allowpartial, a.resp_hascompleted, a.resp_orglevel, b.org_tradingname as org_name 
+                a.resp_id, a.resp_allowreturn, a.resp_allowpartial, c.org_tradingname as org_name 
                 FROM tb_respondents a 
-                INNER JOIN tb_organizations b using(org_id) 
-                INNER JOIN tb_strategic_planning c on b.org_id=c.org_id and c.plan_status=1
+                INNER JOIN tb_diagnostics b ON a.diagnostic_id=b.diagnostic_id AND b.diagnostic_status=1
+                INNER JOIN tb_organizations c USING(org_id) 
             WHERE 
-                a.org_id=:ORG AND a.resp_id=:RESP", array(":ORG"=>$org_id,":RESP" => $resp_id));
+                a.resp_hascompleted=0 AND 
+                a.diagnostic_id=:DIAG AND 
+                a.resp_id=:RESP", array(
+                    ":DIAG"=>$diag_id,
+                    ":RESP" => $resp_id
+                ));
         if (count($results) === 0) {
             throw new \Exception("Este link não é mais válido");
         } else {
             return $results[0];
         }
-    }
-
-    public static function setForgotUsed($idrecovery)
-    {
-        $sql = new Sql();
-        $sql->query("UPDATE tb_respspasswordsrecoveries SET recovery_dtrecovery=NOW() WHERE recovery_id=:idrecovery", array(
-            "idrecovery" => $idrecovery
-        ));
-    }
-
-    public function setPassword($pass)
-    {
-        $pass = password_hash($pass, PASSWORD_DEFAULT, [
-            "cost" => 12
-        ]);
-        $sql = new Sql();
-        $sql->query("UPDATE tb_resps SET resp_password=:pass WHERE resp_id=:id", array(
-            ":pass" => $pass,
-            ":id" => $this->getresp_id()
-        ));
     }
 
     public static function getOrganizationLevelList()
@@ -198,21 +161,118 @@ class Respondent extends Model
         return $list;
     }
 
-    public static function getFromOrganization($orgid)
+    public static function getFromActiveDiagnostic($orgid)
     {
         $sql = new Sql();
-        return $sql->select("SELECT * FROM tb_respondents a WHERE org_id=:ID ORDER BY resp_email", array(
+        return $sql->select("SELECT * FROM tb_respondents a INNER JOIN tb_diagnostics b USING(diagnostic_id) WHERE b.org_id=:ID AND b.diagnostic_status IN (1,2) ORDER BY a.resp_email", array(
             ":ID" => (int)$orgid
         ));
     }
-
-    public static function getSessionUserOrganizations()
-    {
-        $id = (int) $_SESSION[User::SESSION]["resp_id"];
+    
+    /**
+     * Salva os dados (AJAX) no BD tb_responses
+     * 1. Identifica se o Respondedor já respondeu a questão (Externa).
+     * 2. Copia a nota e exclui a ocorrência
+     * 3. Ajusta a posição (grade1 ou grade2) da nota salva os dados 
+     * @param int $idquest ID da Questão
+     * @param int $type Tipo 0=Interna, 1=Externo Ameaça, 2=Externo Oportunidade
+     * @param int $grade Nota atribuída
+     */
+    public function updateResponses($idquest,$type,$grade){
+        $grade1 = 0;
+        $grade2 = 0;
         $sql = new Sql();
-        return $sql->select("SELECT b.org_id, b.org_tradingname FROM tb_resps_organizations a INNER JOIN tb_organizations b USING (org_id) WHERE a.resp_id=:USER", array(
-            ":USER" => $id
+        $result = $sql->select("SELECT * FROM tb_responses WHERE resp_id=:RESP AND quest_id=:QUEST",array(
+            ":RESP" => (int)$this->getresp_id(),
+            ":QUEST" => (int)$idquest
         ));
+        if(count($result) > 0){
+            $grade1 = (int)$result[0]["res_grade"];
+            $grade2 = (int)$result[0]["res_grade2"];
+            $sql->query("DELETE FROM tb_responses WHERE resp_id=:RESP AND quest_id=:QUEST",array(
+                ":QUEST" => (int)$idquest,
+                ":RESP" => (int)$this->getresp_id()
+            ));
+        }
+        if($type=="2"){
+            $grade2 = $grade;
+        }else{
+            $grade1 = $grade;
+        }
+        $sql->query("INSERT INTO tb_responses (resp_id,quest_id,res_grade,res_grade2) VALUES (:RESP,:QUEST,:GRADE,:GRADE2)",array(
+            ":RESP" => (int)$this->getresp_id(),
+            ":QUEST" => (int)$idquest,
+            ":GRADE" => $grade1,
+            ":GRADE2" => $grade2
+        ));
+    }
+
+    /**
+     * Insere um registro no BD tb_responses_inputs
+     * @param int $type Tipo 1-Fraquesa,2-Força,3-Ameaça,4-Oportunidade
+     * @param String $input Resposta dada
+     */
+    public function insertInputs($type,$input){
+        $sql = new Sql();
+        $result = $sql->select("CALL sp_responses_inputs_save(:RESP,:TEXT,:TYPE)", array(
+            ":RESP" => (int)$this->getresp_id(),
+            ":TEXT" => $input,
+            ":TYPE" => (int)$type
+        ));
+        if (count($result) === 0) {
+            throw new \Exception("Não foi possível salvar os dados");
+        }
+        return $result[0]["input_id"];
+    }
+    
+    /**
+     * Exclui o registro do BD tb_responses_inputs
+     * @param int $idinput ID do input
+     */
+    public function removeInputs($idinput){
+        $sql = new Sql();
+        $sql->query("DELETE FROM tb_responses_inputs WHERE input_id=:ID",array(
+            ":ID" => $idinput
+        ));
+    }
+    
+    public function listAllQuestions($quest_environment=0)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT a.quest_id, a.persp_id, a.qset_id, a.quest_text, b.qset_name, c.persp_name, d.res_grade, d.res_grade2   
+            FROM tb_questions a
+            INNER JOIN tb_questions_sets b USING(qset_id)
+            INNER JOIN tb_perspectives c USING(persp_id)
+            LEFT JOIN tb_responses d ON a.quest_id=d.quest_id AND d.resp_id=:RESP 
+            WHERE a.quest_environment=:ENV
+            ORDER BY a.quest_text;",array(
+                ":ENV"=>$quest_environment,
+                ":RESP"=>$this->getresp_id()
+            ));
+    }
+    
+    public function listDistinctPerspectives($quest_environment)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT DISTINCT c.persp_name,c.persp_id 
+            FROM tb_questions a
+            INNER JOIN tb_perspectives c USING(persp_id)
+            WHERE a.quest_environment=:ENV
+            ORDER BY c.persp_name;", array(
+                ":ENV"=>$quest_environment
+            ));
+    }
+    
+    /**
+     * Retorna uma lista com todas as entredas do Respondente
+     * @return array
+     */
+    public function listInputs()
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * FROM tb_responses_inputs WHERE resp_id =:RESP;", array(
+                ":RESP"=> (int)$this->getresp_id()
+            ));
     }
 }
 ?>

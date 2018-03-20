@@ -27,7 +27,7 @@
 									<th>Nível</th>
 									<th>Cadastro</th>
 									<th style="width: 60px">Concluído</th>
-									<th style="width: 140px">&nbsp;</th>
+									<th style="width: 200px">&nbsp;</th>
 								</tr>
 							</thead>
 
@@ -35,17 +35,20 @@
 								{loop="$objs"}
 								<tr>
 									<td>{$value.resp_email}</td>
-									<td>{loop="$levels"}{if="$key==$value1.resp_orglevel"}{$value}{break}{/if}{/loop}</td>
-									<td>{$value.resp_dtcreation}</td>resp_orglevel
-									<td>{if="$value.resp_hascompleted== 1"}Sim{else}Não{/if}</td>
-									<td> {if="$value.resp_hascompleted==0 AND $value.resp_hasemailerror==0"}<a href="/respondents/{$value.resp_id}" 
-										class="btn btn-primary btn-xs"><i class="fa fa-envelope-o"></i>
-											Editar</a>{else}<a href="#}" 
-										class="btn btn-default btn-xs"><i class="fa fa-envelope-o"></i>
-											Editar</a>{/if} <a href="/respondents/{$value.resp_id}/delete"
-										onclick="return confirm('Deseja realmente excluir este registro?')"
-										class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>
-											Excluir</a></td>
+									<td>{$levels[$value.resp_orglevel]}</td>
+									<td>{$value.resp_dtcreation}</td>
+									<td>{if="$value.resp_hascompleted==1"}Sim{else}Não{/if}</td>
+									<td>
+										{if="$value.resp_hascompleted==0 AND $value.resp_hasemailerror==0"} 
+											<a href="/respondents/{$value.resp_id}"	class="btn btn-primary btn-xs"><i class="fa fa-edit"></i>Editar</a> 
+											<a href="/respondents/{$value.resp_id}/delete" class="btn btn-danger btn-xs" onclick="return confirm('Deseja realmente excluir este registro?')"><i class="fa fa-trash"></i>Excluir</a>
+											<a href="/respondents/{$value.resp_id}/resend" class="btn btn-dark btn-xs" title="Reenviar e-mail"><i class="fa fa-envelope-o"></i>Reenviar</a>
+										{else}
+											<a href="#" class="btn btn-default btn-xs"><i class="fa fa-edit"></i> Editar</a> 
+											<a href="/respondents/{$value.resp_id}/delete" class="btn btn-danger btn-xs" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i>Excluir</a> 
+											<a href="#" class="btn btn-default btn-xs" title="Reenviar e-mail"><i class="fa fa-envelope-o"></i>Reenviar</a>
+										{/if}
+									</td>
 								</tr>
 								{/loop}
 							</tbody>

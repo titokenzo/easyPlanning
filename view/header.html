@@ -6,38 +6,38 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="images/favicon.ico" type="image/ico" />
+<link rel="icon" href="{$cfg.imgs}favicon.ico" type="image/ico" />
 
 <title>Easy Planning</title>
 
 <!-- Bootstrap -->
-<link href="/res/vendors/css/bootstrap.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}bootstrap.min.css" rel="stylesheet">
 <!-- Font Awesome -->
-<link href="/res/vendors/css/font-awesome.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}font-awesome.min.css" rel="stylesheet">
 <!-- NProgress -->
-<link href="/res/vendors/css/nprogress.css" rel="stylesheet">
+<link href="{$cfg.libcss}nprogress.css" rel="stylesheet">
 <!-- iCheck -->
-<link href="/res/vendors/css/green.css" rel="stylesheet">
+<link href="{$cfg.libcss}green.css" rel="stylesheet">
 <!-- bootstrap-progressbar -->
-<link href="/res/vendors/css/bootstrap-progressbar-3.3.4.min.css"
+<link href="{$cfg.libcss}bootstrap-progressbar-3.3.4.min.css"
 	rel="stylesheet">
 <!-- JQVMap -->
-<link href="/res/vendors/css/jqvmap.min.css" rel="stylesheet" />
+<link href="{$cfg.libcss}jqvmap.min.css" rel="stylesheet" />
 <!-- bootstrap-daterangepicker -->
-<link href="/res/vendors/css/daterangepicker.css" rel="stylesheet">
+<link href="{$cfg.libcss}daterangepicker.css" rel="stylesheet">
 <!-- Datatables -->
-<link href="/res/vendors/css/dataTables.bootstrap.min.css"
+<link href="{$cfg.libcss}dataTables.bootstrap.min.css"
 	rel="stylesheet">
 <!-- bootstrap-wysiwyg -->
-<link href="/res/vendors/css/prettify.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}prettify.min.css" rel="stylesheet">
 <!-- Select2 -->
-<link href="/res/vendors/css/select2.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}select2.min.css" rel="stylesheet">
 <!-- Switchery -->
-<link href="/res/vendors/css/switchery.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}switchery.min.css" rel="stylesheet">
 <!-- starrr -->
-<link href="/res/vendors/css/starrr.css" rel="stylesheet">
+<link href="{$cfg.libcss}starrr.css" rel="stylesheet">
 <!-- Custom Theme Style -->
-<link href="/res/css/custom.min.css" rel="stylesheet">
+<link href="{$cfg.css}custom.min.css" rel="stylesheet">
 </head>
 
 <body class="nav-md">
@@ -47,7 +47,7 @@
 				<div class="left_col scroll-view">
 					<div class="navbar nav_title" style="border: 0;">
 						<a href="/" class="site_title"><img
-							src="/res/site/img/logoTR_32x32.png" /> <span>Easy
+							src="{$cfg.imgs}logoTR_32x32.png" /> <span>Easy
 								Planning</span></a> {$logged.org_name}
 					</div>
 
@@ -56,7 +56,7 @@
 					<!-- menu profile quick info -->
 					<div class="profile clearfix">
 						<div class="profile_pic">
-							<img src="/res/imgs/img.jpg" alt="..."
+							<img src="{$cfg.imgs}img.jpg" alt="..."
 								class="img-circle profile_img">
 						</div>
 						<div class="profile_info">
@@ -100,7 +100,7 @@
 										class="fa fa-chevron-down"></span></a>
 									<ul class="nav child_menu">
 										<li><a href="/users">Usuários</a></li>
-										<li><a href="/respondents">Respondedores</a></li>
+										{if="isset($logged.diagnostic_id)"}<li><a href="/respondents">Respondedores</a></li>{/if}
 										<li><a href="#">- Departamentos</a></li>
 										<li><a href="#">- Grupos de Acesso</a></li>
 									</ul></li>
@@ -109,6 +109,7 @@
 									<ul class="nav child_menu">
 										<li><a href="/plans">Planos</a></li>
 										<li><a href="/objectives">Objetivos</a></li>
+										<li><a href="/diagnostics">Diagnósticos</a></li>
 										<li><a href="/targets">Metas</a></li>
 										<li><a href="/targets">SWOT</a></li>
 										<li><a href="/maps">Mapa Estratégico</a></li>

@@ -25,6 +25,8 @@ class Page{
 		Tpl::configure( $config );
 		$this->tpl = new Tpl;
 		
+		$this->options["data"]["cfg"] = SysConfig::getSiteCfg();
+		
         if(isset($_SESSION[User::SESSION])){
             $this->options["data"]["logged"] = $_SESSION[User::SESSION];
         }

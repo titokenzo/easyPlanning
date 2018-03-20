@@ -1,359 +1,51 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- Meta, title, CSS, favicons, etc. -->
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="images/favicon.ico" type="image/ico" />
-
-<title>Easy Planning</title>
-
-<!-- Bootstrap -->
-<link href="/res/vendors/css/bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="/res/vendors/css/font-awesome.min.css" rel="stylesheet">
-<!-- NProgress -->
-<link href="/res/vendors/css/nprogress.css" rel="stylesheet">
-<!-- iCheck -->
-<link href="/res/vendors/css/green.css" rel="stylesheet">
-<!-- bootstrap-progressbar -->
-<link href="/res/vendors/css/bootstrap-progressbar-3.3.4.min.css"
-	rel="stylesheet">
-<!-- JQVMap -->
-<link href="/res/vendors/css/jqvmap.min.css" rel="stylesheet" />
-<!-- bootstrap-daterangepicker -->
-<link href="/res/vendors/css/daterangepicker.css" rel="stylesheet">
-<!-- Datatables -->
-<link href="/res/vendors/css/dataTables.bootstrap.min.css"
-	rel="stylesheet">
-<!-- bootstrap-wysiwyg -->
-<link href="/res/vendors/css/prettify.min.css" rel="stylesheet">
-<!-- Select2 -->
-<link href="/res/vendors/css/select2.min.css" rel="stylesheet">
-<!-- Switchery -->
-<link href="/res/vendors/css/switchery.min.css" rel="stylesheet">
-<!-- starrr -->
-<link href="/res/vendors/css/starrr.css" rel="stylesheet">
-<!-- Custom Theme Style -->
-<link href="/res/css/custom.min.css" rel="stylesheet">
-</head>
-
-<body class="login">
-	<div class="nav_menu">
-		<div>
-			<a href="/" class="site_title"><img
-				src="/res/site/img/logoTR_32x32.png" /> <span
-				style="color: midnightblue;">Easy Planning</span></a>
-		</div>
-	</div>
-
-	<!-- page content -->
-	<div style="width: 99.5%;min-width:600px;">
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
 		<div class="page-title">
-			<div class="title_left" style="margin-left: 10px;">
-				<h3>{if="isset($error)"}{$error}{else}{$obj.org_name}{/if}</h3>
+			<div class="title_left">
+				<h3>Diagnósticos Estratégicos</h3>
 			</div>
 		</div>
 		<div class="clearfix"></div>
-		<div class="row" style="padding: 0 20px 0 20px;">
+		<div class="row">
 			<div class="col-md-12 col-sm-12 col-xs-12">
 				<div class="x_panel">
-					<div class="title_left">
-						<h2>Diagnóstico Estratégico</h2>
+					<div class="x_title">
+						<div class="box-header">
+							<a href="/diagnostics/create" class="btn btn-success">Cadastrar novo Diagnósticos</a>
+			            </div>
 						<div class="clearfix"></div>
 					</div>
 					<div class="x_content">
-						{if="isset($error)"}
-						<h2>{$error}</h2>
-						{else}
-						<div class="accordion" id="accordion" role="tablist"
-							aria-multiselectable="true">
-							<div class="panel">
-								<a class="panel-heading collapsed" role="tab" id="headingOne"
-									data-toggle="collapse" data-parent="#accordion" href="#step-11"
-									aria-expanded="false" aria-controls="step-11">
-									<h4 class="panel-title">[Apresentação]</h4>
-								</a>
-								<div id="step-11" class="panel-collapse collapse in"
-									role="tabpanel" aria-labelledby="headingOne">
-									<div class="panel-body">
-										<p>
-											Você responderá a questões que tratam de um processo de
-											diagnóstico estratégico dos Ambientes Interno e Externo do(a)
-											<b>{$obj.org_name}</b>.
-										</p>
-										<p>Trata-se de um momento de extrema importância por
-											contemplar a geração de informações que serão utilizadas para
-											alimentar o processo de tomada de decisão nos três níveis:
-											estratégico, tático e operacional.</p>
-										<p>Este questionário leva, em torno de, 30 minutos para
-											ser concluído.</p>
-									</div>
-								</div>
-							</div>
-							<div class="panel">
-								<a class="panel-heading collapsed" role="tab" id="headingTwo"
-									data-toggle="collapse" data-parent="#accordion" href="#step-22"
-									aria-expanded="false" aria-controls="step-22">
-									<h4 class="panel-title">Ambiente Interno</h4>
-								</a>
-								<div id="step-22" class="panel-collapse collapse"
-									role="tabpanel" aria-labelledby="headingTwo">
-									<div class="panel-body">
-										<div class="" role="tabpanel">
-											<ul class="nav nav-tabs bar_tabs" role="tablist">
-												<li role="presentation" class="active"><a
-													href="#tab_contenthome_intern" id="home-tab" role="tab"
-													data-toggle="tab" aria-expanded="true">[Instruções]</a></li>
-												{loop="$pintern"}
-												<li role="presentation" class=""><a
-													href="#tab_content{$value.persp_id}" role="tab"
-													data-toggle="tab" aria-expanded="false">{$value.persp_name}</a>
-												</li> {/loop}
-											</ul>
-											<div id="myTabContentIntern" class="tab-content">
-												<div role="tabpanel" class="tab-pane fade active in"
-													id="tab_contenthome_intern" aria-labelledby="home-tab">
-													<p>Primeiramente serão realizadas perguntas referentes
-														ao dignóstico estratégico do seu Ambiente Interno, o que
-														significa dizer que estaremos gerando informações sobre a
-														saúde interna da empresa.</p>
-													<p>1. Utilize as abas para navegar entre as categorias.</p>
-													<p>2. Você pode avançar ou retroceder quantas vezes
-														achar necessário para rever suas respostas, mas
-														recomendamos que o diagnóstico seja preenchido de forma
-														sequencial.</p>
-													<p>3. Escolha um dos seguintes conceitos: muito doente,
-														doente, equilibrado, saudável, muito saudável, que indique
-														o grau de saúde da empresa em relação a cada categoria
-														neste exato momento.</p>
-													<p>4. Quando concluir todas as abas, você deve avançar
-														para as próximas etapas.</p>
-												</div>
-												{loop="$pintern"}
-												<div role="tabpanel" class="tab-pane fade"
-													id="tab_content{$value.persp_id}"
-													aria-labelledby="perspective-tab">
-													<table class="table table-striped table-bordered"
-														style="width: auto !important;">
-														<thead>
-															<tr>
-																<th>Pergunta</th>
-																<th style="width: 60px">N/A</th>
-																<th style="width: 60px"><img src="/res/imgs/c1.png"
-																	title="1. Muito doente" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c2.png"
-																	title="2. Doente" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c3.png"
-																	title="3. Equilibrado" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c4.png"
-																	title="4. Saudável" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c5.png"
-																	title="5. Muito saudável" /></th>
-															</tr>
-														</thead>
-														<tbody>
-															{loop="$intern"} {if="$value.persp_id==$value1.persp_id"}
-															<tr class="text-center">
-																<td class="text-left">{$value.quest_text}</td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="0" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="1" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="2" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="3" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="4" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="5" /></td>
-															</tr>
-															{/if} {/loop}
-														</tbody>
-													</table>
-												</div>
-												{/loop}
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="panel">
-								<a class="panel-heading collapsed" role="tab" id="headingThree"
-									data-toggle="collapse" data-parent="#accordion" href="#step-33"
-									aria-expanded="false" aria-controls="step-33">
-									<h4 class="panel-title">Ambiente Externo</h4>
-								</a>
-								<div id="step-33" class="panel-collapse collapse"
-									role="tabpanel" aria-labelledby="headingThree">
-									<div class="panel-body">
-										<div class="" role="tabpanel">
-											<ul class="nav nav-tabs bar_tabs" role="tablist">
-												<li role="presentation" class="active"><a
-													href="#tab_contenthome_extern" id="home-tab" role="tab"
-													data-toggle="tab" aria-expanded="true">[Instruções]</a></li>
-												{loop="$pextern"}
-												<li role="presentation" class=""><a
-													href="#tab_content{$value.persp_id}" role="tab"
-													data-toggle="tab" aria-expanded="false">{$value.persp_name}</a>
-												</li> {/loop}
-												<li role="presentation" class=""><a
-													href="#tab_content_obs_ext" role="tab" data-toggle="tab"
-													aria-expanded="false">Observações</a></li>
-											</ul>
-											<div id="myTabContentExtern" class="tab-content">
-												<div role="tabpanel" class="tab-pane fade active in"
-													id="tab_contenthome_extern" aria-labelledby="home-tab">
-													<p>Raw denim you probably haven't heard of them jean
-														shorts Austin. Nesciunt tofu stumptown aliqua, retro synth
-														master cleanse. Mustache cliche tempor, williamsburg
-														carles vegan helvetica. Reprehenderit butcher retro
-														keffiyeh dreamcatcher synth. Cosby sweater eu banh mi, qui
-														irure terr.</p>
-												</div>
-												{loop="$pextern"}
-												<div role="tabpanel" class="tab-pane fade"
-													id="tab_content{$value.persp_id}"
-													aria-labelledby="perspective-tab">
-													<table class="table table-striped table-bordered"
-														style="width: auto !important;">
-														<thead>
-															<tr>
-																<th>Pergunta</th>
-																<th style="width: 60px">N/A</th>
-																<th style="width: 60px"><img src="/res/imgs/c1.png"
-																	title="1. Muito doente" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c2.png"
-																	title="2. Doente" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c3.png"
-																	title="3. Equilibrado" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c4.png"
-																	title="4. Saudável" /></th>
-																<th style="width: 60px"><img src="/res/imgs/c5.png"
-																	title="5. Muito saudável" /></th>
-															</tr>
-														</thead>
-														<tbody>
-															{loop="$extern"} {if="$value.persp_id==$value1.persp_id"}
-															<tr class="text-center">
-																<td class="text-left">{$value.quest_text}</td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="0" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="1" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="2" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="3" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="4" /></td>
-																<td><input type="radio" name="q{$value.quest_id}"
-																	id="q{$value.quest_id}" value="5" /></td>
-															</tr>
-															{/if} {/loop}
-														</tbody>
-													</table>
-												</div>
-												{/loop}
-												<div role="tabpanel" class="tab-pane fade"
-													id="tab_content_obs_ext" aria-labelledby="perspective-tab">
-													<form class="form-horizontal form-label-left">
-														<div class="form-group">
-															<label class="control-label col-md-3 col-sm-3"
-																for="first-name">First Name <span
-																class="required">*</span>
-															</label>
-															<div class="col-md-6 col-sm-6">
-																<input type="text" id="first-name2" required="required"
-																	class="form-control col-md-7 col-xs-12">
-															</div>
-														</div>
-														<div class="form-group">
-															<label class="control-label col-md-3 col-sm-3"
-																for="last-name">Last Name <span class="required">*</span>
-															</label>
-															<div class="col-md-6 col-sm-6">
-																<input type="text" id="last-name2" name="last-name"
-																	required="required"
-																	class="form-control col-md-7 col-xs-12">
-															</div>
-														</div>
-														<div class="form-group">
-															<label for="middle-name"
-																class="control-label col-md-3 col-sm-3">Middle
-																Name / Initial</label>
-															<div class="col-md-6 col-sm-6">
-																<input id="middle-name2"
-																	class="form-control col-md-7 col-xs-12" type="text"
-																	name="middle-name">
-															</div>
-														</div>
-														<div class="form-group">
-															<label class="control-label col-md-3 col-sm-3">Gender</label>
-															<div class="col-md-6 col-sm-6">
-																<div id="gender2" class="btn-group"
-																	data-toggle="buttons">
-																	<label class="btn btn-default"
-																		data-toggle-class="btn-primary"
-																		data-toggle-passive-class="btn-default"> <input
-																		type="radio" name="gender" value="male">
-																		&nbsp; Male &nbsp;
-																	</label> <label class="btn btn-primary"
-																		data-toggle-class="btn-primary"
-																		data-toggle-passive-class="btn-default"> <input
-																		type="radio" name="gender" value="female" checked="">
-																		Female
-																	</label>
-																</div>
-															</div>
-														</div>
-														<div class="form-group">
-															<label class="control-label col-md-3 col-sm-3">Date
-																Of Birth <span class="required">*</span>
-															</label>
-															<div class="col-md-6 col-sm-6">
-																<input id="birthday2"
-																	class="date-picker form-control col-md-7 col-xs-12"
-																	required="required" type="text">
-															</div>
-														</div>
-													</form>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-							{/if}
-						</div>
+						<table id="datatable" class="table table-striped table-bordered">
+							<thead>
+								<tr>
+									<th>Descrição</th>
+									<th>Criação</th>
+									<th style="width: 60px">Status</th>
+									<th style="width: 140px">&nbsp;</th>
+								</tr>
+							</thead>
+
+							<tbody>
+								{loop="$objs"}
+								<tr>
+				                    <td>{$value.diagnostic_text}</td>
+				                    <td>{$value.diagnostic_dtcreation}</td>
+				                    <td>{$status[$value.diagnostic_status]}</td>
+				                    <td>
+				                      <a href="/diagnostics/{$value.diagnostic_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
+				                      <a href="/diagnostics/{$value.diagnostic_id}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>
+				                    </td>							
+								</tr>
+								{/loop}
+							</tbody>
+						</table>
 					</div>
 				</div>
-				<!-- footer content -->
-				<div class="pull-right">©2018 All Rights Reserved.
-					TreinaRecife!</div>
-				<!-- /footer content -->
 			</div>
 		</div>
-	</div>
 
-	<!-- jQuery -->
-	<script src="/res/vendors/js/jquery.min.js"></script>
-	<!-- Bootstrap -->
-	<script src="/res/vendors/js/bootstrap.min.js"></script>
-	<!-- FastClick -->
-	<script src="/res/vendors/js/fastclick.js"></script>
-	<!-- NProgress -->
-	<script src="/res/vendors/js/nprogress.js"></script>
-	<!-- jQuery Smart Wizard -->
-	<script src="/res/vendors/js/jquery.smartWizard.js"></script>
-	<!-- Datatables -->
-	<script src="/res/vendors/js/jquery.dataTables.min.js"></script>
-	<script src="/res/vendors/js/dataTables.bootstrap.min.js"></script>
-	<!-- Custom Theme Scripts -->
-	<script src="/res/js/custom.min.js"></script>
-	<script src="/res/js/treinarecife.js"></script>
-</body>
-</html>
+	</div>
+</div>
+<!-- /page content -->
