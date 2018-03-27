@@ -1,0 +1,72 @@
+	<div id="alert-print" class="alert alert-danger">
+		<strong>ESTE MATERIAL É APENAS PARA IMPRESSÃO.</strong><br/>
+		UTILISE A IMPRESSORA DO NAVEGADOR (Ctrl + P).
+	</div>
+	<div class="title_left">
+		<h3>Diagnóstico Estratégico: {$logged.org_name}</h3>
+	</div>
+	<div class="panel">
+		<div class="tab-pane">
+			<table class="table table-striped">
+				<thead><tr><th>
+					<h3>Ambiente Interno</h3>
+					<h2>PONTOS FRACOS</h2>
+				</th></tr></thead>
+				<tbody>
+					{loop="$grade1"}{if="$value.media<4 and $value.quest_environment==0"}
+					<tr class="text-center">
+						<td class="text-left">{$value.quest_negativeswot}</td>
+					</tr>
+					{/if} {/loop}
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane">
+			<table class="table table-striped">
+				<thead><tr><th>
+					<h3>Ambiente Interno</h3>
+					<h2>PONTOS FORTES</h2>
+				</th></tr></thead>
+				<tbody>
+					{loop="$grade1"}{if="$value.media>=4 and $value.quest_environment==0"}
+					<tr class="text-center">
+						<td class="text-left">{$value.quest_positiveswot}</td>
+					</tr>
+					{/if} {/loop}
+				</tbody>
+			</table>
+		</div>
+	</div>
+	
+	<div class="panel">
+		<div class="tab-pane">
+			<table class="table table-striped">
+				<thead><tr><th>
+					<h3>Ambiente Externo</h3>
+					<h2>OPORTUNIDADES</h2>
+				</th></tr></thead>
+				<tbody>
+					{loop="$grade2"}{if="$value.media>=3 and $value.quest_environment==1"}
+					<tr class="text-center">
+						<td class="text-left">{$value.quest_positiveswot}</td>
+					</tr>
+					{/if} {/loop}
+				</tbody>
+			</table>
+		</div>
+		<div class="tab-pane">
+			<table class="table table-striped">
+				<thead><tr><th>
+					<h3>Ambiente Externo</h3>
+					<h2>AMEAÇAS</h2>
+				</th></tr></thead>
+				<tbody>
+					{loop="$grade1"}{if="$value.media>=3 and $value.quest_environment==1"}
+					<tr class="text-center">
+						<td class="text-left">{$value.quest_positiveswot}</td>
+					</tr>
+					{/if} {/loop}
+				</tbody>
+			</table>
+		</div>
+	</div>

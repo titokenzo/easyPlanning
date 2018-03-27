@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<!-- Meta, title, CSS, favicons, etc. -->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="{$cfg.imgs}/favicon.ico" type="image/ico" />
+<title>Easy Planning</title>
+<link href="{$cfg.libcss}bootstrap.min.css" rel="stylesheet">
+<link href="{$cfg.libcss}font-awesome.min.css" rel="stylesheet">
+<link href="{$cfg.css}custom.min.css" rel="stylesheet">
+
+<style media="all">
+body {
+	min-width: 600px;
+	-webkit-print-color-adjust: exact;
+	padding: 0;
+	margin: 0;
+}
+div {float: none !important;}
+.tab-pane {
+	display: block !important;
+	opacity: 1 !important;
+	visibility: visible !important;
+	padding:0;
+	page-break-inside: avoid !important;
+}
+.page{padding: 0;}
+.table .txt-small {
+	width: 35px;
+	heght: 40px;
+	font-size: 15px;
+	font-weight: bold;
+	color: black;
+	font-size: 15px;
+}
+.img-small {width: 30px;}
+div #alert-print{
+    display: block;
+    position: fixed;
+    vertical-align: bottom;
+    width: 100%;
+    text-align: center;
+    margin: 0;
+    padding: 10px;
+    top: 0;
+}
+.report-header-bg{
+    vertical-align: bottom;
+    width: 100%;
+    margin: 0;
+    top: 0;	
+}
+.report-header-logo{
+ 	position: fixed; 
+ 	top: 0; 
+ 	left: 0; 
+ 	padding: 0;
+ }
+ .report-footer-div{
+ 	text-align: right;
+ }
+ .form-table{
+ 	width: 100%;
+ 	margin: 10px 0 10px 0;
+ }
+ .form-table tr td{
+ 	border-style: solid;
+ 	border-width: 0.5px;
+ 	height: 1cm;
+ }
+</style>
+
+<style media="print">
+@page{
+    size: auto; 
+    margin: 1.27cm 1.27cm 1.27cm 1.27cm;  
+}
+body{margin: 0;}
+div #alert-print{display:none;}
+thead.report-header {
+   display: table-header-group;
+}
+
+tfoot.report-footer {
+   display:table-footer-group;
+   text-align: right;
+}
+table.report-container {
+    --page-break-after: always;
+}
+.page-break{page-break-before: always !important;}
+</style>
+
+</head>
+
+<body class="login">
+<table class="report-container">
+<thead class="report-header"><tr><th>
+   	<div class="report-header-bg">
+	    <img src="{$cfg.imgs}print_bg.png" style="width: 100%; height: 80px;">
+	    <div class="report-header-logo">
+	        <img src="{$cfg.imgs}logoTR_60x60.png" style="vertical-align:middle" /> <span style="vertical-align:middle;font-size:30px;color: midnightblue;">Easy Planning</span>
+	    </div>
+	</div>
+</th></tr></thead>
+<tfoot class="report-footer"><tr><td>
+	<div class="report-footer-div">©2018 All Rights Reserved. TreinaRecife!</div>
+</td></tr></tfoot>
+<tbody class="report-content"><tr><td>
+<div class="page">

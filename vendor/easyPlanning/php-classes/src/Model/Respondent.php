@@ -10,8 +10,6 @@ use easyPlanning\SysConfig;
 class Respondent extends Model
 {
 
-    public const SESSION = "Logged";
-
     public function __construct()
     {
         $fields = array(

@@ -13,6 +13,8 @@ use easyPlanning\Model\Plan;
 use easyPlanning\Model\Respondent;
 use easyPlanning\Model\Objective;
 use easyPlanning\Model\Diagnostic;
+use easyPlanning\Controller\Report;
+use easyPlanning\PagePrint;
 
 $app = new Slim();
 
@@ -639,6 +641,55 @@ $app->group('/objectives', verifyLogin(), function () use ($app) {
         $app->response->redirect('/objectives', 301);
     });
 });
+    // #############################################################################################
+    // REPORTS
+    // #############################################################################################
+    $app->group('/reports',verifyLogin(),function() use($app){
+        $app->get('/questions',function() use($app){
+            $user = NULL;
+            $objs = NULL;
+            $obj = NULL;
+            try {
+                $obj = new Report();
+                $intern = $obj->listAllQuestions(0);
+                $extern = $obj->listAllQuestions(1);
+                $pintern = $obj->listDistinctPerspectives(0);
+                $pextern = $obj->listDistinctPerspectives(1);
+                $page = new PagePrint();
+                $page->setTpl('print-questions', array(
+                    "pintern" => $pintern,
+                    "pextern" => $pextern,
+                    "intern" => $intern,
+                    "extern" => $extern
+                ));
+            } catch (Exception $e) {
+                $app->flash("error", $e->getMessage());
+                $app->response->redirect('/login', 301);
+            }
+        });
+        
+        $app->get('/diagnostics',function() use($app){
+            $user = NULL;
+            $objs = NULL;
+            $obj = NULL;
+            try {
+                $obj = new Report();
+                $grade1 = $obj->listGrade1Swot(1);
+                $grade2 = $obj->listGrade2Swot(1);
+                $responsesInputs = $obj->listInputs(1);
+                $page = new PagePrint();
+                $page->setTpl('print-diagnostic', array(
+                    "grade1" => $grade1,
+                    "grade2" => $grade2,
+                    "responsesInputs" => $responsesInputs
+                ));
+            } catch (Exception $e) {
+                $app->flash("error", $e->getMessage());
+                $app->response->redirect('/login', 301);
+            }
+        });
+    });
+
 
 // #############################################################################################
 // ADMIN ROUTES
