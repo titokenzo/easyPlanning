@@ -10,7 +10,7 @@ use easyPlanning\SysConfig;
 class User extends Model
 {
 
-    public const SESSION = "Logged";
+    const SESSION = "Logged";
 
     public function __construct()
     {
@@ -55,10 +55,12 @@ class User extends Model
             b.org_id, 
             b.org_tradingname as org_name, 
             a.userorg_type, 
-            c.diagnostic_id 
+            c.diagnostic_id,
+            d.plan_id  
         FROM tb_users_organizations a 
         INNER JOIN tb_organizations b USING (org_id) 
         LEFT JOIN tb_diagnostics c on b.org_id=c.org_id AND c.diagnostic_status IN (1,2)
+        LEFT JOIN tb_strategic_planning d on b.org_id=d.org_id AND d.plan_status IN (1,2)
         WHERE a.user_id=:ID", array(
             ":ID" => $data["user_id"]
             
@@ -92,10 +94,12 @@ class User extends Model
                 b.org_id, 
                 b.org_tradingname as org_name, 
                 a.userorg_type, 
-                c.diagnostic_id 
+                c.diagnostic_id,
+                d.plan_id  
             FROM tb_users_organizations a 
             INNER JOIN tb_organizations b USING (org_id) 
             LEFT JOIN tb_diagnostics c on b.org_id=c.org_id AND c.diagnostic_status IN (1,2)
+            LEFT JOIN tb_strategic_planning d on b.org_id=d.org_id AND d.plan_status IN (1,2)
             WHERE a.user_id=:USER AND a.org_id=:ORG", array(
             ":USER" => $data["user_id"],
             ":ORG" => $idorg
@@ -124,6 +128,12 @@ class User extends Model
     {
         $sql = new Sql();
         return $sql->select("SELECT * from tb_users a ORDER BY a.user_name");
+    }
+    
+    public static function listFromOrganization($org_id)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * from tb_users a INNER JOIN tb_users_organizations b USING(user_id) WHERE b.org_id=:ORG ORDER BY a.user_name", array(":ORG"=>$org_id));
     }
 
     public function save()

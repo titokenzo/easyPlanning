@@ -1,0 +1,122 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h2>{$logged.org_name} - {$objs[0].plan_title} -
+					{$objs[0].obj_description}</h2>
+				<h3>Metas Estratégicas</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Monitoramento de Meta</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<div class="box-body col-md-6 col-xs-6">
+					<div class="form-group">
+						<label>Meta: </label> {$target.target_name}
+						<br/>
+						<label for="user_id">Responsável: </label>
+						{loop="$users"}{if="$target.user_id==$value.user_id"}{$value.user_name}{/if}{/loop}
+						<br/>
+						<label for="target_code">Sigla: </label> {$target.target_code}
+						<br/>
+						<label for="target_unit">Unidade de medida: </label>
+						{$target.target_unit}
+						<br/>
+						<label for="target_baseline">Valor Inicial: </label>
+						{$target.target_baseline}
+						<br/>
+						<label for="target_value">Valor da Meta: </label>
+						{$target.target_value}
+						<br/>
+						<label for="target_dtstart">Data início: </label>
+						{$target.target_dtstart}
+						<br/>
+						<label for="target_dtfinish">Data fim: </label>
+						{$target.target_dtfinish}
+						<br/>
+						<label for="target_frequence">Periodicidade: </label> a cada
+						{$target.target_frequence}
+						{loop="$frequenceUnits"}{if="$target.target_frequenceunit==$key"}{$value}{/if}{/loop}
+					</div>
+					<div class="form-group">
+						<label for="target_description">Descrição: </label>
+						<textarea name="target_description" class="form-control" readonly>{$target.target_description}</textarea>
+					</div>
+					<div class="form-group">
+						<label for="target_justify">Justificativa: </label>
+						<textarea name="target_justify" class="form-control" readonly>{$target.target_justify}</textarea>
+					</div>
+					<div class="form-group">
+						<label for="target_formula">Fórmula de Cálculo: </label>
+						<textarea name="target_formula" class="form-control" readonly>{$target.target_formula}</textarea>
+					</div>
+					<div class="form-group">
+						<label for="target_methodology">Método de Levantamento: </label>
+						<textarea name="target_methodology" class="form-control" readonly
+							required>{$target.target_methodology}</textarea>
+					</div>
+				</div>
+				<form role="form" action="/monitoring/target/update/{$obj.mon_id}" method="post">
+					<input type="hidden" id="target_id" name="target_id" value="{$obj.target_id}" />
+					<input type="hidden" id="mon_id" name="mon_id" value="{$obj.mon_id}" />
+					<div class="box-body col-md-6 col-xs-6">
+						{if="isset($error)"}
+						<div class="alert alert-danger" role="alert">{$error}</div>
+						{/if}
+						<div class="form-group">
+							<label for="mon_value">Medição *</label> <input type="number"
+								id="mon_value" name="mon_value" class="form-control"
+								placeholder="Digite o valor" required value="{$obj.mon_value}" />
+						</div>
+						<div class="form-group">
+							<label for="mon_date">Data *</label> <input type="date"
+								id="mon_date" name="mon_date" class="form-control"
+								placeholder="Data da leitura" required value="{$obj.mon_date}" />
+						</div>
+						<div class="form-group">
+							<label for="mon_comment">Comentários </label>
+							<textarea id="mon_comment" name="mon_comment"
+								class="form-control" placeholder="Digite o comentário">{$obj.mon_comment}</textarea>
+						</div>
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary">Salvar</button>
+							<a class="btn btn-default" href="/monitoring">Voltar</a> <br /> <br />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Histórico dos Monitoramentos</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<table id="" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th style="width: 140px">Data</th>
+							<th>Evolução</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop="$objs"}
+						<tr>
+		                    <td><a href="/monitoring/target/update/{$value.mon_id}">{$value.mon_date}</a></td>
+		                    <td>
+		                    	<img src="{$cfg.imgs}iconemeta{$value.nivel_relativo}.png" title="{$value.mon_value}" />&nbsp;{$value.resultado_relativo}% ({$value.mon_value})
+		                    </td>							
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+<!-- /page content -->

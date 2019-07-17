@@ -2,6 +2,8 @@
 session_start();
 require_once ("vendor/autoload.php");
 
+const _DS_ = DIRECTORY_SEPARATOR;
+
 use \Slim\Slim;
 use \easyPlanning\Page;
 use \easyPlanning\Model\User;
@@ -15,10 +17,29 @@ use easyPlanning\Model\Objective;
 use easyPlanning\Model\Diagnostic;
 use easyPlanning\Controller\Report;
 use easyPlanning\PagePrint;
+use easyPlanning\Model\Target;
+use easyPlanning\Model\Monitoring;
+use easyPlanning\Model\MonitoringObjective;
 
-$app = new Slim();
+$app = new Slim(array(
+    'mode' => 'development'
+));
 
-$app->config('debug', true);
+// Only invoked if mode is "production"
+$app->configureMode('production', function () use ($app) {
+    $app->config(array(
+        'log.enable' => true,
+        'debug' => false
+    ));
+});
+
+// Only invoked if mode is "development"
+$app->configureMode('development', function () use ($app) {
+    $app->config(array(
+        'log.enable' => false,
+        'debug' => true
+    ));
+});
 
 function verifyLogin()
 {
@@ -87,7 +108,7 @@ $app->post('/loginOrganization', verifyLogin(), function () use ($app) {
         $app->response->redirect("/loginOrganization");
     }
     User::setSessionOrganization($idorg);
-    $app->response->redirect("/");
+    $app->response->redirect("/easy.php");
 });
 
 $app->get('/logout', function () use ($app) {
@@ -302,7 +323,7 @@ $app->post('/respond/remove', function () {
 // USER LIST
 $app->group('/users', verifyLogin(), function () use ($app) {
     $app->get('/', function () {
-        $objs = User::listAll();
+        $objs = User::listFromOrganization($_SESSION[User::SESSION]['org_id']);
         $page = new Page();
         $page->setTpl('users', array(
             "objs" => $objs
@@ -365,17 +386,18 @@ $app->group('/users', verifyLogin(), function () use ($app) {
 // #########################################################################################
 // LIST
 $app->group('/plans', verifyLogin(), function () use ($app) {
-    $app->get('/', verifyLogin(), function () {
-        $objs = Plan::listFromOrg($_SESSION[User::SESSION]["org_id"]);
+    $app->get('/', function () {
+        $objs = Plan::listPlansFromOrg($_SESSION[User::SESSION]["org_id"]);
         $page = new Page();
         $page->setTpl('plans', array(
-            "objs" => $objs
+            "objs" => $objs,
+            "status" => Plan::getPlanStatusList()
         ));
     });
     
     // VIEW
-    $app->get('/view', verifyLogin(), function () {
-        $obj = Plan::getActive($_SESSION[User::SESSION]["org_id"]);
+    $app->get('/view', function () {
+        $obj = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         $new = false;
         if (! $obj) {
             $new = true;
@@ -383,18 +405,21 @@ $app->group('/plans', verifyLogin(), function () use ($app) {
         $page = new Page();
         $page->setTpl('plans-view', array(
             "obj" => $obj,
+            "status" => Plan::getPlanStatusList(),
             "new" => $new
         ));
     });
     
     // CREATE
-    $app->get('/create', verifyLogin(), function () {
+    $app->get('/create', function () {
         $page = new Page();
-        $page->setTpl('plans-create');
+        $page->setTpl('plans-create', array(
+            "status" => Plan::getPlanStatusList()
+        ));
     });
     
     // SAVE CREATE
-    $app->post('/create', verifyLogin(), function () use ($app) {
+    $app->post('/create', function () use ($app) {
         $obj = new Plan();
         $_POST["plan_isopen"] = isset($_POST["plan_isopen"]) ? 1 : 0;
         $obj->setData($_POST);
@@ -403,7 +428,7 @@ $app->group('/plans', verifyLogin(), function () use ($app) {
     });
     
     // DELETE
-    $app->get('/:idobj/delete', verifyLogin(), function ($idobj) use ($app) {
+    $app->get('/:idobj/delete', function ($idobj) use ($app) {
         $obj = new Plan();
         $obj->get((int) $idobj);
         $obj->delete();
@@ -411,19 +436,19 @@ $app->group('/plans', verifyLogin(), function () use ($app) {
     });
     
     // VIEW UPDATE
-    $app->get('/:idobj', verifyLogin(), function ($idobj) {
+    $app->get('/:idobj', function ($idobj) {
         $obj = new Plan();
         $obj->get((int) $idobj);
         $page = new Page();
         $page->setTpl('plans-update', array(
-            "obj" => $obj->getValues()
+            "obj" => $obj->getValues(),
+            "status" => Plan::getPlanStatusList()
         ));
     });
     
     // SAVE UPDATE
-    $app->post('/:idobj', verifyLogin(), function ($idobj) use ($app) {
+    $app->post('/:idobj', function ($idobj) use ($app) {
         $obj = new Plan();
-        $_POST["plan_isopen"] = isset($_POST["plan_isopen"]) ? 1 : 0;
         $obj->get((int) $idobj);
         $obj->setData($_POST);
         $obj->update();
@@ -578,11 +603,12 @@ $app->group('/respondents', verifyLogin(), function () use ($app) {
 $app->group('/objectives', verifyLogin(), function () use ($app) {
     $app->get('/', function () {
         $data = $_SESSION[User::SESSION];
-        $objs = Objective::getFromPlan($data["plan_id"]);
+        $objs = Objective::listObjectivesFromActivePlan($data["org_id"]);
         $page = new Page();
         $page->setTpl('objectives', array(
             "objs" => $objs,
-            "levels" => Objective::getOrganizationLevelList()
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"])
         ));
     });
     
@@ -591,7 +617,9 @@ $app->group('/objectives', verifyLogin(), function () use ($app) {
         $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $page = new Page();
         $page->setTpl('objectives-create', array(
-            "levels" => Objective::getOrganizationLevelList(),
+            "perspectives" => Perspective::listAll(),
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
             "error" => $error
         ));
     });
@@ -606,90 +634,281 @@ $app->group('/objectives', verifyLogin(), function () use ($app) {
     
     // VIEW UPDATE
     $app->get('/:idobj', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $obj = new Objective();
         $obj->get((int) $idobj);
+        $plan = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         $page = new Page();
         $page->setTpl('objectives-update', array(
             "obj" => $obj->getValues(),
-            "levels" => Objective::getOrganizationLevelList()
+            "plan" => $plan,
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
+            "perspectives" => Perspective::listAll(),
+            "objs" => Objective::getObjDepends($idobj),
+            "error" => $error
         ));
     });
     
     // SAVE CREATE
     $app->post('/create', function () use ($app) {
         $obj = new Objective();
-        $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
-        $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
         $obj->setData($_POST);
         try {
-            $obj->saveObjectives();
+            $obj->save();
+            $app->response->redirect('/objectives', 301);
         } catch (Exception $e) {
             $app->flash('error', $e->getMessage());
             $app->response->redirect('/objectives/create');
         }
-        $app->response->redirect('/objectives', 301);
     });
     
     // SAVE UPDATE
     $app->post('/:idobj', function ($idobj) use ($app) {
         $obj = new Objective();
-        $_POST["resp_allowpartial"] = isset($_POST["resp_allowpartial"]) ? 1 : 0;
-        $_POST["resp_allowreturn"] = isset($_POST["resp_allowreturn"]) ? 1 : 0;
         $obj->get((int) $idobj);
         $obj->setData($_POST);
-        $obj->update();
-        $app->response->redirect('/objectives', 301);
+        try {
+            $obj->update();
+            $app->response->redirect('/objectives', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/objectives/' . $idobj);
+        }
+    });
+    
+    // ########################################################################################
+    // TARGETS
+    // #########################################################################################
+    // LIST
+    
+    $app->get('/:idobj/targets', function ($idobj) {
+        $data = $_SESSION[User::SESSION];
+        $objs = Target::listObjectiveTargets($idobj);
+        $objective = new Objective();
+        $objective->get((int) $idobj);
+        $page = new Page();
+        $page->setTpl('targets', array(
+            "objs" => $objs,
+            "objective" => $objective->getValues(),
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"])
+        ));
+    });
+    
+    // CREATE
+    $app->get('/:idobj/targets/create', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $objective = new Objective();
+        $objective->get((int) $idobj);
+        $page = new Page();
+        $page->setTpl('targets-create', array(
+            "objective" => $objective->getValues(),
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
+            "error" => $error
+        ));
+    });
+    
+    // DELETE
+    $app->get('/:idobj/targets/:idtarget/delete', function ($idobj, $idtarget) use ($app) {
+        $obj = new Target();
+        $obj->get((int) $idtarget);
+        $obj->delete();
+        $app->response->redirect('/objectives/' . $idobj . '/targets', 301);
+    });
+    
+    // VIEW UPDATE
+    $app->get('/:idobj/targets/:idtarget', function ($idobj, $idtarget) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
+        $objective = new Objective();
+        $objective->get((int) $idobj);
+        $obj = new Target();
+        $obj->get((int) $idtarget);
+        $plan = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
+        $page = new Page();
+        $page->setTpl('targets-update', array(
+            "obj" => $obj->getValues(),
+            "objective" => $objective->getValues(),
+            "plan" => $plan,
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
+            "frequenceUnits" => Target::getFrequenceUnitsList(),
+            "error" => $error
+        ));
+    });
+    
+    // SAVE CREATE
+    $app->post('/:idobj/targets/create', function ($idobj) use ($app) {
+        $obj = new Target();
+        $obj->setData($_POST);
+        try {
+            $obj->save();
+            $app->response->redirect('/objectives/' . $idobj . '/targets', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/objectives/' . $idobj . '/targets/create');
+        }
+    });
+    
+    // SAVE UPDATE
+    $app->post('/:idobj/targets/:idtarget', function ($idobj, $idtarget) use ($app) {
+        $obj = new Target();
+        $obj->get((int) $idtarget);
+        $obj->setData($_POST);
+        try {
+            $obj->update();
+            $app->response->redirect('/objectives/' . $idobj . '/targets', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/objectives/' . $idobj . '/targets/' . $idtarget);
+        }
     });
 });
-    // #############################################################################################
-    // REPORTS
-    // #############################################################################################
-    $app->group('/reports',verifyLogin(),function() use($app){
-        $app->get('/questions',function() use($app){
-            $user = NULL;
-            $objs = NULL;
-            $obj = NULL;
-            try {
-                $obj = new Report();
-                $intern = $obj->listAllQuestions(0);
-                $extern = $obj->listAllQuestions(1);
-                $pintern = $obj->listDistinctPerspectives(0);
-                $pextern = $obj->listDistinctPerspectives(1);
-                $page = new PagePrint();
-                $page->setTpl('print-questions', array(
-                    "pintern" => $pintern,
-                    "pextern" => $pextern,
-                    "intern" => $intern,
-                    "extern" => $extern
-                ));
-            } catch (Exception $e) {
-                $app->flash("error", $e->getMessage());
-                $app->response->redirect('/login', 301);
-            }
-        });
-        
-        $app->get('/diagnostics',function() use($app){
-            $user = NULL;
-            $objs = NULL;
-            $obj = NULL;
-            try {
-                $obj = new Report();
-                $grade1 = $obj->listGrade1Swot(1);
-                $grade2 = $obj->listGrade2Swot(1);
-                $responsesInputs = $obj->listInputs(1);
-                $page = new PagePrint();
-                $page->setTpl('print-diagnostic', array(
-                    "grade1" => $grade1,
-                    "grade2" => $grade2,
-                    "responsesInputs" => $responsesInputs
-                ));
-            } catch (Exception $e) {
-                $app->flash("error", $e->getMessage());
-                $app->response->redirect('/login', 301);
-            }
-        });
-    });
 
+// ########################################################################################
+// MONITORING
+// #########################################################################################
+// LIST
+$app->group('/monitoring', verifyLogin(), function () use ($app) {
+    $app->get('/', function () {
+        $data = $_SESSION[User::SESSION];
+        $objs = Monitoring::listPlanLastResults($data["plan_id"]);
+        $page = new Page();
+        $page->setTpl('monitoring', array(
+            "objs" => $objs,
+            "objectives" => Monitoring::proccessObjectivesResults($objs),
+            "users" => User::listFromOrganization($data["org_id"])
+        ));
+    });
+    
+    // VIEW TARGET CREATE
+    $app->get('/target/create/:idtarget', function ($idtarget) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
+        $target = new Target();
+        $target->get((int) $idtarget);
+        $page = new Page();
+        $page->setTpl('monitoring-target-create', array(
+            "objs" => Monitoring::listTargetResults($idtarget),
+            "target" => $target->getValues(),
+            "users" => User::listFromOrganization($data["org_id"]),
+            "frequenceUnits" => Target::getFrequenceUnitsList(),
+            "error" => $error
+        ));
+    });
+    
+    // SAVE TARGET CREATE
+    $app->post('/target/create', function () use ($app) {
+        $obj = new Monitoring();
+        $obj->setData($_POST);
+        try {
+            $obj->save();
+            $app->response->redirect('/monitoring', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/monitoring/target/create/' . $_POST["target_id"]);
+        }
+    });
+    
+    // VIEW TARGET UPDATE
+    $app->get('/target/update/:idmon', function ($idmon) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
+        $obj = new Monitoring();
+        $obj->get((int) $idmon);
+        $target = new Target();
+        $target->get((int) $obj->gettarget_id());
+        $page = new Page();
+        $page->setTpl('monitoring-target-update', array(
+            "obj" => $obj->getValues(),
+            "objs" => Monitoring::listTargetResults($obj->gettarget_id()),
+            "target" => $target->getValues(),
+            "users" => User::listFromOrganization($data["org_id"]),
+            "frequenceUnits" => Target::getFrequenceUnitsList(),
+            "error" => $error
+        ));
+    });
+    
+    // SAVE TARGET UPDATE
+    $app->post('/target/update/:idmon', function ($idmon) use ($app) {
+        $obj = new Monitoring();
+        $obj->get((int) $idmon);
+        $obj->setData($_POST);
+        try {
+            $obj->update();
+            $app->response->redirect('/monitoring', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/monitoring/target/update/' . $idmon);
+        }
+    });
+    
+    // VIEW OBJECTIVE CREATE
+    $app->get('/obj/create/:idobj', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
+        $objective = new Objective();
+        $objective->get((int) $idobj);
+        $page = new Page();
+        $page->setTpl('monitoring-obj-create', array(
+            "objective" => $objective->getValues(),
+            "objs" => MonitoringObjective::listObjectiveMonitoring($idobj),
+            "targets" => Monitoring::listObjectiveLastResults($idobj),
+            "users" => User::listFromOrganization($data["org_id"]),
+            "error" => $error
+        ));
+    });
+});
+
+// #############################################################################################
+// REPORTS
+// #############################################################################################
+$app->group('/reports', verifyLogin(), function () use ($app) {
+    $app->get('/questions', function () use ($app) {
+        $user = NULL;
+        $objs = NULL;
+        $obj = NULL;
+        try {
+            $obj = new Report();
+            $intern = $obj->listAllQuestions(0);
+            $extern = $obj->listAllQuestions(1);
+            $pintern = $obj->listDistinctPerspectives(0);
+            $pextern = $obj->listDistinctPerspectives(1);
+            $page = new PagePrint();
+            $page->setTpl('print-questions', array(
+                "pintern" => $pintern,
+                "pextern" => $pextern,
+                "intern" => $intern,
+                "extern" => $extern
+            ));
+        } catch (Exception $e) {
+            $app->flash("error", $e->getMessage());
+            $app->response->redirect('/login', 301);
+        }
+    });
+    
+    $app->get('/diagnostics', function () use ($app) {
+        $user = NULL;
+        $objs = NULL;
+        $obj = NULL;
+        try {
+            $obj = new Report();
+            $grade1 = $obj->listGrade1Swot(1);
+            $grade2 = $obj->listGrade2Swot(1);
+            $responsesInputs = $obj->listInputs(1);
+            $page = new PagePrint();
+            $page->setTpl('print-diagnostic', array(
+                "grade1" => $grade1,
+                "grade2" => $grade2,
+                "responsesInputs" => $responsesInputs
+            ));
+        } catch (Exception $e) {
+            $app->flash("error", $e->getMessage());
+            $app->response->redirect('/login', 301);
+        }
+    });
+});
 
 // #############################################################################################
 // ADMIN ROUTES
@@ -697,7 +916,7 @@ $app->group('/objectives', verifyLogin(), function () use ($app) {
 $app->group('/admin', verifyLoginAdmin(),
     function () use ($app) {
         $app->get('/', function () use ($app) {
-            $app->response->redirect('\admin\orgs');
+            $app->response->redirect('/admin/orgs');
         });
         // #####################################################################################
         // ADMIN ORGANIZATIONS
@@ -707,7 +926,7 @@ $app->group('/admin', verifyLoginAdmin(),
             $app->get('/', function () {
                 $objs = Organization::listAll();
                 $page = new Page();
-                $page->setTpl('admin\orgs', array(
+                $page->setTpl('admin' . _DS_ . 'orgs', array(
                     "objs" => $objs
                 ));
             });
@@ -715,7 +934,7 @@ $app->group('/admin', verifyLoginAdmin(),
             // CREATE
             $app->get('/create', function () {
                 $page = new Page();
-                $page->setTpl('admin\orgs-create', array(
+                $page->setTpl('admin' . _DS_ . 'orgs-create', array(
                     "legalnatures" => Organization::getOrgLegalNatureList(),
                     "status" => Organization::getOrgStatusList(),
                     "sizes" => Organization::getOrgSizeList()
@@ -727,7 +946,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new Organization();
                 $obj->get((int) $idobj);
                 $obj->delete();
-                $app->response->redirect('\admin\orgs', 301);
+                $app->response->redirect('/admin/orgs', 301);
             });
             
             // VIEW UPDATE
@@ -735,7 +954,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new Organization();
                 $obj->get((int) $idobj);
                 $page = new Page();
-                $page->setTpl('admin\orgs-update', array(
+                $page->setTpl('admin' . _DS_ . 'orgs-update', array(
                     "obj" => $obj->getValues(),
                     "legalnatures" => Organization::getOrgLegalNatureList(),
                     "status" => Organization::getOrgStatusList(),
@@ -749,7 +968,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $_POST["org_notification"] = isset($_POST["org_notification"]) ? 1 : 0;
                 $obj->setData($_POST);
                 $obj->save();
-                $app->response->redirect('\admin\orgs', 301);
+                $app->response->redirect('/admin/orgs', 301);
             });
             
             // SAVE UPDATE
@@ -759,7 +978,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj->get((int) $idobj);
                 $obj->setData($_POST);
                 $obj->update();
-                $app->response->redirect('\admin\orgs', 301);
+                $app->response->redirect('/admin/orgs', 301);
             });
         });
         // #####################################################################################
@@ -770,7 +989,7 @@ $app->group('/admin', verifyLoginAdmin(),
             $app->get('/', function () {
                 $objs = User::listAll();
                 $page = new Page();
-                $page->setTpl('admin\users', array(
+                $page->setTpl('admin' . _DS_ . 'users', array(
                     "objs" => $objs
                 ));
             });
@@ -778,7 +997,7 @@ $app->group('/admin', verifyLoginAdmin(),
             // USER VIEW CREATE
             $app->get('/create', function () {
                 $page = new Page();
-                $page->setTpl('admin\users-create', array(
+                $page->setTpl('admin' . _DS_ . 'users-create', array(
                     "types" => USer::getUserTypeList(),
                     "orgs" => User::getUserOrganizations()
                 ));
@@ -816,7 +1035,7 @@ $app->group('/admin', verifyLoginAdmin(),
                     "header" => false,
                     "footer" => false
                 ]);
-                $page->setTpl('admin\users-test');
+                $page->setTpl('admin' . _DS_ . 'users-test');
             });
             
             // USER VIEW UPDATE
@@ -824,7 +1043,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new User();
                 $obj->get((int) $idobj);
                 $page = new Page();
-                $page->setTpl('admin\users-update', array(
+                $page->setTpl('admin' . _DS_ . 'users-update', array(
                     "obj" => $obj->getValues(),
                     "types" => USer::getUserTypeList(),
                     "orgs" => User::getUserOrganizations($idobj)
@@ -858,7 +1077,7 @@ $app->group('/admin', verifyLoginAdmin(),
             $app->get('/', function () {
                 $objs = QSet::listAll();
                 $page = new Page();
-                $page->setTpl('admin\qsets', array(
+                $page->setTpl('admin' . _DS_ . 'qsets', array(
                     "objs" => $objs
                 ));
             });
@@ -866,7 +1085,7 @@ $app->group('/admin', verifyLoginAdmin(),
             // CREATE
             $app->get('/create', function () {
                 $page = new Page();
-                $page->setTpl('admin\qsets-create');
+                $page->setTpl('admin' . _DS_ . 'qsets-create');
             });
             
             // DELETE
@@ -882,7 +1101,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new QSet();
                 $obj->get((int) $idobj);
                 $page = new Page();
-                $page->setTpl('admin\qsets-update', array(
+                $page->setTpl('admin' . _DS_ . 'qsets-update', array(
                     "obj" => $obj->getValues()
                 ));
             });
@@ -912,7 +1131,7 @@ $app->group('/admin', verifyLoginAdmin(),
             $app->get('/', function () {
                 $objs = Perspective::listAll();
                 $page = new Page();
-                $page->setTpl('admin\perspectives', array(
+                $page->setTpl('admin' . _DS_ . 'perspectives', array(
                     "objs" => $objs
                 ));
             });
@@ -920,7 +1139,7 @@ $app->group('/admin', verifyLoginAdmin(),
             // CREATE
             $app->get('/create', function () {
                 $page = new Page();
-                $page->setTpl('admin\perspectives-create');
+                $page->setTpl('admin' . _DS_ . 'perspectives-create');
             });
             
             // DELETE
@@ -936,7 +1155,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new Perspective();
                 $obj->get((int) $idobj);
                 $page = new Page();
-                $page->setTpl('admin\perspectives-update', array(
+                $page->setTpl('admin' . _DS_ . 'perspectives-update', array(
                     "obj" => $obj->getValues()
                 ));
             });
@@ -969,7 +1188,7 @@ $app->group('/admin', verifyLoginAdmin(),
             $app->get('/', function () {
                 $objs = Question::listAll();
                 $page = new Page();
-                $page->setTpl('admin\questions', array(
+                $page->setTpl('admin' . _DS_ . 'questions', array(
                     "objs" => $objs
                 ));
             });
@@ -999,7 +1218,7 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new Question();
                 $obj->get((int) $idobj);
                 $page = new Page();
-                $page->setTpl('admin\questions-update', array(
+                $page->setTpl('admin' . _DS_ . 'questions-update', array(
                     "obj" => $obj->getValues(),
                     "status" => Question::getStatusList(),
                     "environments" => Question::getEnvironmentList(),

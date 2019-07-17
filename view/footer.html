@@ -9,66 +9,32 @@
 </div>
 </div>
 
-<!-- jQuery -->
-<script src="{$cfg.libjs}jquery.min.js"></script>
-<!-- Bootstrap -->
-<script src="{$cfg.libjs}bootstrap.min.js"></script>
-<!-- FastClick -->
+<script src="https://code.jquery.com/jquery-2.2.3.min.js"></script>
+<script src="https://unpkg.com/popper.js/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"></script>
+
 <script src="{$cfg.libjs}fastclick.js"></script>
-<!-- NProgress -->
 <script src="{$cfg.libjs}nprogress.js"></script>
-<!-- jQuery Smart Wizard -->
 <script src="{$cfg.libjs}jquery.smartWizard.js"></script>
-<!-- Chart.js -->
 <script src="{$cfg.libjs}Chart.min.js"></script>
-<!-- gauge.js -->
 <script src="{$cfg.libjs}gauge.min.js"></script>
-<!-- bootstrap-progressbar -->
 <script src="{$cfg.libjs}bootstrap-progressbar.min.js"></script>
-<!-- iCheck -->
-<script src="{$cfg.libjs}icheck.min.js"></script>
-<!-- Skycons -->
-<script src="{$cfg.libjs}skycons.js"></script>
-<!-- Flot -->
-<script src="{$cfg.libjs}jquery.flot.js"></script>
-<script src="{$cfg.libjs}jquery.flot.pie.js"></script>
-<script src="{$cfg.libjs}jquery.flot.time.js"></script>
-<script src="{$cfg.libjs}jquery.flot.stack.js"></script>
-<script src="{$cfg.libjs}jquery.flot.resize.js"></script>
-<!-- Flot plugins -->
-<script src="{$cfg.libjs}jquery.flot.orderBars.js"></script>
-<script src="{$cfg.libjs}jquery.flot.spline.min.js"></script>
-<script src="{$cfg.libjs}curvedLines.js"></script>
-<!-- DateJS -->
 <script src="{$cfg.libjs}date.js"></script>
-<!-- JQVMap -->
-<script src="{$cfg.libjs}jquery.vmap.js"></script>
-<script src="{$cfg.libjs}jquery.vmap.world.js"></script>
-<script src="{$cfg.libjs}jqvmap/jquery.vmap.sampledata.js"></script>
-<!-- bootstrap-daterangepicker -->
-<script src="{$cfg.libjs}moment.min.js"></script>
-<script src="{$cfg.libjs}daterangepicker.js"></script>
-<!-- Datatables -->
 <script src="{$cfg.libjs}jquery.dataTables.min.js"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#datatable').DataTable( {
+            "language": {
+                "url": "//cdn.datatables.net/plug-ins/1.10.12/i18n/Portuguese-Brasil.json"
+            }
+        } );
+    } );
+</script>
 <script src="{$cfg.libjs}dataTables.bootstrap.min.js"></script>
-<!-- bootstrap-wysiwyg -->
 <script src="{$cfg.libjs}bootstrap-wysiwyg.min.js"></script>
-<script src="{$cfg.libjs}jquery.hotkeys.js"></script>
 <script src="{$cfg.libjs}prettify.js"></script>
-<!-- jQuery Tags Input -->
-<script src="{$cfg.libjs}jquery.tagsinput.js"></script>
-<!-- Switchery -->
 <script src="{$cfg.libjs}switchery.min.js"></script>
-<!-- Select2 -->
-<script src="{$cfg.libjs}select2.full.min.js"></script>
-<!-- Parsley -->
-<script src="{$cfg.libjs}parsley.min.js"></script>
-<!-- Autosize -->
-<script src="{$cfg.libjs}autosize.min.js"></script>
-<!-- jQuery autocomplete -->
-<script src="{$cfg.libjs}jquery.autocomplete.min.js"></script>
-<!-- starrr -->
-<script src="{$cfg.libjs}starrr.js"></script>
+<script src="{$cfg.libjs}jquery.easypiechart.min.js"></script>
 <!-- Custom Theme Scripts -->
 <script src="{$cfg.js}custom.min.js"></script>
 <script src="{$cfg.js}treinarecife.js"></script>

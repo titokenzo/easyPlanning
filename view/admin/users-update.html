@@ -1,105 +1,105 @@
 <!-- page content -->
 <div class="right_col" role="main">
-	<div class="">
-		<div class="page-title">
-			<div class="title_left">
-				<h3>Administração de Usuários</h3>
-			</div>
-		</div>
-		<div class="clearfix"></div>
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>Atualização de Usuário</h2>
-				<div class="clearfix"></div>
-			</div>
-			<div class="x_content">
-				<form role="form" action="/admin/users/{$obj.user_id}" method="post">
-					<div class="box-body">
-						<div class="form-group">
-							<label for="user_name">Nome *</label> <input type="text"
-								class="form-control" id="user_name" name="user_name" maxlength="200"
-								placeholder="Digite o nome" value="{$obj.user_name}" required />
-						</div>
-						<div class="form-group">
-							<label for="user_cpf">CPF (apenas números) *</label> <input type="text"
-								class="form-control" id="user_cpf" name="user_cpf" maxlength="11"
-								placeholder="Digite o CPF" value="{$obj.user_cpf}" required />
-						</div>
-						<div class="form-group">
-							<label for="user_login">Login *</label> <input type="text"
-								class="form-control" id="user_login" name="user_login" maxlength="20"
-								placeholder="Digite o login" value="{$obj.user_login}" required />
-						</div>
-						<div class="form-group">
-							<label for="user_email">E-mail *</label> <input type="email"
-								class="form-control" id="user_email" name="user_email" maxlength="255"
-								placeholder="Digite o e-mail" value="{$obj.user_email}" required />
-						</div>
-						<div class="form-group">
-							<label for="user_phone">Telefone</label> <input type="text"
-								class="form-control" id="user_phone" name="user_phone" maxlength="100"
-								placeholder="Digite os telefones" value="{$obj.user_phone}" />
-						</div>
-						<div class="form-group">
-							<label for="user_position">Cargo</label> <input type="text"
-								class="form-control" id="user_position" name="user_position" maxlength="100"
-								placeholder="Digite o cargo" value="{$obj.user_position}" />
-						</div>
-						<div class="form-group">
-							<label for="user_photo">Foto</label> <input type="text"
-								class="form-control" id="user_photo" name="user_photo" maxlength="200"
-								placeholder="Selecione a foto" value="{$obj.user_photo}" />
-						</div>
-						<div class="checkbox">
-							<label> <input type="checkbox" name="user_isadmin"
-								value="0" {if="$obj.user_isadmin == 1"}checked{/if}>
-								Acesso de Administrador
-							</label>
-						</div>
-					</div>
-					<div class="box-footer">
-						<button type="submit" class="btn btn-primary">Salvar</button>
-						<a class="btn btn-default" href="/admin/users">Voltar</a>
-					</div>
-				</form>
-			</div>
-		</div>
-		
-		<div class="x_panel">
-			<div class="x_title">
-				<h2>Papel nas Organizações</h2>
-				<div class="clearfix"></div>
-			</div>
-			<div class="x_content">
-				<div class="box-body">
-					<table id="datatable" class="table table-striped table-bordered">
-						<thead>
-							<tr>
-								<th>Organização</th>
-								<th>Papel</th>
-							</tr>
-						</thead>
+    <div class="">
+        <div class="page-title">
+            <div class="title_left">
+                <h3>Administração de Usuários</h3>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Atualização de Usuário</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <form role="form" action="/admin/users/{$obj.user_id}" method="post">
+                    <div class="box-body">
+                        <div class="form-group">
+                            <label for="user_name">Nome *</label> <input type="text"
+                                                                         class="form-control" id="user_name" name="user_name" maxlength="200"
+                                                                         placeholder="Digite o nome" value="{$obj.user_name}" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_cpf">CPF (apenas números) *</label> <input type="text"
+                                                                                        class="form-control" id="user_cpf" name="user_cpf" maxlength="11"
+                                                                                        placeholder="Digite o CPF" value="{$obj.user_cpf}" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_login">Login *</label> <input type="text"
+                                                                           class="form-control" id="user_login" name="user_login" maxlength="20"
+                                                                           placeholder="Digite o login" value="{$obj.user_login}" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_email">E-mail *</label> <input type="email"
+                                                                            class="form-control" id="user_email" name="user_email" maxlength="255"
+                                                                            placeholder="Digite o e-mail" value="{$obj.user_email}" required />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_phone">Telefone</label> <input type="text"
+                                                                            class="form-control" id="user_phone" name="user_phone" maxlength="100"
+                                                                            placeholder="Digite os telefones" value="{$obj.user_phone}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_position">Cargo</label> <input type="text"
+                                                                            class="form-control" id="user_position" name="user_position" maxlength="100"
+                                                                            placeholder="Digite o cargo" value="{$obj.user_position}" />
+                        </div>
+                        <div class="form-group">
+                            <label for="user_photo">Foto</label> <input type="text"
+                                                                        class="form-control" id="user_photo" name="user_photo" maxlength="200"
+                                                                        placeholder="Selecione a foto" value="{$obj.user_photo}" />
+                        </div>
+                        <div class="checkbox">
+                            <label> <input type="checkbox" name="user_isadmin"
+                                           value="0" {if="$obj.user_isadmin == 1"}checked{/if}>
+                                           Acesso de Administrador
+                            </label>
+                        </div>
+                    </div>
+                    <div class="box-footer">
+                        <button type="submit" class="btn btn-primary">Salvar</button>
+                        <a class="btn btn-default" href="/admin/users">Voltar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
 
-						<tbody>
-							{loop="$orgs"}
-							<tr>
-			                    <td>{$value.org_tradingname}</td>
-			                    <td>
-                  						<div class="form-group">
-										<select class="form-control" onchange="pickOrganization(this)" _user="{$obj.user_id}" _org="{$value.org_id}">
-											<option value="0">- Nenhum -</option> {loop="$types"}
-											<option value="{$key}" {if="$value1.userorg_type==$key"}selected{/if}>{$value}</option> {/loop}
-										</select>
-								</td/>
-							</tr>
-							{/loop}
-						</tbody>
-					</table>
-					<br/><br/>
-				</div>
-			</div>
-		</div>		
-	</div>
+        <div class="x_panel">
+            <div class="x_title">
+                <h2>Papel nas Organizações</h2>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                <div class="box-body">
+                    <table id="datatable" class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Organização</th>
+                                <th>Papel</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {loop="$orgs"}
+                            <tr>
+                                <td>{$value.org_tradingname}</td>
+                                <td>
+                                    <div class="form-group">
+                                        <select class="form-control" onchange="pickOrganization(this)" _user="{$obj.user_id}" _org="{$value.org_id}">
+                                            <option value="0">- Nenhum -</option> {loop="$types"}
+                                            <option value="{$key}" {if="$value1.userorg_type==$key"}selected{/if}>{$value}</option> {/loop}
+                                        </select>
+                                </td/>
+                            </tr>
+                            {/loop}
+                        </tbody>
+                    </table>
+                    <br/><br/>
+                </div>
+            </div>
+        </div>		
+    </div>
 </div>
 
 <!-- /page content -->

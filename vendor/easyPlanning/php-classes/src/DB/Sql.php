@@ -11,12 +11,11 @@ class Sql extends SysConfig{
 	public function __construct()
 	{
 
-		$this->conn = new \PDO(
-			"mysql:dbname=". self::BD_BANCO . ";host=" . self::BD_HOST, 
+		$this->conn = new \PDO("mysql:dbname=". self::BD_BANCO . ";host=" . self::BD_HOST . ";charset=utf8", 
 			self::BD_USER,
-			self::BD_PASS
+		    self::BD_PASS,
+		    array(\PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
 		);
-
 	}
 
 	private function setParams($statement, $parameters = array())
@@ -50,7 +49,7 @@ class Sql extends SysConfig{
 
 	}
 
-	public function select($rawQuery, $params = array()):array
+	public function select($rawQuery, $params = array())
 	{
 
 		$stmt = $this->conn->prepare($rawQuery);

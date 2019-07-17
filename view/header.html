@@ -1,249 +1,218 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!-- Meta, title, CSS, favicons, etc. -->
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="icon" href="{$cfg.imgs}favicon.ico" type="image/ico" />
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <!-- Meta, title, CSS, favicons, etc. -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="icon" href="{$cfg.imgs}favicon.ico" type="image/ico" />
 
-<title>Easy Planning</title>
+        <title>Easy Planning</title>
 
-<!-- Bootstrap -->
-<link href="{$cfg.libcss}bootstrap.min.css" rel="stylesheet">
-<!-- Font Awesome -->
-<link href="{$cfg.libcss}font-awesome.min.css" rel="stylesheet">
-<!-- NProgress -->
-<link href="{$cfg.libcss}nprogress.css" rel="stylesheet">
-<!-- iCheck -->
-<link href="{$cfg.libcss}green.css" rel="stylesheet">
-<!-- bootstrap-progressbar -->
-<link href="{$cfg.libcss}bootstrap-progressbar-3.3.4.min.css"
-	rel="stylesheet">
-<!-- JQVMap -->
-<link href="{$cfg.libcss}jqvmap.min.css" rel="stylesheet" />
-<!-- bootstrap-daterangepicker -->
-<link href="{$cfg.libcss}daterangepicker.css" rel="stylesheet">
-<!-- Datatables -->
-<link href="{$cfg.libcss}dataTables.bootstrap.min.css"
-	rel="stylesheet">
-<!-- bootstrap-wysiwyg -->
-<link href="{$cfg.libcss}prettify.min.css" rel="stylesheet">
-<!-- Select2 -->
-<link href="{$cfg.libcss}select2.min.css" rel="stylesheet">
-<!-- Switchery -->
-<link href="{$cfg.libcss}switchery.min.css" rel="stylesheet">
-<!-- starrr -->
-<link href="{$cfg.libcss}starrr.css" rel="stylesheet">
-<!-- Custom Theme Style -->
-<link href="{$cfg.css}custom.min.css" rel="stylesheet">
-</head>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+       
 
-<body class="nav-md">
-	<div class="container body">
-		<div class="main_container">
-			<div class="col-md-3 left_col">
-				<div class="left_col scroll-view">
-					<div class="navbar nav_title" style="border: 0;">
-						<a href="/" class="site_title"><img
-							src="{$cfg.imgs}logoTR_32x32.png" /> <span>Easy
-								Planning</span></a> {$logged.org_name}
-					</div>
+        <link href="{$cfg.libcss}nprogress.css" rel="stylesheet">
+        <link href="{$cfg.libcss}green.css" rel="stylesheet">
+        <link href="{$cfg.libcss}bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}jqvmap.min.css" rel="stylesheet" />
+        <link href="{$cfg.libcss}daterangepicker.css" rel="stylesheet">
+        <link href="{$cfg.libcss}dataTables.bootstrap.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}prettify.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}select2.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}switchery.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}starrr.css" rel="stylesheet">
+        <link href="{$cfg.css}custom.min.css" rel="stylesheet">
+    </head>
 
-					<div class="clearfix"></div>
+    <body class="nav-md">
+        <div class="container body">
+            <div class="main_container">
+                <div class="col-md-3 left_col">
+                    <div class="left_col scroll-view">
+                        <div class="navbar nav_title" style="border: 0;">
+                            <a href="/" class="site_title"><img
+                                    src="{$cfg.imgs}logoTR_32x32.png" /> <span>Easy
+                                    Planning</span></a> {$logged.org_name}
+                        </div>
 
-					<!-- menu profile quick info -->
-					<div class="profile clearfix">
-						<div class="profile_pic">
-							<img src="{$cfg.imgs}img.jpg" alt="..."
-								class="img-circle profile_img">
-						</div>
-						<div class="profile_info">
-							<span>Bem Vindo,</span>
-							<h2>{$logged.user_name}</h2>
-						</div>
-					</div>
-					<!-- /menu profile quick info -->
+                        <div class="clearfix"></div>
 
-					<br />
+                        <!-- menu profile quick info -->
+                        <div class="profile clearfix">
+                            <div class="profile_pic">
+                                <img src="{$cfg.imgs}img.jpg" alt="..."
+                                     class="img-circle profile_img">
+                            </div>
+                            <div class="profile_info">
+                                <span>Bem Vindo,</span>
+                                <h2>{$logged.user_name}</h2>
+                            </div>
+                        </div>
+                        <!-- /menu profile quick info -->
 
-					<!-- sidebar menu -->
-					<div id="sidebar-menu"
-						class="main_menu_side hidden-print main_menu">
-						{if="$logged.org_id==0"}
-						<div class="menu_section">
-							<h3>Administração</h3>
-							<ul class="nav side-menu">
-								<li><a href="/"><i class="fa fa-home"></i> Início </a></li>
-								<li><a><i class="fa fa-edit"></i> Cadastros <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="/admin/orgs">Empresas</a></li>
-										<li><a href="/admin/users">Usuários</a></li>
-										<li><a href="/admin/perspectives">Perspectivas</a></li>
-										<li><a href="/admin/qsets">Grupos de Perguntas</a></li>
-										<li><a href="/admin/questions">Perguntas</a></li>
-										<li><a href="#">- Atividades Econômicas</a></li>
-										<li><a href="#">- Temas de Interesse</a></li>
-										<li><a href="#">- Conhecimentos Corporativos</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-table"></i> Relatórios </a></li>
-							</ul>
-						</div>
-						{elseif="(int)$logged.userorg_type==1"}
-						<div class="menu_section">
-							<h3>Consultor Interno</h3>
-							<ul class="nav side-menu">
-								<li><a href="/"><i class="fa fa-home"></i> Início </a></li>
-								<li><a><i class="fa fa-edit"></i> Cadastros <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="/users">Usuários</a></li>
-										{if="isset($logged.diagnostic_id)"}<li><a href="/respondents">Respondedores</a></li>{/if}
-										<li><a href="#">- Departamentos</a></li>
-										<li><a href="#">- Grupos de Acesso</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-edit"></i>Planejamento Estratégico<span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="/plans">Planos</a></li>
-										<li><a href="/objectives">Objetivos</a></li>
-										<li><a href="/diagnostics">Diagnósticos</a></li>
-										<li><a href="/targets">Metas</a></li>
-										<li><a href="/targets">SWOT</a></li>
-										<li><a href="/maps">Mapa Estratégico</a></li>
-									</ul></li>
-								<li><a><i class="fa fa-bar-chart-o"></i>Painel de Controle</a>
-								<li><a><i class="fa fa-table"></i>Relatórios<span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="/reports/questions" target="_blank">Imprimir Questionário</a></li>
-										<li><a href="/reports/diagnostics" target="_blank">Relatório do Diagnóstico</a></li>
-										<li><a href="#">- Relatório do PETO</a></li>
-										<li><a href="#">- Relatório de Monitoramento</a></li>
-										<li><a href="#">- Outros Relatórios</a></li>
-									</ul></li>
-							</ul>
-						</div>
-						{else}
-						<div class="menu_section">
-							<h3>Colaborador {$logged.userorg_type}</h3>
-							<ul class="nav side-menu">
-								<li><a href="/"><i class="fa fa-home"></i> Início </a></li>
-								<li><a><i class="fa fa-bar-chart-o"></i>Painel de Controle</a>
-								<li><a><i class="fa fa-table"></i>Relatórios</a>
-							</ul>
-						</div>
-						{/if}
-						<div class="menu_section">
-							<h3>Live On</h3>
-							<ul class="nav side-menu">
-								<li><a><i class="fa fa-sitemap"></i> Multilevel Menu <span
-										class="fa fa-chevron-down"></span></a>
-									<ul class="nav child_menu">
-										<li><a href="#level1_1">Level One</a>
-										<li><a>Level One<span class="fa fa-chevron-down"></span></a>
-											<ul class="nav child_menu">
-												<li class="sub_menu"><a href="level2.html">Level
-														Two</a></li>
-												<li><a href="#level2_1">Level Two</a></li>
-												<li><a href="#level2_2">Level Two</a></li>
-											</ul></li>
-										<li><a href="#level1_2">Level One</a></li>
-									</ul></li>
-							</ul>
-						</div>
+                        <br />
 
-					</div>
-					<!-- /sidebar menu -->
+                        <!-- sidebar menu -->
+                        <div id="sidebar-menu"
+                             class="main_menu_side hidden-print main_menu">
+                            {if="$logged.org_id==0"}
+                            <div class="menu_section">
+                                <h3>Administração</h3>
+                                <ul class="nav side-menu">
+                                    <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
+                                    <li><a><i class="fa fa-edit"></i> Cadastros <span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="/admin/orgs">Empresas</a></li>
+                                            <li><a href="/admin/users">Usuários</a></li>
+                                            <li><a href="/admin/perspectives">Perspectivas</a></li>
+                                            <li><a href="/admin/qsets">Grupos de Perguntas</a></li>
+                                            <li><a href="/admin/questions">Perguntas</a></li>
+                                            <li><a href="#">- Atividades Econômicas</a></li>
+                                            <li><a href="#">- Temas de Interesse</a></li>
+                                            <li><a href="#">- Conhecimentos Corporativos</a></li>
+                                        </ul></li>
+                                    <li><a><i class="fa fa-table"></i> Relatórios </a></li>
+                                </ul>
+                            </div>
+                            {elseif="(int)$logged.userorg_type==1 or (int)$logged.user_isadmin==1"}
+                            <div class="menu_section">
+                                <h3>Consultor Interno</h3>
+                                <ul class="nav side-menu">
+                                    <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
+                                    <li><a><i class="fa fa-edit"></i> Cadastros <span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="/users">Usuários</a></li>
+                                            {if="isset($logged.diagnostic_id)"}<li><a href="/respondents">Respondedores</a></li>{/if}
+                                            <li><a href="/plans">Planos</a></li>
+                                            <li><a href="/diagnostics">Diagnósticos</a></li>
+                                            <li><a href="#">- Departamentos</a></li>
+                                            <li><a href="#">- Grupos de Acesso</a></li>
+                                        </ul></li>
+                                    <li><a><i class="fa fa-edit"></i>Planejamento Estratégico<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="/objectives">Objetivos</a></li>
+                                            <li><a href="/targets">- SWOT</a></li>
+                                            <li><a href="/maps">- Mapa Estratégico</a></li>
+                                        </ul></li>
+                                    <li><a><i class="fa fa-table"></i>Relatórios<span
+                                                class="fa fa-chevron-down"></span></a>
+                                        <ul class="nav child_menu">
+                                            <li><a href="/reports/questions" target="_blank">Imprimir Questionário</a></li>
+                                            <li><a href="/reports/diagnostics" target="_blank">Relatório do Diagnóstico</a></li>
+                                            <li><a href="#">- Relatório do PETO</a></li>
+                                            <li><a href="#">- Relatório de Monitoramento</a></li>
+                                            <li><a href="#">- Outros Relatórios</a></li>
+                                        </ul></li>
+                                    <li><a href="#"><i class="fa fa-bar-chart"></i>Painel de Controle</a>
+                                    <li><a href="/monitoring"><i class="fa fa-pie-chart"></i>Execução e Monitoramento</a>
+                                </ul>
+                            </div>
+                            {else}
+                            <div class="menu_section">
+                                <h3>Colaborador {$logged.userorg_type}</h3>
+                                <ul class="nav side-menu">
+                                    <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
+                                    <li><a><i class="fa fa-table"></i>Relatórios</a>
+                                    <li><a><i class="fa fa-bar-chart"></i>Painel de Controle</a>
+                                    <li><a href="/monitoring"><i class="fa fa-pie-chart"></i>Execução e Monitoramento</a>
+                                </ul>
+                            </div>
+                            {/if}
+                        </div>
+                        <!-- /sidebar menu -->
 
-					<!-- /sidebar menu -->
-					<!-- /menu footer buttons -->
-					<div class="sidebar-footer hidden-small">
-						<a data-toggle="tooltip" data-placement="top" title="Settings">
-							<span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="FullScreen">
-							<span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="Lock"> <span
-							class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
-						</a> <a data-toggle="tooltip" data-placement="top" title="Logout"
-							href="/logout"> <span class="glyphicon glyphicon-off"
-							aria-hidden="true"></span>
-						</a>
-					</div>
-					<!-- /menu footer buttons -->
-				</div>
-			</div>
+                        <!-- /sidebar menu -->
+                        <!-- /menu footer buttons -->
+                        <div class="sidebar-footer hidden-small">
+                            <a data-toggle="tooltip" data-placement="top" title="Settings">
+                                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                            </a> <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                            </a> <a data-toggle="tooltip" data-placement="top" title="Lock"> <span
+                                    class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                            </a> <a data-toggle="tooltip" data-placement="top" title="Logout"
+                                    href="/logout"> <span class="glyphicon glyphicon-off"
+                                                  aria-hidden="true"></span>
+                            </a>
+                        </div>
+                        <!-- /menu footer buttons -->
+                    </div>
+                </div>
 
-			<!-- top navigation -->
-			<div class="top_nav">
-				<div class="nav_menu">
-					<nav>
-						<div class="nav toggle">
-							<a id="menu_toggle"><i class="fa fa-bars"></i></a>
-						</div>
+                <!-- top navigation -->
+                <div class="top_nav">
+                    <div class="nav_menu">
+                        <nav>
+                            <div class="nav toggle">
+                                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                            </div>
 
-						<ul class="nav navbar-nav navbar-right">
-							<li class=""><a href="javascript:;"
-								class="user-profile dropdown-toggle" data-toggle="dropdown"
-								aria-expanded="false"> <img src="images/img.jpg" alt="">{$logged.user_name}
-									<span class=" fa fa-angle-down"></span>
-							</a>
-								<ul class="dropdown-menu dropdown-usermenu pull-right">
-									<li><a href="javascript:;"> Perfil</a></li>
-									<li><a href="javascript:;"> <span
-											class="badge bg-red pull-right">50%</span> <span>Configurações</span>
-									</a></li>
-									<li><a href="javascript:;">Ajuda</a></li>
-									{if="$logged.user_isadmin==true"}
-									<li><a href="/loginOrganization">Trocar de Organização</a></li>
-									{/if}
-									<li><a href="/logout"><i
-											class="fa fa-sign-out pull-right"></i> Sair</a></li>
-								</ul></li>
+                            <ul class="nav navbar-nav navbar-right">
+                                <li class=""><a href="javascript:;"
+                                                class="user-profile dropdown-toggle" data-toggle="dropdown"
+                                                aria-expanded="false"> <img src="{$cfg.imgs}img.jpg" alt="">{$logged.user_name}
+                                        <span class=" fa fa-angle-down"></span>
+                                    </a>
+                                    <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                        <li><a href="javascript:;"> Perfil</a></li>
+                                        <li><a href="javascript:;"> <span
+                                                    class="badge bg-red pull-right">50%</span> <span>Configurações</span>
+                                            </a></li>
+                                        <li><a href="javascript:;">Ajuda</a></li>
+                                        {if="$logged.user_isadmin==true"}
+                                        <li><a href="/loginOrganization">Trocar de Organização</a></li>
+                                        {/if}
+                                        <li><a href="/logout"><i
+                                                    class="fa fa-sign-out pull-right"></i> Sair</a></li>
+                                    </ul></li>
 
-							<li role="presentation" class="dropdown"><a
-								href="javascript:;" class="dropdown-toggle info-number"
-								data-toggle="dropdown" aria-expanded="false"> <i
-									class="fa fa-envelope-o"></i> <span class="badge bg-green">6</span>
-							</a>
-								<ul id="menu1" class="dropdown-menu list-unstyled msg_list"
-									role="menu">
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
-													Smith</span> <span class="time">3 mins ago</span>
-										</span> <span class="message"> Film festivals used to be
-												do-or-die moments for movie makers. They were where... </span>
-									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
-													Smith</span> <span class="time">3 mins ago</span>
-										</span> <span class="message"> Film festivals used to be
-												do-or-die moments for movie makers. They were where... </span>
-									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
-													Smith</span> <span class="time">3 mins ago</span>
-										</span> <span class="message"> Film festivals used to be
-												do-or-die moments for movie makers. They were where... </span>
-									</a></li>
-									<li><a> <span class="image"><img
-												src="images/img.jpg" alt="Profile Image" /></span> <span> <span>John
-													Smith</span> <span class="time">3 mins ago</span>
-										</span> <span class="message"> Film festivals used to be
-												do-or-die moments for movie makers. They were where... </span>
-									</a></li>
-									<li>
-										<div class="text-center">
-											<a> <strong>See All Alerts</strong> <i
-												class="fa fa-angle-right"></i>
-											</a>
-										</div>
-									</li>
-								</ul></li>
-						</ul>
-					</nav>
-				</div>
-			</div>
-			<!-- /top navigation -->
+                                <li role="presentation" class="dropdown"><a
+                                        href="javascript:;" class="dropdown-toggle info-number"
+                                        data-toggle="dropdown" aria-expanded="false"> <i
+                                            class="fa fa-envelope-o"></i> <span class="badge bg-green">6</span>
+                                    </a>
+                                    <ul id="menu1" class="dropdown-menu list-unstyled msg_list"
+                                        role="menu">
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li>
+                                            <div class="text-center">
+                                                <a> <strong>See All Alerts</strong> <i
+                                                        class="fa fa-angle-right"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul></li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <!-- /top navigation -->

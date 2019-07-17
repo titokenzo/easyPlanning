@@ -21,7 +21,7 @@
 								placeholder="Digite o nome" value="{$obj.user_name}" required />
 						</div>
 						<div class="form-group">
-							<label for="user_cpf">CPF (apenas números) *</label> <input type="text"
+							<label for="user_cpf">CPF (apenas números) *</label> <input type="number"
 								class="form-control" id="user_cpf" name="user_cpf" maxlength="11"
 								placeholder="Digite o CPF" value="{$obj.user_cpf}" required />
 						</div>
@@ -49,14 +49,6 @@
 							<label for="user_photo">Foto</label> <input type="text"
 								class="form-control" id="user_photo" name="user_photo" maxlength="200"
 								placeholder="Selecione a foto" value="{$obj.user_photo}" />
-						</div>
-						<div class="form-group">
-							<label for="user_type">Tipo *</label> <select id="user_type"
-								name="user_type" class="form-control" required>
-								<option value="">Selecione...</option> {loop="$types"}
-								<option value="{$key}" {if="$obj.user_type == $key"}selected{/if}>{$value}</option>
-								{/loop}
-							</select>
 						</div>
 					</div>
 					<div class="box-footer">

@@ -6,14 +6,13 @@ use easyPlanning\Model;
 
 class Plan extends Model
 {
-
     public function __construct()
     {
         $fields = array(
             "plan_id",
             "org_id",
             "plan_dtcreation",
-            "plan_isopen",
+            "plan_status",
             "plan_title",
             "plan_team",
             "plan_mission",
@@ -29,7 +28,7 @@ class Plan extends Model
         return $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) ORDER BY a.plan_title;");
     }
 
-    public static function listFromOrg($idorg)
+    public static function listPlansFromOrg($idorg)
     {
         $sql = new Sql();
         return $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) WHERE a.org_id=:ORG ORDER BY a.plan_title;", array(":ORG"=>$idorg));
@@ -41,7 +40,7 @@ class Plan extends Model
         
         $results = $sql->query("INSERT INTO tb_strategic_planning (
             org_id,
-            plan_isopen,
+            plan_status,
             plan_title,
             plan_team,
             plan_mission,
@@ -49,7 +48,7 @@ class Plan extends Model
             plan_values
         ) VALUES(
             :org_id,
-            :plan_isopen,
+            :plan_status,
             :plan_title,
             :plan_team,
             :plan_mission,
@@ -57,7 +56,7 @@ class Plan extends Model
             :plan_values
         )", array(
             ":org_id" => (int)$this->getorg_id(),
-            ":plan_isopen" => $this->getplan_isopen(),
+            ":plan_status" => $this->getplan_status(),
             ":plan_title" => $this->getplan_title(),
             ":plan_team" => $this->getplan_team(),
             ":plan_mission" => $this->getplan_mission(),
@@ -81,14 +80,14 @@ class Plan extends Model
         $sql = new Sql();
         
         $sql->query("UPDATE tb_strategic_planning SET 
-                plan_isopen=:plan_isopen,
+                plan_status=:plan_status,
                 plan_title=:plan_title,
                 plan_team=:plan_team,
                 plan_mission=:plan_mission,
                 plan_vision=:plan_vision,
                 plan_values=:plan_values
             WHERE plan_id=:plan_id", array(
-            ":plan_isopen" => $this->getplan_isopen(),
+            ":plan_status" => $this->getplan_status(),
             ":plan_title" => $this->getplan_title(),
             ":plan_team" => $this->getplan_team(),
             ":plan_mission" => $this->getplan_mission(),
@@ -106,10 +105,25 @@ class Plan extends Model
         ));
     }
     
-    public static function getActive($idorg){
+    public static function getActiveOrgPlan($idorg){
         $sql = new Sql();
-        $results = $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) WHERE a.org_id=:ORG", array(":ORG"=>$idorg));
-        return $results[0];
+        $results = $sql->select("SELECT * from tb_strategic_planning a INNER JOIN tb_organizations b USING(org_id) WHERE a.org_id=:ORG AND a.plan_status IN (1,2)", array(":ORG"=>$idorg));
+        if($results){
+            $_SESSION[User::SESSION]["plan_id"]=$results[0]["plan_id"];
+            $_SESSION[User::SESSION]["plan_title"]=$results[0]["plan_title"];
+            return $results[0];
+        }
+        return null;
+    }
+    
+    public static function getPlanStatusList(){
+        $list = array(
+            0 => "Fechado",
+            1 => "Em construção",
+            2 => "Em execução",
+            3 => "Suspenso"
+        );
+        return $list;
     }
 }
 ?>

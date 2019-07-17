@@ -1,65 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Easy Planning</title>
+        <title>Easy Planning</title>
 
-<link href="/res/vendors/css/bootstrap.min.css" rel="stylesheet">
-<link href="/res/vendors/css/font-awesome.min.css" rel="stylesheet">
-<link href="/res/vendors/nprogress.css" rel="stylesheet">
-<link href="/res/vendors/animate.min.css" rel="stylesheet">
-<link href="/res/css/custom.min.css" rel="stylesheet">
-</head>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+        <link href="{$cfg.libcss}nprogress.css" rel="stylesheet">
+        <link href="{$cfg.libcss}animate.min.css" rel="stylesheet">
+        <link href="{$cfg.css}custom.min.css" rel="stylesheet">
+    </head>
 
-<body class="login">
-	<div>
-		<a class="hiddenanchor" id="signup"></a> <a class="hiddenanchor"
-			id="signin"></a>
+    <body class="login">
+        <div>
+            <a class="hiddenanchor" id="signup"></a> <a class="hiddenanchor"
+                                                        id="signin"></a>
 
-		<div class="login_wrapper">
-			<div class="animate form login_form">
-				<section class="login_content">
-					<form method="post" action="loginOrganization">
-						<h1>Organização</h1>
-						<div class="form-group">
-							<select
-								id="org_id" name="org_id" class="form-control"
-								required>
-								<option value="">Selecione...</option>
-								{if="(int)$user_isamdin===1"}
-								<option value="0">Administração</option>
-								{/if}
-								{loop="$orgs"}
-								<option value="{$value.org_id}">{$value.org_tradingname}</option>
-								{/loop}
-							</select>
-						</div>
-						<div>
-							<input type="submit" class="btn btn-primary submit"
-								value="Entrar" /> 
-						</div>
+            <div class="login_wrapper">
+                <div class="animate form login_form">
+                    <section class="login_content">
+                        <form method="post" action="loginOrganization">
+                            <h1>Organização</h1>
+                            <div class="form-group">
+                                <select
+                                    id="org_id" name="org_id" class="form-control"
+                                    required>
+                                    <option value="">Selecione...</option>
+                                    {if="(int)$user_isamdin===1"}
+                                    <option value="0">Administração</option>
+                                    {/if}
+                                    {loop="$orgs"}
+                                    <option value="{$value.org_id}">{$value.org_tradingname}</option>
+                                    {/loop}
+                                </select>
+                            </div>
+                            <div>
+                                <input type="submit" class="btn btn-primary submit"
+                                       value="Entrar" /> 
+                            </div>
 
-						<div class="clearfix"></div>
+                            <div class="clearfix"></div>
 
-						<div class="separator">
-							<div class="clearfix"></div>
-							<br />
+                            <div class="separator">
+                                <div class="clearfix"></div>
+                                <br />
 
-							<div>
-								<h1>
-									<img src="/res/site/img/logoTR_32x32.png" /> TreinaRecife!
-								</h1>
-								<p>©2018 All Rights Reserved. TreinaRecife!</p>
-							</div>
-						</div>
-					</form>
-				</section>
-			</div>
-		</div>
-	</div>
-</body>
+                                <div>
+                                    <h1>
+                                        <img src="{$cfg.imgs}logoTR_32x32.png" /> TreinaRecife!
+                                    </h1>
+                                    <p>©2018 All Rights Reserved. TreinaRecife!</p>
+                                </div>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

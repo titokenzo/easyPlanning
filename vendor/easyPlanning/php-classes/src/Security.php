@@ -12,7 +12,7 @@ class Security{
         $iv = openssl_random_pseudo_bytes($iv_length);
         
         $first_encrypted = openssl_encrypt($data, $method, $first_key, OPENSSL_RAW_DATA, $iv);
-        $second_encrypted = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+        $second_encrypted = hash_hmac('sha512', $first_encrypted, $second_key, TRUE);
         
         $output = base64_encode($iv . $second_encrypted . $first_encrypted);
         return $output;
@@ -32,7 +32,8 @@ class Security{
         $first_encrypted = substr($mix, $iv_length + 64);
         
         $data = openssl_decrypt($first_encrypted, $method, $first_key, OPENSSL_RAW_DATA, $iv);
-        $second_encrypted_new = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
+        $second_encrypted_new = hash_hmac('sha512', $first_encrypted, $second_key, TRUE);
+        //$second_encrypted_new = hash_hmac('sha3-512', $first_encrypted, $second_key, TRUE);
         
         if (hash_equals($second_encrypted, $second_encrypted_new))
             return $data;

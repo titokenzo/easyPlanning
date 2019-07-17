@@ -6,3 +6,4 @@
 /vendor/slim/
 /vendor/easyPlanning/php-classes/src/SysConfig.php
 /.settings/
+/nbproject/private/

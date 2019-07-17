@@ -33,6 +33,23 @@ class Objective extends Model
             ORDER BY a.obj_description;");
     }
 
+    public static function listObjectivesFromOrg($idorg)
+    {
+        $sql = new Sql();
+        return $sql->select("SELECT * from tb_objectives a
+            INNER JOIN tb_strategic_planning b USING(plan_id)
+            INNER JOIN tb_perspectives c USING(persp_id) 
+            WHERE b.org_id=:ORG ORDER BY c.persp_name, a.obj_description;", array(":ORG"=>$idorg));
+    }
+    
+    public static function listObjectivesFromActivePlan($idorg){
+        $sql = new Sql();
+       return $sql->select("SELECT * from tb_objectives a
+            INNER JOIN tb_strategic_planning b USING(plan_id)
+            INNER JOIN tb_perspectives c USING(persp_id) 
+            WHERE b.org_id=:ORG AND b.plan_status IN (1,2) ORDER BY c.persp_name, a.obj_description;", array(":ORG"=>$idorg));
+    }
+    
     public function save()
     {
         $sql = new Sql();
@@ -41,29 +58,17 @@ class Objective extends Model
             plan_id,
             persp_id,
             user_id,
-            obj_description,
-            obj_positionx,
-            obj_positiony,
-            obj_sizex,
-            obj_sizey
+            obj_description
         ) VALUES(
             :plan_id,
             :persp_id,
             :user_id,
-            :obj_description,
-            :obj_positionx,
-            :obj_positiony,
-            :obj_sizex,
-            :obj_sizey
-        )", array(
+            :obj_description
+        );", array(
             ":plan_id" => $this->getplan_id(),
             ":persp_id" => $this->getpersp_id(),
             ":user_id" => $this->getuser_id(),
-            ":obj_description" => $this->getobj_description(),
-            ":obj_positionx" => $this->getobj_positionx(),
-            ":obj_positiony" => $this->getobj_positiony(),
-            ":obj_sizex" => $this->getobj_sizex(),
-            ":obj_sizey" => $this->getobj_sizey()
+            ":obj_description" => $this->getobj_description()
         ));
     }
 
@@ -81,24 +86,16 @@ class Objective extends Model
     {
         $sql = new Sql();
         
-        $sql->query("UPDATE tb_strategic_planning SET 
+        $sql->query("UPDATE tb_objectives SET 
                 plan_id=:plan_id,
                 persp_id=:persp_id,
                 user_id=:user_id,
-                obj_description=:obj_description,
-                obj_positionx=:obj_positionx,
-                obj_positiony=:obj_positiony,
-                obj_sizex=:obj_sizex,
-                obj_sizey=:obj_sizey 
+                obj_description=:obj_description
             WHERE obj_id=:obj_id", array(
                 ":plan_id" => $this->getplan_id(),
                 ":persp_id" => $this->getpersp_id(),
                 ":user_id" => $this->getuser_id(),
                 ":obj_description" => $this->getobj_description(),
-                ":obj_positionx" => $this->getobj_positionx(),
-                ":obj_positiony" => $this->getobj_positiony(),
-                ":obj_sizex" => $this->getobj_sizex(),
-                ":obj_sizey" => $this->getobj_sizey(),
                 ":obj_id" => $this->getobj_id()
         ));
     }
@@ -110,5 +107,13 @@ class Objective extends Model
             ":id" => $this->getobj_id()
         ));
     }
+    
+    public static function getObjDepends($obj){
+        $sql = new Sql();
+        return $sql->select("SELECT a.obj_id, a.obj_description, b.obj_id AS depends FROM tb_objectives a LEFT JOIN tb_objective_objective b ON a.obj_id=b.obj_dependson AND b.obj_id=:ID WHERE a.obj_id<>:ID;", array(
+            ":ID"=>$obj
+        ));
+    }
+    
 }
 ?>

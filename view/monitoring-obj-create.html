@@ -1,0 +1,116 @@
+<!-- page content -->
+<div class="right_col" role="main">
+	<div class="">
+		<div class="page-title">
+			<div class="title_left">
+				<h2>{$logged.org_name} - {$targets[0].plan_title} - {$objective.obj_description}</h2>
+				<h3>Metas Estratégicas</h3>
+			</div>
+		</div>
+		<div class="clearfix"></div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Monitoramento de Objetivo</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<div class="box-body col-md-6 col-xs-6">
+					<div class="form-group">
+						<div class="col-xs-4">
+							<span class="chart" data-percent="{$result.resultado_relativo}">
+								<span class="percent"></span>
+							</span>
+						</div>
+					</div>
+				</div>
+				<form role="form" action="/monitoring/obj/create" method="post">
+					<input type="hidden" id="obj_id" name="obj_id" value="{$objective.obj_id}" />
+					<div class="box-body col-md-6 col-xs-6">
+						{if="isset($error)"}
+						<div class="alert alert-danger" role="alert">{$error}</div>
+						{/if}
+						<div class="form-group">
+							<label for="monobj_results">Resultados *</label> <textarea
+								id="monobj_results" name="monobj_results" class="form-control"
+								placeholder="Digite os resultados" required></textarea>
+						</div>
+						<div class="form-group">
+							<label for="monobj_problems">Problemas </label> <textarea
+								id="monobj_problems" name="monobj_problems" class="form-control"
+								placeholder="Digite os problemas"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="monobj_action">O que fazer </label>
+							<textarea id="monobj_action" name="monobj_action"
+								class="form-control" placeholder="Digite as ações"></textarea>
+						</div>
+						<div class="form-group">
+							<label for="monobj_deadline">Prazo </label>
+							<input type="date" id="monobj_deadline" name="monobj_deadline"
+								class="form-control" placeholder="Informe o prazo" />
+						</div>
+						<div class="box-footer">
+							<button type="submit" class="btn btn-primary">Salvar</button>
+							<a class="btn btn-default" href="/monitoring">Voltar</a> <br /> <br />
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Metas</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<table id="" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th>Meta</th>
+							<th>Última atualização</th>
+							<th>Evolução</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop="$targets"}
+						<tr>
+		                    <td>{$value.target_name}</td>
+		                    <td>{$value.mon_date}</td>
+		                    <td>
+		                    	<img src="{$cfg.imgs}iconemeta{$value.nivel_relativo}.png" title="{$value.mon_value}" />&nbsp;{$value.resultado_relativo}% ({$value.mon_value})
+		                    </td>							
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+			</div>
+		</div>		
+		<div class="x_panel">
+			<div class="x_title">
+				<h2>Histórico de Monitoramentos</h2>
+				<div class="clearfix"></div>
+			</div>
+			<div class="x_content">
+				<table id="" class="table table-striped table-bordered">
+					<thead>
+						<tr>
+							<th style="width: 140px">Data</th>
+							<th>Evolução</th>
+						</tr>
+					</thead>
+					<tbody>
+						{loop="$objs"}
+						<tr>
+		                    <td><a href="/monitoring/obj/update/{$value.mon_id}">{$value.mon_date}</a></td>
+		                    <td>
+		                    	<img src="{$cfg.imgs}iconemeta{$value.nivel}.png" />&nbsp;{$value.resultado}% 
+		                    </td>							
+						</tr>
+						{/loop}
+					</tbody>
+				</table>
+			</div>
+		</div>		
+	</div>
+</div>
+<!-- /page content -->

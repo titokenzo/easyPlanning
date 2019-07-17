@@ -1,5 +1,3 @@
-CREATE DATABASE  IF NOT EXISTS `easyplanning` /*!40100 DEFAULT CHARACTER SET utf8 */;
-USE `easyplanning`;
 -- MySQL dump 10.13  Distrib 5.7.17, for Win64 (x86_64)
 --
 -- Host: localhost    Database: easyplanning
@@ -52,6 +50,48 @@ CREATE TABLE `tb_legalnatures` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `tb_monitoring`
+--
+
+DROP TABLE IF EXISTS `tb_monitoring`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_monitoring` (
+  `mon_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `target_id` int(10) unsigned NOT NULL,
+  `mon_value` double NOT NULL,
+  `mon_dtcreation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `mon_date` date NOT NULL,
+  `mon_comment` text,
+  `mon_image` text,
+  PRIMARY KEY (`mon_id`),
+  KEY `fk_mon_target_idx` (`target_id`),
+  CONSTRAINT `fk_mon_target` FOREIGN KEY (`target_id`) REFERENCES `tb_targets` (`target_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `tb_monitoring_objectives`
+--
+
+DROP TABLE IF EXISTS `tb_monitoring_objectives`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_monitoring_objectives` (
+  `monobj_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `obj_id` int(10) unsigned NOT NULL,
+  `monobj_dtcreation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `monobj_results` text,
+  `monobj_problems` text,
+  `monobj_action` text,
+  `monobj_deadline` date DEFAULT NULL,
+  PRIMARY KEY (`monobj_id`),
+  KEY `fk_obj_monitoring_idx` (`obj_id`),
+  CONSTRAINT `fk_obj_monitoring` FOREIGN KEY (`obj_id`) REFERENCES `tb_objectives` (`obj_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `tb_objective_objective`
 --
 
@@ -79,12 +119,12 @@ CREATE TABLE `tb_objectives` (
   `obj_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `plan_id` int(10) unsigned NOT NULL,
   `persp_id` int(10) unsigned NOT NULL,
-  `obj_description` text NOT NULL,
-  `obj_positionx` int(11) NOT NULL,
-  `obj_positiony` int(11) NOT NULL,
-  `obj_sizex` int(10) unsigned NOT NULL,
-  `obj_sizey` int(10) unsigned NOT NULL,
   `user_id` int(10) unsigned NOT NULL,
+  `obj_description` text NOT NULL,
+  `obj_positionx` int(11) NOT NULL DEFAULT '0',
+  `obj_positiony` int(11) NOT NULL DEFAULT '0',
+  `obj_sizex` int(10) unsigned NOT NULL DEFAULT '0',
+  `obj_sizey` int(10) unsigned NOT NULL DEFAULT '0',
   `obj_dtcreation` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`obj_id`),
   KEY `objective_plan_fk_idx` (`plan_id`),
@@ -93,7 +133,7 @@ CREATE TABLE `tb_objectives` (
   CONSTRAINT `objective_perspective_fk` FOREIGN KEY (`persp_id`) REFERENCES `tb_perspectives` (`persp_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `objective_plan_fk` FOREIGN KEY (`plan_id`) REFERENCES `tb_strategic_planning` (`plan_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
   CONSTRAINT `objective_user_fk` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`user_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -132,7 +172,7 @@ CREATE TABLE `tb_organizations` (
   PRIMARY KEY (`org_id`),
   KEY `tb_organizations_legalnature_idx` (`legalnature_id`),
   CONSTRAINT `tb_organizations_legalnature` FOREIGN KEY (`legalnature_id`) REFERENCES `tb_legalnatures` (`legalnature_id`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -217,7 +257,7 @@ CREATE TABLE `tb_respondents` (
   PRIMARY KEY (`resp_id`),
   KEY `fk_respondent_diagnostic_idx` (`diagnostic_id`),
   CONSTRAINT `fk_respondent_diagnostic` FOREIGN KEY (`diagnostic_id`) REFERENCES `tb_diagnostics` (`diagnostic_id`) ON DELETE CASCADE ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=20 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=19 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -284,6 +324,40 @@ CREATE TABLE `tb_strategic_planning` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
+-- Table structure for table `tb_targets`
+--
+
+DROP TABLE IF EXISTS `tb_targets`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `tb_targets` (
+  `target_id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `obj_id` int(10) unsigned NOT NULL,
+  `user_id` int(10) unsigned NOT NULL COMMENT 'Responsavel pela meta',
+  `target_code` varchar(5) NOT NULL,
+  `target_name` varchar(255) NOT NULL,
+  `target_dtstart` date NOT NULL,
+  `target_dtfinish` date NOT NULL,
+  `target_frequenceunit` tinyint(1) unsigned NOT NULL COMMENT '1-Dia, 2-Semana, 3-Mes, 4-Ano',
+  `target_baseline` double NOT NULL COMMENT 'Valor atual',
+  `target_value` double NOT NULL COMMENT 'Valor da Meta',
+  `target_unit` varchar(50) NOT NULL,
+  `target_frequence` int(4) unsigned NOT NULL,
+  `target_weight` int(4) unsigned NOT NULL DEFAULT '1',
+  `target_status` tinyint(1) unsigned NOT NULL DEFAULT '1',
+  `target_formula` text NOT NULL,
+  `target_justify` text NOT NULL,
+  `target_description` text NOT NULL,
+  `target_methodology` text,
+  PRIMARY KEY (`target_id`),
+  KEY `fk_target_user_idx` (`user_id`),
+  KEY `fk_target_obj_idx` (`obj_id`),
+  CONSTRAINT `fk_target_obj` FOREIGN KEY (`obj_id`) REFERENCES `tb_objectives` (`obj_id`) ON DELETE CASCADE ON UPDATE NO ACTION,
+  CONSTRAINT `fk_target_user` FOREIGN KEY (`user_id`) REFERENCES `tb_users` (`user_id`) ON DELETE CASCADE ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
 -- Table structure for table `tb_tmp`
 --
 
@@ -322,7 +396,7 @@ CREATE TABLE `tb_users` (
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `user_login_UNIQUE` (`user_login`),
   UNIQUE KEY `user_cpf_UNIQUE` (`user_cpf`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -560,4 +634,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-03-20  0:26:43
+-- Dump completed on 2018-04-23  3:43:06
