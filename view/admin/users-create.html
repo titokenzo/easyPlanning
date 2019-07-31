@@ -15,6 +15,9 @@
             <div class="x_content">
                 <form role="form" action="/admin/users/create" method="post">
                     <div class="box-body">
+                        {if="isset($error)"}
+                        <div class="alert alert-danger" role="alert">{$error}</div>
+                        {/if}
                         <div class="form-group">
                             <label for="user_name">Nome *</label> <input type="text"
                                                                          class="form-control" id="user_name" name="user_name"
