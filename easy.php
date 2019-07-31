@@ -337,9 +337,11 @@ $app->group('/users', verifyLogin(), function () use ($app) {
     
     // USER VIEW CREATE
     $app->get('/create', function () {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $page = new Page();
         $page->setTpl('users-create', array(
-            "types" => USer::getUserTypeList()
+            "types" => User::getUserTypeList(),
+            "error" => $error
         ));
     });
     
@@ -350,8 +352,13 @@ $app->group('/users', verifyLogin(), function () use ($app) {
         $_POST["user_isadmin"] = 0;
         $idorg = $_SESSION[User::SESSION]['org_id'];
         $obj->setData($_POST);
-        $obj->saveColaborador($idorg);
-        $app->response->redirect('/users', 301);
+        try {
+            $obj->saveColaborador($idorg);
+            $app->response->redirect('/users', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/users/create', 301);
+        }        
     });
     
     // USER DELETE
@@ -1008,10 +1015,12 @@ $app->group('/admin', verifyLoginAdmin(),
             
             // USER VIEW CREATE
             $app->get('/create', function () {
+                $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
                 $page = new Page();
                 $page->setTpl('admin' . _DS_ . 'users-create', array(
                     "types" => USer::getUserTypeList(),
-                    "orgs" => User::getUserOrganizations()
+                    "orgs" => User::getUserOrganizations(),
+                    "error" => $error
                 ));
             });
             
@@ -1067,8 +1076,15 @@ $app->group('/admin', verifyLoginAdmin(),
                 $obj = new User();
                 $_POST["user_isadmin"] = isset($_POST["user_isadmin"]) ? 1 : 0;
                 $obj->setData($_POST);
-                $obj->save();
-                $app->response->redirect('\admin\users', 301);
+                try {
+                    $obj->save();
+                    $app->response->redirect(_DS_ .'admin'. _DS_ .'users', 301);
+
+                    $app->response->redirect('/objectives/' . $idobj . '/targets', 301);
+                } catch (Exception $e) {
+                    $app->flash('error', $e->getMessage());
+                    $app->response->redirect(_DS_ .'admin'. _DS_ .'users'. _DS_ .'create', 301);
+                }
             });
             
             // USER SAVE UPDATE
