@@ -8,7 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="icon" href="{$cfg.imgs}favicon.ico" type="image/ico" />
 
-        <title>Easy Planning - {$logged.org_name}</title>
+        <title>Easy Planning</title>
 
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
         <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
@@ -35,16 +35,31 @@
                         <div class="navbar nav_title" style="border: 0;">
                             <a href="/" class="site_title"><img
                                     src="{$cfg.imgs}logoTR_32x32.png" /> <span>Easy
-                                    Planning</span></a>
+                                    Planning</span></a> {$logged.org_name}
                         </div>
+
                         <div class="clearfix"></div>
+
+                        <!-- menu profile quick info -->
+                        <div class="profile clearfix">
+                            <div class="profile_pic">
+                                <img src="{$cfg.imgs}img.jpg" alt="..."
+                                     class="img-circle profile_img">
+                            </div>
+                            <div class="profile_info">
+                                <span>Bem Vindo,</span>
+                                <h2>{$logged.user_name}</h2>
+                            </div>
+                        </div>
+                        <!-- /menu profile quick info -->
+
+                        <br />
 
                         <!-- sidebar menu -->
                         <div id="sidebar-menu"
                              class="main_menu_side hidden-print main_menu">
-                            <div class="menu_section">
-                                <h3>{$logged.org_name}</h3>
                             {if="$logged.org_id==0"}
+                            <div class="menu_section">
                                 <h3>Administração</h3>
                                 <ul class="nav side-menu">
                                     <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
@@ -60,7 +75,9 @@
                                         </ul></li>
                                     <li><a><i class="fa fa-table"></i> Relatórios </a></li>
                                 </ul>
+                            </div>
                             {elseif="(int)$logged.userorg_type==1 or (int)$logged.user_isadmin==1"}
+                            <div class="menu_section">
                                 <h3>Consultor Interno</h3>
                                 <ul class="nav side-menu">
                                     <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
@@ -71,6 +88,8 @@
                                             {if="isset($logged.diagnostic_id)"}<li><a href="/respondents">Respondedores</a></li>{/if}
                                             <li><a href="/plans">Planos</a></li>
                                             <li><a href="/diagnostics">Diagnósticos</a></li>
+                                            <li><a href="#">- Departamentos</a></li>
+                                            <li><a href="#">- Grupos de Acesso</a></li>
                                         </ul></li>
                                     <li><a><i class="fa fa-edit"></i>Planejamento Estratégico<span
                                                 class="fa fa-chevron-down"></span></a>
@@ -91,7 +110,9 @@
                                     <li><a href="#"><i class="fa fa-bar-chart"></i>Painel de Controle</a>
                                     <li><a href="/monitoring"><i class="fa fa-pie-chart"></i>Execução e Monitoramento</a>
                                 </ul>
+                            </div>
                             {else}
+                            <div class="menu_section">
                                 <h3>Colaborador {$logged.userorg_type}</h3>
                                 <ul class="nav side-menu">
                                     <li><a href="/easy.php"><i class="fa fa-home"></i> Início </a></li>
@@ -99,8 +120,8 @@
                                     <li><a><i class="fa fa-bar-chart"></i>Painel de Controle</a>
                                     <li><a href="/monitoring"><i class="fa fa-pie-chart"></i>Execução e Monitoramento</a>
                                 </ul>
-                            {/if}
                             </div>
+                            {/if}
                         </div>
                         <!-- /sidebar menu -->
 
@@ -137,7 +158,11 @@
                                         <span class=" fa fa-angle-down"></span>
                                     </a>
                                     <ul class="dropdown-menu dropdown-usermenu pull-right">
-                                       
+                                        <li><a href="javascript:;"> Perfil</a></li>
+                                        <li><a href="javascript:;"> <span
+                                                    class="badge bg-red pull-right">50%</span> <span>Configurações</span>
+                                            </a></li>
+                                        <li><a href="javascript:;">Ajuda</a></li>
                                         {if="$logged.user_isadmin==true"}
                                         <li><a href="/loginOrganization">Trocar de Organização</a></li>
                                         {/if}
@@ -145,7 +170,45 @@
                                                     class="fa fa-sign-out pull-right"></i> Sair</a></li>
                                     </ul></li>
 
-                                
+                                <li role="presentation" class="dropdown"><a
+                                        href="javascript:;" class="dropdown-toggle info-number"
+                                        data-toggle="dropdown" aria-expanded="false"> <i
+                                            class="fa fa-envelope-o"></i> <span class="badge bg-green">6</span>
+                                    </a>
+                                    <ul id="menu1" class="dropdown-menu list-unstyled msg_list"
+                                        role="menu">
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li><a> <span class="image"><img
+                                                        src="{$cfg.imgs}img.jpg" alt="Profile Image" /></span> <span> <span>John
+                                                        Smith</span> <span class="time">3 mins ago</span>
+                                                </span> <span class="message"> Film festivals used to be
+                                                    do-or-die moments for movie makers. They were where... </span>
+                                            </a></li>
+                                        <li>
+                                            <div class="text-center">
+                                                <a> <strong>See All Alerts</strong> <i
+                                                        class="fa fa-angle-right"></i>
+                                                </a>
+                                            </div>
+                                        </li>
+                                    </ul></li>
                             </ul>
                         </nav>
                     </div>

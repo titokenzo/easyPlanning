@@ -207,6 +207,9 @@ $app->post('/forgot/reset', function () {
 // RESPOND
 $app->get('/respond', function () use ($app) {
     $error = NULL;
+    $user = NULL;
+    $objs = NULL;
+    $obj = NULL;
     try {
         $obj = new Respondent();
         $obj->setData(Respondent::validFormDecrypt($_GET["code"]));
@@ -237,6 +240,9 @@ $app->get('/respond', function () use ($app) {
 // RESPOND PRINT
 $app->get('/respond/print', function () use ($app) {
     $error = NULL;
+    $user = NULL;
+    $objs = NULL;
+    $obj = NULL;
     try {
         $obj = new Respondent();
         $obj->setData(Respondent::validFormDecrypt($_GET["code"]));
@@ -322,9 +328,9 @@ $app->post('/respond/remove', function () {
 // USERS
 // #########################################################################################
 // USER LIST
-$app->group('/users', verifyLogin(), function () use ($app,$logged,$error) {
-    $app->get('/', function () use($logged) {
-        $objs = User::listFromOrganization($logged['org_id']);
+$app->group('/users', verifyLogin(), function () use ($app) {
+    $app->get('/', function () {
+        $objs = User::listFromOrganization($_SESSION[User::SESSION]['org_id']);
         $page = new Page();
         $page->setTpl('users', array(
             "objs" => $objs
@@ -332,7 +338,8 @@ $app->group('/users', verifyLogin(), function () use ($app,$logged,$error) {
     });
     
     // USER VIEW CREATE
-    $app->get('/create', function () use($error){
+    $app->get('/create', function () {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $page = new Page();
         $page->setTpl('users-create', array(
             "types" => User::getUserTypeList(),
@@ -341,11 +348,11 @@ $app->group('/users', verifyLogin(), function () use ($app,$logged,$error) {
     });
     
     // USER SAVE CREATE
-    $app->post('/create', function () use ($app,$logged) {
+    $app->post('/create', function () use ($app) {
         $obj = new User();
         // ATRIBUIR A ORG_ID=LOGGED.ORG_ID, O TIPO=2, ISADMIN=0
         $_POST["user_isadmin"] = 0;
-        $idorg = $logged['org_id'];
+        $idorg = $_SESSION[User::SESSION]['org_id'];
         $obj->setData($_POST);
         try {
             $obj->saveColaborador($idorg);
@@ -392,9 +399,9 @@ $app->group('/users', verifyLogin(), function () use ($app,$logged,$error) {
 // STRATEGIC PLANNING
 // #########################################################################################
 // LIST
-$app->group('/plans', verifyLogin(), function () use ($app,$logged,$error) {
-    $app->get('/', function () use($logged) {
-        $objs = Plan::listPlansFromOrg($logged["org_id"]);
+$app->group('/plans', verifyLogin(), function () use ($app) {
+    $app->get('/', function () {
+        $objs = Plan::listPlansFromOrg($_SESSION[User::SESSION]["org_id"]);
         $page = new Page();
         $page->setTpl('plans', array(
             "objs" => $objs,
@@ -403,8 +410,8 @@ $app->group('/plans', verifyLogin(), function () use ($app,$logged,$error) {
     });
     
     // VIEW
-    $app->get('/view', function () use($logged) {
-        $obj = Plan::getActiveOrgPlan($logged["org_id"]);
+    $app->get('/view', function () {
+        $obj = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         $new = false;
         if (! $obj) {
             $new = true;
@@ -467,9 +474,9 @@ $app->group('/plans', verifyLogin(), function () use ($app,$logged,$error) {
 // DIAGNOSTIC
 // #########################################################################################
 // LIST
-$app->group('/diagnostics', verifyLogin(), function () use ($app,$logged) {
-    $app->get('/', verifyLogin(), function () use($logged) {
-        $objs = Diagnostic::listAllFromOrg($logged["org_id"]);
+$app->group('/diagnostics', verifyLogin(), function () use ($app) {
+    $app->get('/', verifyLogin(), function () {
+        $objs = Diagnostic::listAllFromOrg($_SESSION[User::SESSION]["org_id"]);
         $status = Diagnostic::getStatusList();
         $page = new Page();
         $page->setTpl('diagnostics', array(
@@ -527,17 +534,19 @@ $app->group('/diagnostics', verifyLogin(), function () use ($app,$logged) {
 // #########################################################################################
 // LIST
 
-$app->group('/respondents', verifyLogin(), function () use ($app,$logged,$error) {
-    $app->get('/', function () use($logged){
+$app->group('/respondents', verifyLogin(), function () use ($app) {
+    $app->get('/', function () {
+        $data = $_SESSION[User::SESSION];
         $page = new Page();
         $page->setTpl('respondents', array(
-            "objs" => Respondent::getFromActiveDiagnostic($logged["org_id"]),
+            "objs" => Respondent::getFromActiveDiagnostic($data["org_id"]),
             "levels" => Respondent::getOrganizationLevelList()
         ));
     });
     
     // CREATE
-    $app->get('/create', function () use($error) {
+    $app->get('/create', function () {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $page = new Page();
         $page->setTpl('respondents-create', array(
             "levels" => Respondent::getOrganizationLevelList(),
@@ -605,10 +614,11 @@ $app->group('/respondents', verifyLogin(), function () use ($app,$logged,$error)
 // #########################################################################################
 // LIST
 
-$app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) {
-    $app->get('/', function () use($app,$logged) {
-        $objs = Objective::listObjectivesFromActivePlan($logged["org_id"]);
-        $plan = Plan::getActiveOrgPlan($logged["org_id"]);
+$app->group('/objectives', verifyLogin(), function () use ($app) {
+    $app->get('/', function () use($app) {
+        $data = $_SESSION[User::SESSION];
+        $objs = Objective::listObjectivesFromActivePlan($data["org_id"]);
+        $plan = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         if (! $plan) {
             $app->response->redirect('/', 301);
         }
@@ -616,18 +626,18 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
         $page->setTpl('objectives', array(
             "objs" => $objs,
             "plan" => $plan,
-            "users" => User::listFromOrganization($logged["org_id"])
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"])
         ));
     });
     
     // CREATE
-    $app->get('/create', function () use($logged){
+    $app->get('/create', function () {
         $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $page = new Page();
         $page->setTpl('objectives-create', array(
             "perspectives" => Perspective::listAll(),
-            "plan" => Plan::getActiveOrgPlan($logged["org_id"]),
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
             "error" => $error
         ));
     });
@@ -641,15 +651,17 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
     });
     
     // VIEW UPDATE
-    $app->get('/:idobj', function ($idobj) use($logged,$error) {
+    $app->get('/:idobj', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $obj = new Objective();
         $obj->get((int) $idobj);
-        $plan = Plan::getActiveOrgPlan($logged["org_id"]);
+        $plan = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         $page = new Page();
         $page->setTpl('objectives-update', array(
             "obj" => $obj->getValues(),
             "plan" => $plan,
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
             "perspectives" => Perspective::listAll(),
             "objs" => Objective::getObjDepends($idobj),
             "error" => $error
@@ -688,7 +700,8 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
     // #########################################################################################
     // LIST
     
-    $app->get('/:idobj/targets', function ($idobj) use($logged) {
+    $app->get('/:idobj/targets', function ($idobj) {
+        $data = $_SESSION[User::SESSION];
         $objs = Target::listObjectiveTargets($idobj);
         $objective = new Objective();
         $objective->get((int) $idobj);
@@ -696,20 +709,21 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
         $page->setTpl('targets', array(
             "objs" => $objs,
             "objective" => $objective->getValues(),
-            "plan" => Plan::getActiveOrgPlan($logged["org_id"]),
-            "users" => User::listFromOrganization($logged["org_id"])
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"])
         ));
     });
     
     // CREATE
-    $app->get('/:idobj/targets/create', function ($idobj) use($logged,$error) {
+    $app->get('/:idobj/targets/create', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
         $objective = new Objective();
         $objective->get((int) $idobj);
         $page = new Page();
         $page->setTpl('targets-create', array(
             "objective" => $objective->getValues(),
-            "plan" => Plan::getActiveOrgPlan($logged["org_id"]),
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "plan" => Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
             "error" => $error
         ));
     });
@@ -723,18 +737,20 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
     });
     
     // VIEW UPDATE
-    $app->get('/:idobj/targets/:idtarget', function ($idobj, $idtarget) use($logged,$error) {
+    $app->get('/:idobj/targets/:idtarget', function ($idobj, $idtarget) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $objective = new Objective();
         $objective->get((int) $idobj);
         $obj = new Target();
         $obj->get((int) $idtarget);
-        $plan = Plan::getActiveOrgPlan($logged["org_id"]);
+        $plan = Plan::getActiveOrgPlan($_SESSION[User::SESSION]["org_id"]);
         $page = new Page();
         $page->setTpl('targets-update', array(
             "obj" => $obj->getValues(),
             "objective" => $objective->getValues(),
             "plan" => $plan,
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "users" => User::listFromOrganization($_SESSION[User::SESSION]["org_id"]),
             "frequenceUnits" => Target::getFrequenceUnitsList(),
             "error" => $error
         ));
@@ -772,9 +788,10 @@ $app->group('/objectives', verifyLogin(), function () use ($app,$logged,$error) 
 // MONITORING
 // #########################################################################################
 // LIST
-$app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) {
-    $app->get('/', function () use($app,$logged) {
-        $objs = Monitoring::listPlanLastResults($logged["plan_id"]);
+$app->group('/monitoring', verifyLogin(), function () use ($app) {
+    $app->get('/', function () use($app) {
+        $data = $_SESSION[User::SESSION];
+        $objs = Monitoring::listPlanLastResults($data["plan_id"]);
         if (! $objs) {
             $app->response->redirect('/', 301);
         }
@@ -782,17 +799,19 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
         $page->setTpl('monitoring', array(
             "objs" => $objs,
             "objectives" => Monitoring::proccessObjectivesResults($objs),
-            "users" => User::listFromOrganization($logged["org_id"])
+            "users" => User::listFromOrganization($data["org_id"])
         ));
     });
     
     // VIEW TARGET CREATE
-    $app->get('/target/create/:idtarget', function ($idtarget) use($logged,$error) {
+    $app->get('/target/create/:idtarget', function ($idtarget) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $page = new Page();
         $page->setTpl('monitoring-target-create', array(
             "objs" => Monitoring::listTargetResults($idtarget),
             "obj" => Monitoring::getTargetMetaData($idtarget),
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "users" => User::listFromOrganization($data["org_id"]),
             "frequenceUnits" => Target::getFrequenceUnitsList(),
             "error" => $error
         ));
@@ -812,7 +831,9 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
     });
     
     // VIEW TARGET UPDATE
-    $app->get('/target/update/:idmon', function ($idmon) use($logged,$error) {
+    $app->get('/target/update/:idmon', function ($idmon) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $obj = new Monitoring();
         $obj->get((int) $idmon);
         $target = new Target();
@@ -822,7 +843,7 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
             "obj" => $obj->getValues(),
             "objs" => Monitoring::listTargetResults($obj->gettarget_id()),
             "target" => $target->getValues(),
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "users" => User::listFromOrganization($data["org_id"]),
             "frequenceUnits" => Target::getFrequenceUnitsList(),
             "error" => $error
         ));
@@ -843,7 +864,9 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
     });
     
     // VIEW OBJECTIVE CREATE
-    $app->get('/obj/create/:idobj', function ($idobj) use($logged,$error) {
+    $app->get('/obj/create/:idobj', function ($idobj) {
+        $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
+        $data = $_SESSION[User::SESSION];
         $objective = new Objective();
         $objective->get((int) $idobj);
         $targets = Monitoring::listObjectiveLastResults($idobj);
@@ -853,7 +876,7 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
             "objs" => MonitoringObjective::listObjectiveMonitoring($idobj),
             "targets" => $targets,
             "result" => Monitoring::proccessObjectivesResults($targets)[0],
-            "users" => User::listFromOrganization($logged["org_id"]),
+            "users" => User::listFromOrganization($data["org_id"]),
             "error" => $error
         ));
     });
@@ -862,8 +885,11 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
 // #############################################################################################
 // REPORTS
 // #############################################################################################
-$app->group('/reports', verifyLogin(), function () use ($app,$logged,$error) {
+$app->group('/reports', verifyLogin(), function () use ($app) {
     $app->get('/questions', function () use ($app) {
+        $user = NULL;
+        $objs = NULL;
+        $obj = NULL;
         try {
             $obj = new Report();
             $intern = $obj->listAllQuestions(0);
@@ -884,6 +910,9 @@ $app->group('/reports', verifyLogin(), function () use ($app,$logged,$error) {
     });
     
     $app->get('/diagnostics', function () use ($app) {
+        $user = NULL;
+        $objs = NULL;
+        $obj = NULL;
         try {
             $obj = new Report();
             $grade1 = $obj->listGrade1Swot(1);
@@ -906,7 +935,7 @@ $app->group('/reports', verifyLogin(), function () use ($app,$logged,$error) {
 // ADMIN ROUTES
 // #############################################################################################
 $app->group('/admin', verifyLoginAdmin(),
-    function () use ($app,$logged,$error) {
+    function () use ($app) {
         $app->get('/', function () use ($app) {
             $app->response->redirect('/admin/orgs');
         });
@@ -977,7 +1006,7 @@ $app->group('/admin', verifyLoginAdmin(),
         // ADMIN USERS
         // #####################################################################################
         // USER LIST
-        $app->group('/users', function () use ($app,$logged,$error) {
+        $app->group('/users', function () use ($app) {
             $app->get('/', function () {
                 $objs = User::listAll();
                 $page = new Page();
@@ -987,7 +1016,8 @@ $app->group('/admin', verifyLoginAdmin(),
             });
             
             // USER VIEW CREATE
-            $app->get('/create', function () use($error) {
+            $app->get('/create', function () {
+                $error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
                 $page = new Page();
                 $page->setTpl('admin' . _DS_ . 'users-create', array(
                     "types" => USer::getUserTypeList(),
