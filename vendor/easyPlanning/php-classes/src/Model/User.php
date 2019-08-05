@@ -233,31 +233,30 @@ class User extends Model
         ));
         if (count($results) === 0) {
             throw new \Exception("Não foi possível recuperar a senha");
-        } else {
-            $data = $results[0];
-            $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :ip)", array(
-                ":iduser" => $data["user_id"],
-                ":ip" => $_SERVER["REMOTE_ADDR"]
-            ));
-            if (count($results2) === 0) {
-                throw new \Exception("Não foi possível recuperar a senha");
-            } else {
-                $dataRecovery = $results2[0];
-                $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
-                $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
-                $mailer = new Mailer($data["user_email"], $data["user_name"], "Redefinir senha do EasyPlanning", "forgot", array(
-                    "name" => $data["user_name"],
-                    "link" => $link
-                ));
-                try{
-                    $mailer->send();
-                }catch(\Exception $e){
-                    throw new \Exception('Não foi possível enviar o e-mail de recuperação: ' . $e->getMessage());
-                }
-                // $mailer->send();
-                return $data;
-            }
+        } 
+        
+        $data = $results[0];
+        $results2 = $sql->select("CALL sp_userspasswordsrecoveries_create(:iduser, :ip)", array(
+            ":iduser" => $data["user_id"],
+            ":ip" => $_SERVER["REMOTE_ADDR"]
+        ));
+        if (count($results2) === 0) {
+            throw new \Exception("Não foi possível recuperar a senha");
+        } 
+
+        $dataRecovery = $results2[0];
+        $code = Security::secured_encrypt($dataRecovery["recovery_id"]);
+        $link = SysConfig::SITE_URL . "/forgot/reset?code=$code";
+        $mailer = new Mailer($data["user_email"], $data["user_name"], "Redefinir senha do EasyPlanning", "forgot", array(
+            "name" => $data["user_name"],
+            "link" => $link
+        ));
+        try{
+            $mailer->send();
+        }catch(\Exception $e){
+            throw new \Exception('Não foi possível enviar o e-mail de recuperação: ' . $e->getMessage());
         }
+        return $data;
     }
 
     public static function validForgotDecrypt($code)

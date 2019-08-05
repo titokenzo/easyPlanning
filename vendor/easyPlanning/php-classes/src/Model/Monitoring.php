@@ -319,4 +319,3 @@ class Monitoring extends Model
     }
     
 }
-?>

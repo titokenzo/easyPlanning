@@ -3,7 +3,7 @@
     <div class="">
         <div class="page-title">
             <div class="title_left">
-                <h2>{$logged.org_name} - {$plan.plan_title}</h2>
+                <h2>{$plan.plan_title}</h2>
                 <h3>Objetivos Estratégicos</h3>
             </div>
         </div>
@@ -35,7 +35,7 @@
                                     <td>{$value.persp_name}</td>
                                     <td>{$value.obj_description}</td>
                                     <td>{loop="$users"}{if="$value.user_id==$value1.user_id"}{$value.user_name}{break}{/if}{/loop}</td>
-                                    <td>{$value.obj_dtcreation}</td>
+                                    <td>{function="date( 'd/m/Y H:i' , strtotime( $value.obj_dtcreation ) )"}</td>
                                     <td>
                                         <a href="/objectives/{$value.obj_id}" class="btn btn-primary btn-xs"><i class="fa fa-edit"></i> Editar</a>
                                         <a href="/objectives/{$value.obj_id}/delete" onclick="return confirm('Deseja realmente excluir este registro?')" class="btn btn-danger btn-xs"><i class="fa fa-trash"></i> Excluir</a>

@@ -67,18 +67,17 @@ function verifyLoginAdmin()
 }
 
 // LOGIN VIEW
-$app->get('/login', function () {
+$app->get('/login', function () use($error) {
     $page = new Page([
         "header" => false,
         "footer" => false
     ]);
-    //$error = isset($_SESSION['slim.flash']['error']) ? $_SESSION['slim.flash']['error'] : NULL;
     $page->setTpl('login', array(
         "error" => $error
     ));
 });
 
-$app->post('/login', function () use ($app,$logged) {
+$app->post('/login', function () use ($app,$logged,$error) {
     try {
         User::login($_POST["login"], $_POST["password"]);
         if (isset($logged["org_id"])) {
@@ -92,7 +91,7 @@ $app->post('/login', function () use ($app,$logged) {
     }
 });
 
-$app->get('/loginOrganization', verifyLogin(), function () use($logged) {
+$app->get('/loginOrganization', verifyLogin(), function () use($logged,$error) {
     if($logged["user_isadmin"]==0){
         $orgs = User::getSessionUserOrganizations();
     }else{
@@ -108,7 +107,7 @@ $app->get('/loginOrganization', verifyLogin(), function () use($logged) {
     ));
 });
 
-$app->post('/loginOrganization', verifyLogin(), function () use ($app) {
+$app->post('/loginOrganization', verifyLogin(), function () use ($app,$error) {
     $idorg = NULL;
     if (isset($_POST["org_id"])) {
         $idorg = $_POST["org_id"];
@@ -119,13 +118,13 @@ $app->post('/loginOrganization', verifyLogin(), function () use ($app) {
     $app->response->redirect("/easy.php");
 });
 
-$app->get('/logout', function () use ($app) {
+$app->get('/logout', function () use ($app,$error) {
     User::logout();
     $app->response->redirect("/login");
 });
 
 // HOME / DEFAULT
-$app->get('/', verifyLogin(), function () use ($app,$logged) {
+$app->get('/', verifyLogin(), function () use ($app,$logged,$error) {
     if ($logged["org_id"] == 0 and $logged["user_isadmin"] == 1) {
         $app->response->redirect('/admin/orgs');
     } elseif ($logged["userorg_type"] == 1) {
@@ -135,7 +134,7 @@ $app->get('/', verifyLogin(), function () use ($app,$logged) {
     }
 });
 
-$app->post('/', verifyLogin(), function () use ($app) {
+$app->post('/', verifyLogin(), function () use ($app,$error) {
     $app->response->redirect('/');
 });
 
@@ -150,7 +149,7 @@ $app->get('/forgot', function () {
 $app->post('/forgot', function () {
     $error = NULL;
     try {
-        $user = User::getForgot($_POST["email"]);
+        User::getForgot($_POST["email"]);
     } catch (Exception $e) {
         $error = $e->getMessage();
     }
@@ -857,6 +856,53 @@ $app->group('/monitoring', verifyLogin(), function () use ($app,$logged,$error) 
             "error" => $error
         ));
     });
+
+    // SAVE OBJECTIVE CREATE
+    $app->post('/obj/create', function () use ($app) {
+        $obj = new MonitoringObjective();
+        $obj->setData($_POST);
+        try {
+            $obj->save();
+            $app->response->redirect('/monitoring', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/monitoring/obj/create/' . $_POST["obj_id"]);
+        }
+    });
+    
+    // VIEW OBJECTIVE UPDATE
+    $app->get('/obj/update/:idmonobj', function ($idmonobj) use($logged,$error) {
+        $obj = new MonitoringObjective();
+        $obj->get((int) $idmonobj);
+        $idobj = (int) $obj->getobj_id();
+        $objective = new Objective();
+        $objective->get($idobj);
+        $targets = Monitoring::listObjectiveLastResults($idobj);
+        $page = new Page();
+        $page->setTpl('monitoring-obj-update', array(
+            "obj" => $obj->getValues(),
+            "objective" => $objective->getValues(),
+            "objs" => MonitoringObjective::listObjectiveMonitoring($idobj),
+            "targets" => $targets,
+            "result" => Monitoring::proccessObjectivesResults($targets)[0],
+            "users" => User::listFromOrganization($logged["org_id"]),
+            "error" => $error
+        ));
+    });
+
+    // SAVE OBJECTIVE UPDATE
+    $app->post('/obj/update/:idmonobj', function ($idmonobj) use ($app) {
+        $obj = new MonitoringObjective();
+        $obj->get((int) $idmonobj);
+        $obj->setData($_POST);
+        try {
+            $obj->update();
+            $app->response->redirect('/monitoring', 301);
+        } catch (Exception $e) {
+            $app->flash('error', $e->getMessage());
+            $app->response->redirect('/monitoring/obj/update/' . $idmonobj);
+        }
+    });
 });
 
 // #############################################################################################
@@ -1051,8 +1097,6 @@ $app->group('/admin', verifyLoginAdmin(),
                 try {
                     $obj->save();
                     $app->response->redirect(_DS_ .'admin'. _DS_ .'users', 301);
-
-                    $app->response->redirect('/objectives/' . $idobj . '/targets', 301);
                 } catch (Exception $e) {
                     $app->flash('error', $e->getMessage());
                     $app->response->redirect(_DS_ .'admin'. _DS_ .'users'. _DS_ .'create', 301);

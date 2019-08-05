@@ -78,18 +78,19 @@ class MonitoringObjective extends Model
             monobj_action,
             monobj_deadline
         ) VALUES(
-            :obj_id
+            :obj_id,
             :monobj_results,
             :monobj_problems,
             :monobj_action,
             :monobj_deadline
         );", array(
             ":obj_id" => $this->getobj_id(),
-            ":monobj_results" => $this->getmonobj_value(),
+            ":monobj_results" => $this->getmonobj_results(),
             ":monobj_problems" => $this->getmonobj_problems(),
             ":monobj_action" => $this->getmonobj_action(),
             ":monobj_deadline" => $this->getmonobj_deadline()
         ));
+        echo $results;
     }
 
     public function get($id)
@@ -107,14 +108,12 @@ class MonitoringObjective extends Model
         $sql = new Sql();
         
         $sql->query("UPDATE tb_monitoring_objectives SET 
-                obj_id=:obj_id,
                 monobj_results=:monobj_results,
                 monobj_problems=:monobj_problems,
                 monobj_action=:monobj_action,
                 monobj_deadline=:monobj_deadline
             WHERE monobj_id=:monobj_id;", array(
-                ":obj_id" => $this->getobj_id(),
-                ":monobj_results" => $this->getmonobj_value(),
+                ":monobj_results" => $this->getmonobj_results(),
                 ":monobj_problems" => $this->getmonobj_problems(),
                 ":monobj_action" => $this->getmonobj_action(),
                 ":monobj_deadline" => $this->getmonobj_deadline(),

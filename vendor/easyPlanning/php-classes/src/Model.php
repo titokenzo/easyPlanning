@@ -20,6 +20,10 @@ class Model{
         $this->attrs = $arg;
     }
     
+    /**
+     * Retorna o vetor com a lista de atributos da classe
+     * @return Array
+     */
     public function getAttrs(){
         return $this->attrs;
     }
@@ -31,7 +35,6 @@ class Model{
         switch($method){
             case "get":
                 return $this->values[$attribute];
-                break;
             case "set":
                 $this->values[$attribute] = $args[0];
                 break;
